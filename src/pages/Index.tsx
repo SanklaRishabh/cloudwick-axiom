@@ -18,6 +18,17 @@ const Index = () => {
     );
   }
 
+  const getUserDisplayName = () => {
+    if (!user) return '';
+    if (user.firstName && user.lastName) {
+      return `${user.firstName} ${user.lastName}`;
+    }
+    if (user.firstName) {
+      return user.firstName;
+    }
+    return user.username;
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
       <div className="text-center space-y-8 p-8">
@@ -30,7 +41,7 @@ const Index = () => {
           {isAuthenticated && user ? (
             <>
               <h1 className="text-4xl font-bold font-lexend text-gray-900 mb-4">
-                Welcome back, {user.name || user.username}!
+                Welcome back, {getUserDisplayName()}!
               </h1>
               <p className="text-xl text-gray-600 font-lexend max-w-md mx-auto">
                 You're successfully signed in to Cloudwick Axiom.
