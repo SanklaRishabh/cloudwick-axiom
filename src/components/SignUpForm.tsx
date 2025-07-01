@@ -87,7 +87,7 @@ const SignUpForm = ({ onSwitchToSignIn }: SignUpFormProps) => {
           <Label htmlFor="email" className="text-white font-lexend text-sm">Email address</Label>
           <Input
             id="email"
-            type="email"
+            type="text"
             placeholder="john.doe@cloudwick.com"
             value={formData.email}
             onChange={(e) => handleInputChange('email', e.target.value)}
