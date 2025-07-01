@@ -8,7 +8,7 @@ const cognitoConfig = {
   Auth: {
     Cognito: {
       userPoolId: process.env.VITE_COGNITO_USER_POOL_ID || 'us-east-1_VCluLurNK',
-      userPoolClientId: process.env.VITE_COGNITO_USER_POOL_CLIENT_ID || '472bug70sne4qdqvgfk3gcjgu3',
+      userPoolClientId: process.env.VITE_COGNITO_USER_POOL_CLIENT_ID || '635oqqdma2mdd7t3sb40thun6m',
       loginWith: {
         email: true,
       },
