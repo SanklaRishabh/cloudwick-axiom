@@ -12,7 +12,7 @@ const cognitoConfig = {
       loginWith: {
         email: true,
       },
-      signUpVerificationMethod: 'code',
+      signUpVerificationMethod: 'code' as const,
       userAttributes: {
         email: {
           required: true,
@@ -21,7 +21,6 @@ const cognitoConfig = {
           required: true,
         },
       },
-      allowGuestAccess: false,
       passwordFormat: {
         minLength: 8,
         requireLowercase: true,
@@ -152,7 +151,6 @@ export const authService = {
       return {
         accessToken: session.tokens?.accessToken?.toString(),
         idToken: session.tokens?.idToken?.toString(),
-        refreshToken: session.tokens?.refreshToken?.toString(),
       };
     } catch (error) {
       console.error('Get tokens error:', error);
