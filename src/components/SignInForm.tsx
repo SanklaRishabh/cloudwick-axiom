@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -23,7 +22,7 @@ const SignInForm = ({ onSwitchToSignUp }: SignInFormProps) => {
     const success = await signIn(email, password);
     
     if (success) {
-      navigate('/');
+      navigate('/dashboard');
     }
     
     setIsLoading(false);
