@@ -4,9 +4,9 @@ import { authService, AuthState, CognitoUser } from '@/lib/cognito';
 import { useToast } from '@/hooks/use-toast';
 
 interface AuthContextType extends AuthState {
-  signIn: (email: string, password: string) => Promise<boolean>;
-  signUp: (email: string, password: string, name: string) => Promise<{ success: boolean; needsConfirmation?: boolean }>;
-  confirmSignUp: (email: string, code: string) => Promise<boolean>;
+  signIn: (username: string, password: string) => Promise<boolean>;
+  signUp: (username: string, email: string, password: string, firstName: string, lastName: string) => Promise<{ success: boolean; needsConfirmation?: boolean }>;
+  confirmSignUp: (username: string, code: string) => Promise<boolean>;
   signOut: () => Promise<void>;
 }
 
@@ -41,9 +41,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const signIn = async (email: string, password: string): Promise<boolean> => {
+  const signIn = async (username: string, password: string): Promise<boolean> => {
     try {
-      const result = await authService.signIn(email, password);
+      const result = await authService.signIn(username, password);
       
       if (result.success && result.isSignedIn) {
         const user = await authService.getCurrentUser();
@@ -75,9 +75,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const signUp = async (email: string, password: string, name: string) => {
+  const signUp = async (username: string, email: string, password: string, firstName: string, lastName: string) => {
     try {
-      const result = await authService.signUp(email, password, name);
+      const result = await authService.signUp(username, email, password, firstName, lastName);
       
       if (result.success) {
         if (result.isSignUpComplete) {
@@ -111,9 +111,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const confirmSignUp = async (email: string, code: string): Promise<boolean> => {
+  const confirmSignUp = async (username: string, code: string): Promise<boolean> => {
     try {
-      const result = await authService.confirmSignUp(email, code);
+      const result = await authService.confirmSignUp(username, code);
       
       if (result.success && result.isSignUpComplete) {
         toast({

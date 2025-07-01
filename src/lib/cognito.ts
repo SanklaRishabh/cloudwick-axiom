@@ -11,13 +11,17 @@ const cognitoConfig = {
       userPoolClientId: process.env.VITE_COGNITO_USER_POOL_CLIENT_ID || '1epbmpkpafmm1dqhsbgudd1t74',
       loginWith: {
         email: true,
+        username: true,
       },
       signUpVerificationMethod: 'code' as const,
       userAttributes: {
         email: {
           required: true,
         },
-        name: {
+        given_name: {
+          required: true,
+        },
+        family_name: {
           required: true,
         },
       },
@@ -37,7 +41,8 @@ Amplify.configure(cognitoConfig);
 export interface CognitoUser {
   username: string;
   email: string;
-  name?: string;
+  firstName?: string;
+  lastName?: string;
 }
 
 export interface AuthState {
@@ -48,15 +53,16 @@ export interface AuthState {
 
 // Authentication functions
 export const authService = {
-  async signUp(email: string, password: string, name: string) {
+  async signUp(username: string, email: string, password: string, firstName: string, lastName: string) {
     try {
       const { isSignUpComplete, userId, nextStep } = await signUp({
-        username: email,
+        username,
         password,
         options: {
           userAttributes: {
             email,
-            name,
+            given_name: firstName,
+            family_name: lastName,
           },
         },
       });
@@ -76,10 +82,10 @@ export const authService = {
     }
   },
 
-  async confirmSignUp(email: string, confirmationCode: string) {
+  async confirmSignUp(username: string, confirmationCode: string) {
     try {
       const { isSignUpComplete, nextStep } = await confirmSignUp({
-        username: email,
+        username,
         confirmationCode,
       });
 
@@ -97,10 +103,10 @@ export const authService = {
     }
   },
 
-  async signIn(email: string, password: string) {
+  async signIn(username: string, password: string) {
     try {
       const { isSignedIn, nextStep } = await signIn({
-        username: email,
+        username,
         password,
       });
 
@@ -137,7 +143,8 @@ export const authService = {
       return {
         username: user.username,
         email: user.signInDetails?.loginId || '',
-        name: user.username,
+        firstName: user.username,
+        lastName: '',
       };
     } catch (error) {
       console.error('Get current user error:', error);

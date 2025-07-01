@@ -13,8 +13,10 @@ interface SignUpFormProps {
 
 const SignUpForm = ({ onSwitchToSignIn }: SignUpFormProps) => {
   const [formData, setFormData] = useState({
-    name: '',
+    username: '',
     email: '',
+    firstName: '',
+    lastName: '',
     password: '',
     agreeToTerms: false
   });
@@ -30,7 +32,7 @@ const SignUpForm = ({ onSwitchToSignIn }: SignUpFormProps) => {
     e.preventDefault();
     setIsLoading(true);
     
-    const result = await signUp(formData.email, formData.password, formData.name);
+    const result = await signUp(formData.username, formData.email, formData.password, formData.firstName, formData.lastName);
     
     if (result.success) {
       if (result.needsConfirmation) {
@@ -71,13 +73,13 @@ const SignUpForm = ({ onSwitchToSignIn }: SignUpFormProps) => {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="name" className="text-white font-lexend text-sm">Name</Label>
+          <Label htmlFor="username" className="text-white font-lexend text-sm">Username</Label>
           <Input
-            id="name"
+            id="username"
             type="text"
-            placeholder="e.g. John Doe"
-            value={formData.name}
-            onChange={(e) => handleInputChange('name', e.target.value)}
+            placeholder="e.g. johndoe"
+            value={formData.username}
+            onChange={(e) => handleInputChange('username', e.target.value)}
             className="bg-white border-gray-300 font-lexend text-gray-900 placeholder:text-gray-500"
             required
           />
@@ -87,13 +89,41 @@ const SignUpForm = ({ onSwitchToSignIn }: SignUpFormProps) => {
           <Label htmlFor="email" className="text-white font-lexend text-sm">Email address</Label>
           <Input
             id="email"
-            type="text"
+            type="email"
             placeholder="john.doe@cloudwick.com"
             value={formData.email}
             onChange={(e) => handleInputChange('email', e.target.value)}
             className="bg-white border-gray-300 font-lexend text-gray-900 placeholder:text-gray-500"
             required
           />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="firstName" className="text-white font-lexend text-sm">First Name</Label>
+            <Input
+              id="firstName"
+              type="text"
+              placeholder="John"
+              value={formData.firstName}
+              onChange={(e) => handleInputChange('firstName', e.target.value)}
+              className="bg-white border-gray-300 font-lexend text-gray-900 placeholder:text-gray-500"
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="lastName" className="text-white font-lexend text-sm">Last Name</Label>
+            <Input
+              id="lastName"
+              type="text"
+              placeholder="Doe"
+              value={formData.lastName}
+              onChange={(e) => handleInputChange('lastName', e.target.value)}
+              className="bg-white border-gray-300 font-lexend text-gray-900 placeholder:text-gray-500"
+              required
+            />
+          </div>
         </div>
 
         <div className="space-y-2">
