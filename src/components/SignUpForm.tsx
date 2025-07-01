@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
+import { useAuth } from '@/hooks/useAuth';
+import VerificationForm from './VerificationForm';
 
 interface SignUpFormProps {
   onSwitchToSignIn: () => void;
@@ -17,6 +19,8 @@ const SignUpForm = ({ onSwitchToSignIn }: SignUpFormProps) => {
     agreeToTerms: false
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [showVerification, setShowVerification] = useState(false);
+  const { signUp } = useAuth();
 
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -26,15 +30,37 @@ const SignUpForm = ({ onSwitchToSignIn }: SignUpFormProps) => {
     e.preventDefault();
     setIsLoading(true);
     
-    // Placeholder for Cognito authentication
-    console.log('Sign up attempt:', formData);
+    const result = await signUp(formData.email, formData.password, formData.name);
     
-    // Simulate authentication
-    setTimeout(() => {
-      setIsLoading(false);
-      // Here you would integrate with AWS Cognito
-    }, 1500);
+    if (result.success) {
+      if (result.needsConfirmation) {
+        setShowVerification(true);
+      } else {
+        onSwitchToSignIn();
+      }
+    }
+    
+    setIsLoading(false);
   };
+
+  const handleVerified = () => {
+    setShowVerification(false);
+    onSwitchToSignIn();
+  };
+
+  const handleBackToSignUp = () => {
+    setShowVerification(false);
+  };
+
+  if (showVerification) {
+    return (
+      <VerificationForm
+        email={formData.email}
+        onBack={handleBackToSignUp}
+        onVerified={handleVerified}
+      />
+    );
+  }
 
   return (
     <div>

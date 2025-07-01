@@ -2,7 +2,8 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { useAuth } from '@/hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 interface SignInFormProps {
   onSwitchToSignUp: () => void;
@@ -12,19 +13,20 @@ const SignInForm = ({ onSwitchToSignUp }: SignInFormProps) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const { signIn } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     
-    // Placeholder for Cognito authentication
-    console.log('Sign in attempt:', { email, password });
+    const success = await signIn(email, password);
     
-    // Simulate authentication
-    setTimeout(() => {
-      setIsLoading(false);
-      // Here you would integrate with AWS Cognito
-    }, 1500);
+    if (success) {
+      navigate('/');
+    }
+    
+    setIsLoading(false);
   };
 
   return (
