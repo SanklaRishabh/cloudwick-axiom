@@ -6,12 +6,13 @@ import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/useAuth';
 
 interface VerificationFormProps {
+  username: string;
   email: string;
   onBack: () => void;
   onVerified: () => void;
 }
 
-const VerificationForm = ({ email, onBack, onVerified }: VerificationFormProps) => {
+const VerificationForm = ({ username, email, onBack, onVerified }: VerificationFormProps) => {
   const [code, setCode] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { confirmSignUp } = useAuth();
@@ -21,7 +22,7 @@ const VerificationForm = ({ email, onBack, onVerified }: VerificationFormProps) 
     if (!code.trim()) return;
 
     setIsLoading(true);
-    const success = await confirmSignUp(email, code);
+    const success = await confirmSignUp(username, code);
     setIsLoading(false);
 
     if (success) {

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -57,6 +56,7 @@ const SignUpForm = ({ onSwitchToSignIn }: SignUpFormProps) => {
   if (showVerification) {
     return (
       <VerificationForm
+        username={formData.username}
         email={formData.email}
         onBack={handleBackToSignUp}
         onVerified={handleVerified}
