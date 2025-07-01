@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,7 +62,14 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				cloudwick: {
+					blue: '#3374DF'
 				}
+			},
+			fontFamily: {
+				'lato': ['Lato', 'sans-serif'],
+				'lexend': ['Lexend', 'sans-serif'],
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
