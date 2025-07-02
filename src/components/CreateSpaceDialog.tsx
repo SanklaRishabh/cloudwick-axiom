@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import {
@@ -40,6 +39,8 @@ const CreateSpaceDialog = ({ onSpaceCreated }: CreateSpaceDialogProps) => {
     setIsLoading(true);
 
     try {
+      console.log('Creating space with data:', { SpaceName: spaceName.trim(), SpaceDescription: description.trim() || undefined });
+      
       const response = await fetch('https://ndncqs0q7i.execute-api.us-east-1.amazonaws.com/Test1_without_auth/spaces', {
         method: 'POST',
         headers: {
@@ -51,22 +52,29 @@ const CreateSpaceDialog = ({ onSpaceCreated }: CreateSpaceDialogProps) => {
         }),
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to create space');
+      console.log('Response status:', response.status);
+      console.log('Response ok:', response.ok);
+
+      // Check if the response is successful (status 200-299)
+      if (response.status === 201 || response.ok) {
+        console.log('Space created successfully');
+        
+        toast({
+          title: "Success",
+          description: "Space created successfully",
+        });
+
+        // Reset form
+        setSpaceName('');
+        setDescription('');
+        setOpen(false);
+        
+        // Refresh spaces list
+        onSpaceCreated();
+      } else {
+        console.error('Response not ok:', response.status, response.statusText);
+        throw new Error(`Failed to create space: ${response.status} ${response.statusText}`);
       }
-
-      toast({
-        title: "Success",
-        description: "Space created successfully",
-      });
-
-      // Reset form
-      setSpaceName('');
-      setDescription('');
-      setOpen(false);
-      
-      // Refresh spaces list
-      onSpaceCreated();
     } catch (error) {
       console.error('Error creating space:', error);
       toast({
