@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import {
@@ -9,16 +10,29 @@ import {
 import { MoreVertical, Edit, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import CreateSpaceDialog from '@/components/CreateSpaceDialog';
+import EditSpaceDialog from '@/components/EditSpaceDialog';
 
 interface Space {
-  id: string;
-  name: string;
-  description?: string;
+  SpaceId: string;
+  SpaceName: string;
+  SpaceDescription?: string;
+  SpaceAdmin?: string;
+}
+
+interface SpacesResponse {
+  Spaces: Space[];
+  Pagination: {
+    Offset: number;
+    Limit: number;
+    SortBy: string;
+    Total: number;
+  };
 }
 
 const Spaces = () => {
   const [spaces, setSpaces] = useState<Space[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [editingSpace, setEditingSpace] = useState<Space | null>(null);
   const { toast } = useToast();
 
   const fetchSpaces = async () => {
@@ -30,18 +44,10 @@ const Spaces = () => {
         throw new Error('Failed to fetch spaces');
       }
 
-      const data = await response.json();
+      const data: SpacesResponse = await response.json();
       console.log('Fetched spaces:', data);
       
-      // Transform the API response to match our interface
-      // Assuming the API returns an array of spaces with SpaceName and SpaceDescription
-      const transformedSpaces = Array.isArray(data) ? data.map((space: any, index: number) => ({
-        id: space.id || `space-${index}`,
-        name: space.SpaceName || space.name || 'Unnamed Space',
-        description: space.SpaceDescription || space.description,
-      })) : [];
-      
-      setSpaces(transformedSpaces);
+      setSpaces(data.Spaces || []);
     } catch (error) {
       console.error('Error fetching spaces:', error);
       toast({
@@ -49,7 +55,6 @@ const Spaces = () => {
         description: "Failed to load spaces. Please try again.",
         variant: "destructive",
       });
-      // Keep empty array on error
       setSpaces([]);
     } finally {
       setIsLoading(false);
@@ -60,22 +65,41 @@ const Spaces = () => {
     fetchSpaces();
   }, []);
 
-  const handleDeleteSpace = (spaceId: string) => {
-    // TODO: Implement delete API call
-    setSpaces(spaces.filter(space => space.id !== spaceId));
-    toast({
-      title: "Success",
-      description: "Space deleted successfully",
-    });
+  const handleDeleteSpace = async (spaceId: string) => {
+    try {
+      const response = await fetch(`https://ndncqs0q7i.execute-api.us-east-1.amazonaws.com/Test1_without_auth/spaces/${spaceId}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete space');
+      }
+
+      setSpaces(spaces.filter(space => space.SpaceId !== spaceId));
+      toast({
+        title: "Success",
+        description: "Space deleted successfully",
+      });
+    } catch (error) {
+      console.error('Error deleting space:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete space. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
-  const handleEditSpace = (spaceId: string) => {
-    console.log('Edit space:', spaceId);
-    // TODO: Implement edit functionality
+  const handleEditSpace = (space: Space) => {
+    setEditingSpace(space);
+  };
+
+  const handleSpaceUpdated = () => {
+    setEditingSpace(null);
+    fetchSpaces();
   };
 
   const handleSpaceCreated = () => {
-    // Refresh the spaces list when a new space is created
     fetchSpaces();
   };
 
@@ -107,7 +131,7 @@ const Spaces = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {spaces.map((space) => (
-            <div key={space.id} className="relative bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+            <div key={space.SpaceId} className="relative bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon" className="absolute top-4 right-4 h-8 w-8">
@@ -115,12 +139,12 @@ const Spaces = () => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => handleEditSpace(space.id)}>
+                  <DropdownMenuItem onClick={() => handleEditSpace(space)}>
                     <Edit className="h-4 w-4 mr-2" />
                     Edit
                   </DropdownMenuItem>
                   <DropdownMenuItem 
-                    onClick={() => handleDeleteSpace(space.id)}
+                    onClick={() => handleDeleteSpace(space.SpaceId)}
                     className="text-red-600"
                   >
                     <Trash2 className="h-4 w-4 mr-2" />
@@ -136,9 +160,9 @@ const Spaces = () => {
                 </div>
                 
                 <div className="text-center">
-                  <h3 className="text-xl font-bold text-gray-900 font-lexend">{space.name}</h3>
-                  {space.description && (
-                    <p className="text-sm text-gray-600 font-lexend mt-1">{space.description}</p>
+                  <h3 className="text-xl font-bold text-gray-900 font-lexend">{space.SpaceName}</h3>
+                  {space.SpaceDescription && (
+                    <p className="text-sm text-gray-600 font-lexend mt-1">{space.SpaceDescription}</p>
                   )}
                 </div>
               </div>
@@ -148,6 +172,14 @@ const Spaces = () => {
       )}
 
       <CreateSpaceDialog onSpaceCreated={handleSpaceCreated} />
+      
+      {editingSpace && (
+        <EditSpaceDialog 
+          space={editingSpace}
+          onSpaceUpdated={handleSpaceUpdated}
+          onClose={() => setEditingSpace(null)}
+        />
+      )}
     </div>
   );
 };
