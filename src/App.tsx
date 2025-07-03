@@ -10,6 +10,8 @@ import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import DashboardHome from "./components/DashboardHome";
 import Spaces from "./pages/Spaces";
+import People from "./pages/People";
+import UserDetail from "./pages/UserDetail";
 import Documents from "./pages/Documents";
 import Courses from "./pages/Courses";
 import Exams from "./pages/Exams";
@@ -30,6 +32,8 @@ const App = () => (
             <Route path="/dashboard" element={<Dashboard />}>
               <Route index element={<DashboardHome />} />
               <Route path="spaces" element={<Spaces />} />
+              <Route path="people" element={<People />} />
+              <Route path="people/:userId" element={<UserDetail />} />
               <Route path="documents" element={<Documents />} />
               <Route path="courses" element={<Courses />} />
               <Route path="exams" element={<Exams />} />

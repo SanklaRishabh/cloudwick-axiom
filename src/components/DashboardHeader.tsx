@@ -19,6 +19,10 @@ export function DashboardHeader() {
     navigate('/');
   };
 
+  const handleLogoClick = () => {
+    navigate('/dashboard');
+  };
+
   const getUserInitials = () => {
     if (!user) return 'U';
     if (user.firstName && user.lastName) {
@@ -32,7 +36,7 @@ export function DashboardHeader() {
 
   return (
     <header className="h-16 border-b border-gray-200 bg-white flex items-center justify-between px-6">
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 cursor-pointer" onClick={handleLogoClick}>
         <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
           <span className="text-white font-bold text-sm">CW</span>
         </div>

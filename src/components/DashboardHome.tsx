@@ -2,7 +2,7 @@
 import React from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from "@/components/ui/button";
-import { Box } from 'lucide-react';
+import { Box, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const DashboardHome = () => {
@@ -31,6 +31,10 @@ const DashboardHome = () => {
     navigate('/dashboard/spaces');
   };
 
+  const handleNavigateToPeople = () => {
+    navigate('/dashboard/people');
+  };
+
   return (
     <div className="space-y-8">
       <div className="space-y-4">
@@ -38,13 +42,23 @@ const DashboardHome = () => {
           {getTimeOfDayGreeting()}, {getUserDisplayName()}!
         </h1>
         
-        <Button 
-          onClick={handleNavigateToSpaces}
-          className="bg-blue-600 hover:bg-blue-700 font-lexend flex items-center gap-2"
-        >
-          <Box className="h-5 w-5" />
-          Go to Spaces
-        </Button>
+        <div className="flex gap-4">
+          <Button 
+            onClick={handleNavigateToSpaces}
+            className="bg-blue-600 hover:bg-blue-700 font-lexend flex items-center gap-2"
+          >
+            <Box className="h-5 w-5" />
+            Spaces
+          </Button>
+          
+          <Button 
+            onClick={handleNavigateToPeople}
+            className="bg-blue-600 hover:bg-blue-700 font-lexend flex items-center gap-2"
+          >
+            <Users className="h-5 w-5" />
+            People
+          </Button>
+        </div>
       </div>
 
       {/* Placeholder content cards */}
