@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -33,7 +32,15 @@ export function DashboardHeader() {
 
   return (
     <header className="h-16 border-b border-gray-200 bg-white flex items-center justify-between px-6">
-      <SidebarTrigger />
+      <div className="flex items-center gap-2">
+        <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+          <span className="text-white font-bold text-sm">CW</span>
+        </div>
+        <div className="flex flex-col">
+          <span className="text-blue-600 font-bold text-sm font-lato">Cloudwick</span>
+          <span className="text-gray-600 font-light text-xs font-lato">Axiom</span>
+        </div>
+      </div>
       
       <div className="flex items-center gap-4">
         <DropdownMenu>

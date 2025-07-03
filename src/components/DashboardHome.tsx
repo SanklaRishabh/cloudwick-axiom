@@ -1,9 +1,13 @@
 
 import React from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { Button } from "@/components/ui/button";
+import { Box } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const DashboardHome = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   const getTimeOfDayGreeting = () => {
     const hour = new Date().getHours();
@@ -23,12 +27,24 @@ const DashboardHome = () => {
     return user.username;
   };
 
+  const handleNavigateToSpaces = () => {
+    navigate('/dashboard/spaces');
+  };
+
   return (
     <div className="space-y-8">
-      <div>
+      <div className="space-y-4">
         <h1 className="text-3xl font-bold text-gray-900 font-lexend">
           {getTimeOfDayGreeting()}, {getUserDisplayName()}!
         </h1>
+        
+        <Button 
+          onClick={handleNavigateToSpaces}
+          className="bg-blue-600 hover:bg-blue-700 font-lexend flex items-center gap-2"
+        >
+          <Box className="h-5 w-5" />
+          Go to Spaces
+        </Button>
       </div>
 
       {/* Placeholder content cards */}
