@@ -23,6 +23,10 @@ export function DashboardHeader() {
     navigate('/dashboard');
   };
 
+  const handleSettingsClick = () => {
+    navigate('/dashboard/settings');
+  };
+
   const getUserInitials = () => {
     if (!user) return 'U';
     if (user.firstName && user.lastName) {
@@ -56,7 +60,7 @@ export function DashboardHeader() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56" align="end" forceMount>
-            <DropdownMenuItem className="font-lexend">
+            <DropdownMenuItem onClick={handleSettingsClick} className="font-lexend">
               Settings
             </DropdownMenuItem>
             <DropdownMenuItem onClick={handleSignOut} className="font-lexend">

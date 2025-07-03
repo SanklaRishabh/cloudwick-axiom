@@ -15,6 +15,7 @@ import UserDetail from "./pages/UserDetail";
 import Documents from "./pages/Documents";
 import Courses from "./pages/Courses";
 import Exams from "./pages/Exams";
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -37,6 +38,7 @@ const App = () => (
               <Route path="documents" element={<Documents />} />
               <Route path="courses" element={<Courses />} />
               <Route path="exams" element={<Exams />} />
+              <Route path="settings" element={<Settings />} />
             </Route>
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
