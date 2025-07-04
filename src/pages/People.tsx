@@ -1,8 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { Users, Mail, Badge } from 'lucide-react';
+import { apiClient } from '@/lib/api';
 
 interface User {
   UserId: string;
@@ -26,12 +26,7 @@ const People = () => {
   const fetchUsers = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch('https://ndncqs0q7i.execute-api.us-east-1.amazonaws.com/Test1_without_auth/users');
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch users');
-      }
-
+      const response = await apiClient.get('/users');
       const data: UsersResponse = await response.json();
       console.log('Fetched users:', data);
       

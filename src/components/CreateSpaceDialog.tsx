@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import {
@@ -12,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { apiClient } from '@/lib/api';
 
 interface CreateSpaceDialogProps {
   onSpaceCreated: () => void;
@@ -41,15 +43,9 @@ const CreateSpaceDialog = ({ onSpaceCreated }: CreateSpaceDialogProps) => {
     try {
       console.log('Creating space with data:', { SpaceName: spaceName.trim(), SpaceDescription: description.trim() || undefined });
       
-      const response = await fetch('https://ndncqs0q7i.execute-api.us-east-1.amazonaws.com/Test1_without_auth/spaces', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          SpaceName: spaceName.trim(),
-          SpaceDescription: description.trim() || undefined,
-        }),
+      const response = await apiClient.post('/spaces', {
+        SpaceName: spaceName.trim(),
+        SpaceDescription: description.trim() || undefined,
       });
 
       console.log('Response status:', response.status);

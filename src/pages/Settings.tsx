@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
+import { apiClient } from '@/lib/api';
 
 interface UserProfile {
   FirstName: string;
@@ -37,26 +38,15 @@ const Settings = () => {
 
     setIsLoading(true);
     try {
-      const response = await fetch(`https://ndncqs0q7i.execute-api.us-east-1.amazonaws.com/Test1_without_auth/users/${user.username}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          FirstName: data.FirstName,
-          LastName: data.LastName,
-        }),
+      await apiClient.put(`/users/${user.username}`, {
+        FirstName: data.FirstName,
+        LastName: data.LastName,
       });
 
-      if (response.ok || response.status === 200) {
-        const result = await response.json();
-        toast({
-          title: "Success",
-          description: "Profile updated successfully!",
-        });
-      } else {
-        throw new Error('Failed to update profile');
-      }
+      toast({
+        title: "Success",
+        description: "Profile updated successfully!",
+      });
     } catch (error) {
       console.error('Error updating profile:', error);
       toast({

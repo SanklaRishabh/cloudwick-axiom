@@ -1,9 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Mail, Badge, Calendar, User, Users } from 'lucide-react';
+import { apiClient } from '@/lib/api';
 
 interface UserDetail {
   UserId: string;
@@ -29,12 +29,7 @@ const UserDetail = () => {
     
     try {
       setIsLoading(true);
-      const response = await fetch(`https://ndncqs0q7i.execute-api.us-east-1.amazonaws.com/Test1_without_auth/users/${userId}`);
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch user details');
-      }
-
+      const response = await apiClient.get(`/users/${userId}`);
       const data: UserDetail = await response.json();
       console.log('Fetched user details:', data);
       

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -12,6 +11,7 @@ import { MoreVertical, Edit, Trash2, FileText, BookOpen, Users } from 'lucide-re
 import { useToast } from '@/hooks/use-toast';
 import CreateSpaceDialog from '@/components/CreateSpaceDialog';
 import EditSpaceDialog from '@/components/EditSpaceDialog';
+import { apiClient } from '@/lib/api';
 
 interface Space {
   SpaceId: string;
@@ -40,12 +40,7 @@ const Spaces = () => {
   const fetchSpaces = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch('https://ndncqs0q7i.execute-api.us-east-1.amazonaws.com/Test1_without_auth/spaces');
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch spaces');
-      }
-
+      const response = await apiClient.get('/spaces');
       const data: SpacesResponse = await response.json();
       console.log('Fetched spaces:', data);
       
@@ -69,13 +64,7 @@ const Spaces = () => {
 
   const handleDeleteSpace = async (spaceId: string) => {
     try {
-      const response = await fetch(`https://ndncqs0q7i.execute-api.us-east-1.amazonaws.com/Test1_without_auth/spaces/${spaceId}`, {
-        method: 'DELETE',
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to delete space');
-      }
+      await apiClient.delete(`/spaces/${spaceId}`);
 
       setSpaces(spaces.filter(space => space.SpaceId !== spaceId));
       toast({

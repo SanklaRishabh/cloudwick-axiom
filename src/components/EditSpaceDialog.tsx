@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from '@/hooks/use-toast';
+import { apiClient } from '@/lib/api';
 
 interface Space {
   SpaceId: string;
@@ -37,20 +38,10 @@ const EditSpaceDialog = ({ space, onSpaceUpdated, onClose }: EditSpaceDialogProp
     setIsLoading(true);
 
     try {
-      const response = await fetch(`https://ndncqs0q7i.execute-api.us-east-1.amazonaws.com/Test1_without_auth/spaces/${space.SpaceId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          SpaceDescription: description.trim() || undefined,
-          SpaceAdmin: spaceAdmin.trim() || undefined,
-        }),
+      await apiClient.put(`/spaces/${space.SpaceId}`, {
+        SpaceDescription: description.trim() || undefined,
+        SpaceAdmin: spaceAdmin.trim() || undefined,
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to update space');
-      }
 
       toast({
         title: "Success",
