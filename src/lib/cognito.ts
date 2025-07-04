@@ -1,4 +1,3 @@
-
 import { Amplify } from 'aws-amplify';
 import { signUp, signIn, signOut, confirmSignUp, getCurrentUser, fetchAuthSession } from 'aws-amplify/auth';
 
@@ -178,13 +177,11 @@ export const authService = {
       const tokens = {
         accessToken: session.tokens.accessToken?.toString(),
         idToken: session.tokens.idToken?.toString(),
-        refreshToken: session.tokens.refreshToken ? session.tokens.refreshToken.toString() : undefined,
       };
 
       console.log('🎟️ Token details:', {
         hasAccessToken: !!tokens.accessToken,
         hasIdToken: !!tokens.idToken,
-        hasRefreshToken: !!tokens.refreshToken,
         accessTokenLength: tokens.accessToken?.length || 0,
         idTokenLength: tokens.idToken?.length || 0
       });
