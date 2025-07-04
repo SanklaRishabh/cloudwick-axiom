@@ -3,7 +3,6 @@ import { Amplify } from 'aws-amplify';
 import { signUp, signIn, signOut, confirmSignUp, getCurrentUser, fetchAuthSession } from 'aws-amplify/auth';
 
 // Configure Amplify with Cognito settings
-// Note: You'll need to replace these with your actual Cognito configuration
 const cognitoConfig = {
   Auth: {
     Cognito: {
@@ -139,7 +138,13 @@ export const authService = {
 
   async getCurrentUser(): Promise<CognitoUser | null> {
     try {
+      console.log('🔍 Getting current user...');
       const user = await getCurrentUser();
+      console.log('👤 Current user retrieved:', {
+        username: user.username,
+        loginId: user.signInDetails?.loginId
+      });
+      
       return {
         username: user.username,
         email: user.signInDetails?.loginId || '',
@@ -147,21 +152,60 @@ export const authService = {
         lastName: '',
       };
     } catch (error) {
-      console.error('Get current user error:', error);
+      console.error('❌ Get current user error:', error);
       return null;
     }
   },
 
   async getTokens() {
     try {
+      console.log('🔐 Fetching auth session...');
       const session = await fetchAuthSession();
-      return {
-        accessToken: session.tokens?.accessToken?.toString(),
-        idToken: session.tokens?.idToken?.toString(),
+      
+      console.log('📋 Auth session details:', {
+        hasTokens: !!session.tokens,
+        hasAccessToken: !!session.tokens?.accessToken,
+        hasIdToken: !!session.tokens?.idToken,
+        credentials: !!session.credentials,
+        identityId: session.identityId
+      });
+
+      if (!session.tokens) {
+        console.error('❌ No tokens in session');
+        return null;
+      }
+
+      const tokens = {
+        accessToken: session.tokens.accessToken?.toString(),
+        idToken: session.tokens.idToken?.toString(),
+        refreshToken: session.tokens.refreshToken?.toString(),
       };
+
+      console.log('🎟️ Token details:', {
+        hasAccessToken: !!tokens.accessToken,
+        hasIdToken: !!tokens.idToken,
+        hasRefreshToken: !!tokens.refreshToken,
+        accessTokenLength: tokens.accessToken?.length || 0,
+        idTokenLength: tokens.idToken?.length || 0
+      });
+
+      return tokens;
     } catch (error) {
-      console.error('Get tokens error:', error);
+      console.error('❌ Get tokens error:', error);
       return null;
     }
   },
+
+  async isAuthenticated() {
+    try {
+      const user = await this.getCurrentUser();
+      const tokens = await this.getTokens();
+      const isAuth = !!(user && tokens?.accessToken);
+      console.log('🔒 Authentication status:', isAuth);
+      return isAuth;
+    } catch (error) {
+      console.error('❌ Authentication check failed:', error);
+      return false;
+    }
+  }
 };

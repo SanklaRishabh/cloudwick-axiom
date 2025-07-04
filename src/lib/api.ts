@@ -12,6 +12,8 @@ export const apiClient = {
     const { requireAuth = true, ...fetchOptions } = options;
     
     const url = `${BASE_URL}${endpoint}`;
+    console.log('🚀 API Request URL:', url);
+    
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
       ...fetchOptions.headers,
@@ -20,26 +22,64 @@ export const apiClient = {
     // Add authentication headers if required
     if (requireAuth) {
       try {
+        console.log('🔐 Attempting to get auth tokens...');
         const tokens = await authService.getTokens();
+        console.log('📝 Retrieved tokens:', {
+          hasAccessToken: !!tokens?.accessToken,
+          hasIdToken: !!tokens?.idToken,
+          accessTokenPreview: tokens?.accessToken ? `${tokens.accessToken.substring(0, 20)}...` : 'null',
+          idTokenPreview: tokens?.idToken ? `${tokens.idToken.substring(0, 20)}...` : 'null'
+        });
+        
         if (tokens?.accessToken) {
           headers['Authorization'] = `Bearer ${tokens.accessToken}`;
+          console.log('✅ Authorization header added');
+        } else {
+          console.error('❌ No access token available');
+          throw new Error('No access token available');
+        }
+
+        // Also add the ID token if available
+        if (tokens?.idToken) {
+          headers['X-ID-Token'] = tokens.idToken;
+          console.log('✅ ID Token header added');
         }
       } catch (error) {
-        console.error('Failed to get auth tokens:', error);
-        throw new Error('Authentication required');
+        console.error('❌ Failed to get auth tokens:', error);
+        throw new Error('Authentication required - failed to retrieve tokens');
       }
     }
 
-    const response = await fetch(url, {
-      ...fetchOptions,
-      headers,
+    console.log('📤 Request headers:', {
+      'Content-Type': headers['Content-Type'],
+      'Authorization': headers['Authorization'] ? `Bearer ${(headers['Authorization'] as string).substring(7, 27)}...` : 'not set',
+      'X-ID-Token': headers['X-ID-Token'] ? `${(headers['X-ID-Token'] as string).substring(0, 20)}...` : 'not set'
     });
+    console.log('📤 Request method:', fetchOptions.method || 'GET');
+    console.log('📤 Request body:', fetchOptions.body);
 
-    if (!response.ok) {
-      throw new Error(`API Error: ${response.status} ${response.statusText}`);
+    try {
+      const response = await fetch(url, {
+        ...fetchOptions,
+        headers,
+      });
+
+      console.log('📥 Response status:', response.status);
+      console.log('📥 Response ok:', response.ok);
+      console.log('📥 Response headers:', Object.fromEntries(response.headers.entries()));
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('❌ API Error Response:', errorText);
+        throw new Error(`API Error: ${response.status} ${response.statusText} - ${errorText}`);
+      }
+
+      console.log('✅ Request successful');
+      return response;
+    } catch (error) {
+      console.error('❌ Network error:', error);
+      throw error;
     }
-
-    return response;
   },
 
   async get(endpoint: string, options: ApiOptions = {}) {

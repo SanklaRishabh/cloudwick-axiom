@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { authService, AuthState, CognitoUser } from '@/lib/cognito';
 import { useToast } from '@/hooks/use-toast';
@@ -26,13 +25,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const checkAuthState = async () => {
     try {
+      console.log('🔍 Checking auth state...');
       const user = await authService.getCurrentUser();
+      const isAuthenticated = await authService.isAuthenticated();
+      
+      console.log('🔐 Auth state check result:', {
+        user: !!user,
+        isAuthenticated,
+        username: user?.username
+      });
+
       setAuthState({
-        isAuthenticated: !!user,
+        isAuthenticated,
         user,
         isLoading: false,
       });
     } catch (error) {
+      console.error('❌ Auth state check failed:', error);
       setAuthState({
         isAuthenticated: false,
         user: null,
@@ -43,21 +52,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signIn = async (username: string, password: string): Promise<boolean> => {
     try {
+      console.log('🔐 Attempting sign in for:', username);
       const result = await authService.signIn(username, password);
       
       if (result.success && result.isSignedIn) {
+        console.log('✅ Sign in successful, getting user info...');
         const user = await authService.getCurrentUser();
+        const isAuthenticated = await authService.isAuthenticated();
+        
         setAuthState({
-          isAuthenticated: true,
+          isAuthenticated,
           user,
           isLoading: false,
         });
+        
         toast({
           title: "Success",
           description: "Successfully signed in!",
         });
         return true;
       } else {
+        console.error('❌ Sign in failed:', result.error);
         toast({
           title: "Error",
           description: result.error || "Sign in failed",
@@ -66,6 +81,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         return false;
       }
     } catch (error: any) {
+      console.error('❌ Sign in error:', error);
       toast({
         title: "Error",
         description: error.message || "Sign in failed",
