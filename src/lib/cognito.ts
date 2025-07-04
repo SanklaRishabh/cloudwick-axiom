@@ -178,7 +178,7 @@ export const authService = {
       const tokens = {
         accessToken: session.tokens.accessToken?.toString(),
         idToken: session.tokens.idToken?.toString(),
-        refreshToken: session.tokens.refreshToken?.toString(),
+        refreshToken: session.tokens.refreshToken ? session.tokens.refreshToken.toString() : undefined,
       };
 
       console.log('🎟️ Token details:', {
