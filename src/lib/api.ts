@@ -1,4 +1,3 @@
-
 import { authService } from './cognito';
 
 const BASE_URL = 'https://ndncqs0q7i.execute-api.us-east-1.amazonaws.com/auth-test';
@@ -39,11 +38,8 @@ export const apiClient = {
           throw new Error('No access token available');
         }
 
-        // Also add the ID token if available
-        if (tokens?.idToken) {
-          headers['X-ID-Token'] = tokens.idToken;
-          console.log('✅ ID Token header added');
-        }
+        // Removed X-ID-Token header to fix CORS issue
+        console.log('ℹ️ ID Token available but not sent due to CORS restrictions');
       } catch (error) {
         console.error('❌ Failed to get auth tokens:', error);
         throw new Error('Authentication required - failed to retrieve tokens');
@@ -52,8 +48,7 @@ export const apiClient = {
 
     console.log('📤 Request headers:', {
       'Content-Type': headers['Content-Type'],
-      'Authorization': headers['Authorization'] ? `Bearer ${(headers['Authorization'] as string).substring(7, 27)}...` : 'not set',
-      'X-ID-Token': headers['X-ID-Token'] ? `${(headers['X-ID-Token'] as string).substring(0, 20)}...` : 'not set'
+      'Authorization': headers['Authorization'] ? `Bearer ${(headers['Authorization'] as string).substring(7, 27)}...` : 'not set'
     });
     console.log('📤 Request method:', fetchOptions.method || 'GET');
     console.log('📤 Request body:', fetchOptions.body);
