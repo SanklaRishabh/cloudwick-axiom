@@ -1,3 +1,4 @@
+
 import { authService } from './cognito';
 
 const BASE_URL = 'https://ndncqs0q7i.execute-api.us-east-1.amazonaws.com/auth-test';
@@ -30,16 +31,15 @@ export const apiClient = {
           idTokenPreview: tokens?.idToken ? `${tokens.idToken.substring(0, 20)}...` : 'null'
         });
         
-        if (tokens?.accessToken) {
-          headers['Authorization'] = `Bearer ${tokens.accessToken}`;
-          console.log('✅ Authorization header added');
+        if (tokens?.idToken) {
+          headers['Authorization'] = `Bearer ${tokens.idToken}`;
+          console.log('✅ Authorization header added with ID token');
         } else {
-          console.error('❌ No access token available');
-          throw new Error('No access token available');
+          console.error('❌ No ID token available');
+          throw new Error('No ID token available');
         }
 
-        // Removed X-ID-Token header to fix CORS issue
-        console.log('ℹ️ ID Token available but not sent due to CORS restrictions');
+        console.log('ℹ️ Using ID Token for Cognito authorizer authentication');
       } catch (error) {
         console.error('❌ Failed to get auth tokens:', error);
         throw new Error('Authentication required - failed to retrieve tokens');
