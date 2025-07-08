@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from "@/components/ui/button";
@@ -18,6 +17,7 @@ const Settings = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingProfile, setIsLoadingProfile] = useState(true);
 
   const form = useForm<UserProfile>({
     defaultValues: {
@@ -27,10 +27,29 @@ const Settings = () => {
   });
 
   useEffect(() => {
-    if (user) {
-      form.setValue("FirstName", user.firstName || "");
-      form.setValue("LastName", user.lastName || "");
-    }
+    const fetchUserProfile = async () => {
+      if (!user?.username) return;
+      
+      setIsLoadingProfile(true);
+      try {
+        const response = await apiClient.get(`/users/${user.username}`);
+        const userData = await response.json();
+        
+        form.setValue("FirstName", userData.FirstName || "");
+        form.setValue("LastName", userData.LastName || "");
+        
+        console.log('👤 Loaded user profile for settings:', userData);
+      } catch (error) {
+        console.error('❌ Error loading user profile:', error);
+        // Fallback to user data from auth context
+        form.setValue("FirstName", user.firstName || "");
+        form.setValue("LastName", user.lastName || "");
+      } finally {
+        setIsLoadingProfile(false);
+      }
+    };
+
+    fetchUserProfile();
   }, [user, form]);
 
   const onSubmit = async (data: UserProfile) => {
@@ -58,6 +77,16 @@ const Settings = () => {
       setIsLoading(false);
     }
   };
+
+  if (isLoadingProfile) {
+    return (
+      <div className="container mx-auto px-4 py-8 max-w-2xl">
+        <div className="flex items-center justify-center h-64">
+          <p className="text-gray-500 font-lexend">Loading profile...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-2xl">

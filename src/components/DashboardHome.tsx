@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from "@/components/ui/button";
@@ -18,9 +17,6 @@ const DashboardHome = () => {
 
   const getUserDisplayName = () => {
     if (!user) return 'User';
-    if (user.firstName && user.lastName) {
-      return `${user.firstName} ${user.lastName}`;
-    }
     if (user.firstName) {
       return user.firstName;
     }
@@ -34,6 +30,8 @@ const DashboardHome = () => {
   const handleNavigateToPeople = () => {
     navigate('/dashboard/people');
   };
+
+  const isSystemAdmin = user?.role === 'SystemAdmin';
 
   return (
     <div className="space-y-8">
@@ -51,13 +49,15 @@ const DashboardHome = () => {
             Spaces
           </Button>
           
-          <Button 
-            onClick={handleNavigateToPeople}
-            className="bg-blue-600 hover:bg-blue-700 font-lexend flex items-center gap-2"
-          >
-            <Users className="h-5 w-5" />
-            People
-          </Button>
+          {isSystemAdmin && (
+            <Button 
+              onClick={handleNavigateToPeople}
+              className="bg-blue-600 hover:bg-blue-700 font-lexend flex items-center gap-2"
+            >
+              <Users className="h-5 w-5" />
+              People
+            </Button>
+          )}
         </div>
       </div>
 

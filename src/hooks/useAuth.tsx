@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { authService, AuthState, CognitoUser } from '@/lib/cognito';
 import { useToast } from '@/hooks/use-toast';
@@ -29,15 +30,32 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const user = await authService.getCurrentUser();
       const isAuthenticated = await authService.isAuthenticated();
       
+      let enrichedUser = user;
+      
+      // If user is authenticated, fetch their profile to get role
+      if (user && isAuthenticated) {
+        console.log('🔍 Fetching user profile for role...');
+        const userProfile = await authService.getUserProfile(user.username);
+        if (userProfile) {
+          enrichedUser = {
+            ...user,
+            firstName: userProfile.FirstName || user.firstName,
+            lastName: userProfile.LastName || user.lastName,
+            role: userProfile.Role,
+          };
+        }
+      }
+      
       console.log('🔐 Auth state check result:', {
-        user: !!user,
+        user: !!enrichedUser,
         isAuthenticated,
-        username: user?.username
+        username: enrichedUser?.username,
+        role: enrichedUser?.role
       });
 
       setAuthState({
         isAuthenticated,
-        user,
+        user: enrichedUser,
         isLoading: false,
       });
     } catch (error) {
@@ -60,9 +78,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const user = await authService.getCurrentUser();
         const isAuthenticated = await authService.isAuthenticated();
         
+        // Fetch user profile to get role
+        let enrichedUser = user;
+        if (user && isAuthenticated) {
+          const userProfile = await authService.getUserProfile(user.username);
+          if (userProfile) {
+            enrichedUser = {
+              ...user,
+              firstName: userProfile.FirstName || user.firstName,
+              lastName: userProfile.LastName || user.lastName,
+              role: userProfile.Role,
+            };
+          }
+        }
+        
         setAuthState({
           isAuthenticated,
-          user,
+          user: enrichedUser,
           isLoading: false,
         });
         

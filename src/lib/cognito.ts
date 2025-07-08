@@ -1,5 +1,5 @@
 import { Amplify } from 'aws-amplify';
-import { signUp, signIn, signOut, confirmSignUp, getCurrentUser, fetchAuthSession } from 'aws-amplify/auth';
+import { signUp, signIn, signOut, confirmSignUp, getCurrentUser, fetchAuthSession, fetchUserAttributes } from 'aws-amplify/auth';
 
 // Configure Amplify with Cognito settings
 const cognitoConfig = {
@@ -41,6 +41,7 @@ export interface CognitoUser {
   email: string;
   firstName?: string;
   lastName?: string;
+  role?: string;
 }
 
 export interface AuthState {
@@ -144,14 +145,33 @@ export const authService = {
         loginId: user.signInDetails?.loginId
       });
       
+      // Fetch user attributes to get proper first and last name
+      console.log('📋 Fetching user attributes...');
+      const attributes = await fetchUserAttributes();
+      console.log('📝 User attributes:', attributes);
+      
       return {
         username: user.username,
-        email: user.signInDetails?.loginId || '',
-        firstName: user.username,
-        lastName: '',
+        email: user.signInDetails?.loginId || attributes.email || '',
+        firstName: attributes.given_name || '',
+        lastName: attributes.family_name || '',
       };
     } catch (error) {
       console.error('❌ Get current user error:', error);
+      return null;
+    }
+  },
+
+  async getUserProfile(username: string) {
+    try {
+      console.log('🔍 Fetching user profile for:', username);
+      const { apiClient } = await import('./api');
+      const response = await apiClient.get(`/users/${username}`);
+      const userData = await response.json();
+      console.log('👤 User profile data:', userData);
+      return userData;
+    } catch (error) {
+      console.error('❌ Failed to fetch user profile:', error);
       return null;
     }
   },
