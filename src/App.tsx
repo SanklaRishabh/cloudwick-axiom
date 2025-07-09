@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -10,6 +9,7 @@ import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import DashboardHome from "./components/DashboardHome";
 import Spaces from "./pages/Spaces";
+import SpaceDetail from "./pages/SpaceDetail";
 import People from "./pages/People";
 import UserDetail from "./pages/UserDetail";
 import Documents from "./pages/Documents";
@@ -33,6 +33,7 @@ const App = () => (
             <Route path="/dashboard" element={<Dashboard />}>
               <Route index element={<DashboardHome />} />
               <Route path="spaces" element={<Spaces />} />
+              <Route path="spaces/:spaceId" element={<SpaceDetail />} />
               <Route path="people" element={<People />} />
               <Route path="people/:userId" element={<UserDetail />} />
               <Route path="documents" element={<Documents />} />

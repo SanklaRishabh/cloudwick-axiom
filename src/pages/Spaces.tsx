@@ -1,14 +1,15 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreVertical, Edit, Trash2, FileText, BookOpen, Users } from 'lucide-react';
+import { MoreVertical, Edit, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 import CreateSpaceDialog from '@/components/CreateSpaceDialog';
 import EditSpaceDialog from '@/components/EditSpaceDialog';
 import { apiClient } from '@/lib/api';
@@ -34,8 +35,8 @@ const Spaces = () => {
   const [spaces, setSpaces] = useState<Space[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [editingSpace, setEditingSpace] = useState<Space | null>(null);
-  const [activeTab, setActiveTab] = useState('files');
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const fetchSpaces = async () => {
     try {
@@ -94,6 +95,10 @@ const Spaces = () => {
     fetchSpaces();
   };
 
+  const handleSpaceClick = (spaceId: string) => {
+    navigate(`/dashboard/spaces/${spaceId}`);
+  };
+
   if (isLoading) {
     return (
       <div className="space-y-6">
@@ -115,83 +120,69 @@ const Spaces = () => {
         <p className="text-gray-600 font-lexend mt-2">Manage your workspace environments</p>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="files" className="flex items-center gap-2 font-lexend">
-            <FileText className="h-4 w-4" />
-            Files
-          </TabsTrigger>
-          <TabsTrigger value="courses" className="flex items-center gap-2 font-lexend">
-            <BookOpen className="h-4 w-4" />
-            Courses
-          </TabsTrigger>
-          <TabsTrigger value="people" className="flex items-center gap-2 font-lexend">
-            <Users className="h-4 w-4" />
-            People
-          </TabsTrigger>
-        </TabsList>
+      {spaces.length === 0 ? (
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
+          <p className="text-gray-500 font-lexend">No spaces found. Create your first space to get started.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {spaces.map((space) => (
+            <div 
+              key={space.SpaceId} 
+              className="relative bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow cursor-pointer"
+              onClick={() => handleSpaceClick(space.SpaceId)}
+            >
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="absolute top-4 right-4 h-8 w-8"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <MoreVertical className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleEditSpace(space);
+                    }}
+                  >
+                    <Edit className="h-4 w-4 mr-2" />
+                    Edit
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteSpace(space.SpaceId);
+                    }}
+                    className="text-red-600"
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Delete
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
 
-        <TabsContent value="files" className="space-y-6">
-          {spaces.length === 0 ? (
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
-              <p className="text-gray-500 font-lexend">No spaces found. Create your first space to get started.</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {spaces.map((space) => (
-                <div key={space.SpaceId} className="relative bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" className="absolute top-4 right-4 h-8 w-8">
-                        <MoreVertical className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => handleEditSpace(space)}>
-                        <Edit className="h-4 w-4 mr-2" />
-                        Edit
-                      </DropdownMenuItem>
-                      <DropdownMenuItem 
-                        onClick={() => handleDeleteSpace(space.SpaceId)}
-                        className="text-red-600"
-                      >
-                        <Trash2 className="h-4 w-4 mr-2" />
-                        Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-
-                  <div className="space-y-4">
-                    <div className="w-full h-32 bg-gray-100 rounded-lg flex items-center justify-center">
-                      <div className="w-8 h-8 bg-gray-300 rounded transform rotate-45"></div>
-                      <div className="w-8 h-8 bg-gray-300 rounded transform -rotate-45 -ml-4"></div>
-                    </div>
-                    
-                    <div className="text-center">
-                      <h3 className="text-xl font-bold text-gray-900 font-lexend">{space.SpaceName}</h3>
-                      {space.SpaceDescription && (
-                        <p className="text-sm text-gray-600 font-lexend mt-1">{space.SpaceDescription}</p>
-                      )}
-                    </div>
-                  </div>
+              <div className="space-y-4">
+                <div className="w-full h-32 bg-gray-100 rounded-lg flex items-center justify-center">
+                  <div className="w-8 h-8 bg-gray-300 rounded transform rotate-45"></div>
+                  <div className="w-8 h-8 bg-gray-300 rounded transform -rotate-45 -ml-4"></div>
                 </div>
-              ))}
+                
+                <div className="text-center">
+                  <h3 className="text-xl font-bold text-gray-900 font-lexend">{space.SpaceName}</h3>
+                  {space.SpaceDescription && (
+                    <p className="text-sm text-gray-600 font-lexend mt-1">{space.SpaceDescription}</p>
+                  )}
+                </div>
+              </div>
             </div>
-          )}
-        </TabsContent>
-
-        <TabsContent value="courses" className="space-y-6">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
-            <p className="text-gray-500 font-lexend">Courses feature coming soon...</p>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="people" className="space-y-6">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
-            <p className="text-gray-500 font-lexend">People feature coming soon...</p>
-          </div>
-        </TabsContent>
-      </Tabs>
+          ))}
+        </div>
+      )}
 
       <CreateSpaceDialog onSpaceCreated={handleSpaceCreated} />
       
