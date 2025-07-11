@@ -5,8 +5,8 @@ import { signUp, signIn, signOut, confirmSignUp, getCurrentUser, fetchAuthSessio
 const cognitoConfig = {
   Auth: {
     Cognito: {
-      userPoolId: process.env.VITE_COGNITO_USER_POOL_ID || 'us-east-1_gt96zzkHV',
-      userPoolClientId: process.env.VITE_COGNITO_USER_POOL_CLIENT_ID || '1epbmpkpafmm1dqhsbgudd1t74',
+      userPoolId: import.meta.env.VITE_COGNITO_USER_POOL_ID || 'us-east-1_gt96zzkHV',
+      userPoolClientId: import.meta.env.VITE_COGNITO_USER_POOL_CLIENT_ID || '1epbmpkpafmm1dqhsbgudd1t74',
       loginWith: {
         email: true,
         username: true,

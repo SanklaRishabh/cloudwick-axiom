@@ -3,9 +3,13 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { ArrowLeft, FileText, BookOpen, Users } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { ArrowLeft, FileText, BookOpen, Users, Settings } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { apiClient } from '@/lib/api';
+import { useAuth } from '@/hooks/useAuth';
 import SpaceFiles from '@/components/SpaceFiles';
 import SpaceCourses from '@/components/SpaceCourses';
 import SpacePeople from '@/components/SpacePeople';
@@ -20,10 +24,16 @@ interface Space {
 const SpaceDetail = () => {
   const { spaceId } = useParams<{ spaceId: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [space, setSpace] = useState<Space | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('files');
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [editForm, setEditForm] = useState({ SpaceName: '', SpaceDescription: '' });
+  const [isUpdating, setIsUpdating] = useState(false);
   const { toast } = useToast();
+
+  const isSystemAdmin = user?.role === 'SystemAdmin';
 
   useEffect(() => {
     const fetchSpace = async () => {
@@ -34,6 +44,10 @@ const SpaceDetail = () => {
         const response = await apiClient.get(`/spaces/${spaceId}`);
         const spaceData = await response.json();
         setSpace(spaceData);
+        setEditForm({
+          SpaceName: spaceData.SpaceName || '',
+          SpaceDescription: spaceData.SpaceDescription || ''
+        });
       } catch (error) {
         console.error('Error fetching space:', error);
         toast({
@@ -49,6 +63,43 @@ const SpaceDetail = () => {
 
     fetchSpace();
   }, [spaceId, navigate, toast]);
+
+  const handleUpdateSpace = async () => {
+    if (!spaceId) return;
+
+    setIsUpdating(true);
+    try {
+      const response = await apiClient.put(`/spaces/${spaceId}`, editForm);
+      const result = await response.json();
+      
+      if (result.Message) {
+        setSpace(prev => prev ? { ...prev, ...editForm } : null);
+        setIsEditDialogOpen(false);
+        toast({
+          title: "Success! 🎉",
+          description: result.Message,
+          className: "bg-green-50 border-green-200 text-green-800",
+        });
+      } else if (result.Error) {
+        toast({
+          title: "Oops! 😔",
+          description: result.Error,
+          variant: "destructive",
+          className: "bg-red-50 border-red-200 text-red-800",
+        });
+      }
+    } catch (error) {
+      console.error('Error updating space:', error);
+      toast({
+        title: "Something went wrong 😞",
+        description: "Failed to update space. Please try again.",
+        variant: "destructive",
+        className: "bg-red-50 border-red-200 text-red-800",
+      });
+    } finally {
+      setIsUpdating(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -83,10 +134,64 @@ const SpaceDetail = () => {
         </Button>
       </div>
 
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900 font-lexend">{space.SpaceName}</h1>
-        {space.SpaceDescription && (
-          <p className="text-gray-600 font-lexend mt-2">{space.SpaceDescription}</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 font-lexend">{space.SpaceName}</h1>
+          {space.SpaceDescription && (
+            <p className="text-gray-600 font-lexend mt-2">{space.SpaceDescription}</p>
+          )}
+        </div>
+        
+        {isSystemAdmin && (
+          <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="icon" className="h-9 w-9">
+                <Settings className="h-4 w-4" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Edit Space Details</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium text-gray-700 font-lexend">Space Name</label>
+                  <Input
+                    value={editForm.SpaceName}
+                    onChange={(e) => setEditForm(prev => ({ ...prev, SpaceName: e.target.value }))}
+                    placeholder="Enter space name"
+                    className="mt-1"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700 font-lexend">Description</label>
+                  <Textarea
+                    value={editForm.SpaceDescription}
+                    onChange={(e) => setEditForm(prev => ({ ...prev, SpaceDescription: e.target.value }))}
+                    placeholder="Enter space description"
+                    className="mt-1"
+                    rows={3}
+                  />
+                </div>
+                <div className="flex justify-end gap-2">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setIsEditDialogOpen(false)}
+                    disabled={isUpdating}
+                  >
+                    Cancel
+                  </Button>
+                  <Button 
+                    onClick={handleUpdateSpace}
+                    disabled={isUpdating}
+                    className="bg-blue-600 hover:bg-blue-700"
+                  >
+                    {isUpdating ? 'Updating...' : 'Update Space'}
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
         )}
       </div>
 

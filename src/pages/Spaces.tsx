@@ -1,18 +1,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { MoreVertical, Edit, Trash2 } from 'lucide-react';
+import { ArrowLeft, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import CreateSpaceDialog from '@/components/CreateSpaceDialog';
-import EditSpaceDialog from '@/components/EditSpaceDialog';
 import { apiClient } from '@/lib/api';
+import { useAuth } from '@/hooks/useAuth';
 
 interface Space {
   SpaceId: string;
@@ -34,9 +28,11 @@ interface SpacesResponse {
 const Spaces = () => {
   const [spaces, setSpaces] = useState<Space[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [editingSpace, setEditingSpace] = useState<Space | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const isSystemAdmin = user?.role === 'SystemAdmin';
 
   const fetchSpaces = async () => {
     try {
@@ -82,14 +78,6 @@ const Spaces = () => {
     }
   };
 
-  const handleEditSpace = (space: Space) => {
-    setEditingSpace(space);
-  };
-
-  const handleSpaceUpdated = () => {
-    setEditingSpace(null);
-    fetchSpaces();
-  };
 
   const handleSpaceCreated = () => {
     fetchSpaces();
@@ -115,6 +103,17 @@ const Spaces = () => {
 
   return (
     <div className="space-y-6">
+      <div className="flex items-center gap-4">
+        <Button 
+          variant="ghost" 
+          onClick={() => navigate('/dashboard')}
+          className="flex items-center gap-2 font-lexend"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to Dashboard
+        </Button>
+      </div>
+
       <div>
         <h1 className="text-3xl font-bold text-gray-900 font-lexend">Spaces</h1>
         <p className="text-gray-600 font-lexend mt-2">Manage your workspace environments</p>
@@ -132,39 +131,19 @@ const Spaces = () => {
               className="relative bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow cursor-pointer"
               onClick={() => handleSpaceClick(space.SpaceId)}
             >
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    className="absolute top-4 right-4 h-8 w-8"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <MoreVertical className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleEditSpace(space);
-                    }}
-                  >
-                    <Edit className="h-4 w-4 mr-2" />
-                    Edit
-                  </DropdownMenuItem>
-                  <DropdownMenuItem 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDeleteSpace(space.SpaceId);
-                    }}
-                    className="text-red-600"
-                  >
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Delete
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              {isSystemAdmin && (
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="absolute top-4 right-4 h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteSpace(space.SpaceId);
+                  }}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              )}
 
               <div className="space-y-4">
                 <div className="w-full h-32 bg-gray-100 rounded-lg flex items-center justify-center">
@@ -184,15 +163,7 @@ const Spaces = () => {
         </div>
       )}
 
-      <CreateSpaceDialog onSpaceCreated={handleSpaceCreated} />
-      
-      {editingSpace && (
-        <EditSpaceDialog 
-          space={editingSpace}
-          onSpaceUpdated={handleSpaceUpdated}
-          onClose={() => setEditingSpace(null)}
-        />
-      )}
+      {isSystemAdmin && <CreateSpaceDialog onSpaceCreated={handleSpaceCreated} />}
     </div>
   );
 };

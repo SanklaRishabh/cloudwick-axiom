@@ -1,7 +1,7 @@
 
 import { authService } from './cognito';
 
-const BASE_URL = 'https://ndncqs0q7i.execute-api.us-east-1.amazonaws.com/auth-test';
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://ndncqs0q7i.execute-api.us-east-1.amazonaws.com/auth-test';
 
 interface ApiOptions extends RequestInit {
   requireAuth?: boolean;

@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
+import { ArrowLeft } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 
 interface UserProfile {
@@ -15,6 +17,7 @@ interface UserProfile {
 
 const Settings = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingProfile, setIsLoadingProfile] = useState(true);
@@ -91,6 +94,17 @@ const Settings = () => {
   return (
     <div className="container mx-auto px-4 py-8 max-w-2xl">
       <div className="space-y-6">
+        <div className="flex items-center gap-4">
+          <Button 
+            variant="ghost" 
+            onClick={() => navigate('/dashboard')}
+            className="flex items-center gap-2 font-lexend"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to Dashboard
+          </Button>
+        </div>
+
         <div>
           <h1 className="text-3xl font-bold text-gray-900 font-lexend">Settings</h1>
           <p className="text-gray-600 mt-2">Manage your account settings and preferences.</p>

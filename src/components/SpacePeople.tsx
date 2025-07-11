@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { UserPlus, MoreVertical, Mail, Shield, User, Crown } from 'lucide-react';
+import { UserPlus, MoreVertical, Mail, Shield, User, Crown, UserCheck } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { apiClient } from '@/lib/api';
 import { useAuth } from '@/hooks/useAuth';
@@ -23,6 +23,13 @@ interface SpaceMember {
   Email: string;
 }
 
+interface Space {
+  SpaceId: string;
+  SpaceName: string;
+  SpaceDescription?: string;
+  SpaceAdmin?: string;
+}
+
 interface AllUser {
   UserId: string;
   FirstName: string;
@@ -35,10 +42,12 @@ interface AllUser {
 const SpacePeople: React.FC<SpacePeopleProps> = ({ spaceId }) => {
   const [members, setMembers] = useState<SpaceMember[]>([]);
   const [allUsers, setAllUsers] = useState<AllUser[]>([]);
+  const [space, setSpace] = useState<Space | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState<string>('');
   const [isAdding, setIsAdding] = useState(false);
+  const [isAssigningAdmin, setIsAssigningAdmin] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
 
@@ -46,6 +55,7 @@ const SpacePeople: React.FC<SpacePeopleProps> = ({ spaceId }) => {
 
   useEffect(() => {
     fetchSpaceMembers();
+    fetchSpaceDetails();
     if (isSystemAdmin) {
       fetchAllUsers();
     }
@@ -60,12 +70,23 @@ const SpacePeople: React.FC<SpacePeopleProps> = ({ spaceId }) => {
     } catch (error) {
       console.error('Error fetching space members:', error);
       toast({
-        title: "Error",
+        title: "Oops! 😔",
         description: "Failed to load space members. Please try again.",
         variant: "destructive",
+        className: "bg-red-50 border-red-200 text-red-800",
       });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const fetchSpaceDetails = async () => {
+    try {
+      const response = await apiClient.get(`/spaces/${spaceId}`);
+      const data = await response.json();
+      setSpace(data);
+    } catch (error) {
+      console.error('Error fetching space details:', error);
     }
   };
 
@@ -77,9 +98,10 @@ const SpacePeople: React.FC<SpacePeopleProps> = ({ spaceId }) => {
     } catch (error) {
       console.error('Error fetching all users:', error);
       toast({
-        title: "Error",
+        title: "Oops! 😔",
         description: "Failed to load users list.",
         variant: "destructive",
+        className: "bg-red-50 border-red-200 text-red-800",
       });
     }
   };
@@ -94,28 +116,67 @@ const SpacePeople: React.FC<SpacePeopleProps> = ({ spaceId }) => {
       
       if (data.Message) {
         toast({
-          title: "Success",
+          title: "Success! 🎉",
           description: data.Message,
+          className: "bg-green-50 border-green-200 text-green-800",
         });
         setIsAddDialogOpen(false);
         setSelectedUserId('');
         fetchSpaceMembers(); // Refresh the list
       } else if (data.Error) {
         toast({
-          title: "Error",
+          title: "Oops! 😔",
           description: data.Error,
           variant: "destructive",
+          className: "bg-red-50 border-red-200 text-red-800",
         });
       }
     } catch (error) {
       console.error('Error adding user to space:', error);
       toast({
-        title: "Error",
+        title: "Something went wrong 😞",
         description: "Failed to add user to space. Please try again.",
         variant: "destructive",
+        className: "bg-red-50 border-red-200 text-red-800",
       });
     } finally {
       setIsAdding(false);
+    }
+  };
+
+  const handleAssignAdmin = async (userId: string) => {
+    setIsAssigningAdmin(true);
+    try {
+      const response = await apiClient.put(`/spaces/${spaceId}`, {
+        SpaceAdmin: userId
+      });
+      const result = await response.json();
+      
+      if (result.Message) {
+        setSpace(prev => prev ? { ...prev, SpaceAdmin: userId } : null);
+        toast({
+          title: "Success! 🎉",
+          description: result.Message,
+          className: "bg-green-50 border-green-200 text-green-800",
+        });
+      } else if (result.Error) {
+        toast({
+          title: "Oops! 😔",
+          description: result.Error,
+          variant: "destructive",
+          className: "bg-red-50 border-red-200 text-red-800",
+        });
+      }
+    } catch (error) {
+      console.error('Error assigning space admin:', error);
+      toast({
+        title: "Something went wrong 😞",
+        description: "Failed to assign space admin. Please try again.",
+        variant: "destructive",
+        className: "bg-red-50 border-red-200 text-red-800",
+      });
+    } finally {
+      setIsAssigningAdmin(false);
     }
   };
 
@@ -218,6 +279,15 @@ const SpacePeople: React.FC<SpacePeopleProps> = ({ spaceId }) => {
                         <Mail className="h-4 w-4 mr-2" />
                         Send Message
                       </DropdownMenuItem>
+                      {space?.SpaceAdmin !== member.UserId && (
+                        <DropdownMenuItem
+                          onClick={() => handleAssignAdmin(member.UserId)}
+                          disabled={isAssigningAdmin}
+                        >
+                          <UserCheck className="h-4 w-4 mr-2" />
+                          Make Space Admin
+                        </DropdownMenuItem>
+                      )}
                       <DropdownMenuItem className="text-red-600">
                         <User className="h-4 w-4 mr-2" />
                         Remove from Space
@@ -227,8 +297,16 @@ const SpacePeople: React.FC<SpacePeopleProps> = ({ spaceId }) => {
                 )}
               </div>
               
-              <div className="text-sm text-gray-600 font-lexend">
-                User ID: {member.UserId}
+              <div className="flex items-center justify-between">
+                <div className="text-sm text-gray-600 font-lexend">
+                  User ID: {member.UserId}
+                </div>
+                {space?.SpaceAdmin === member.UserId && (
+                  <div className="flex items-center gap-1 bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-xs font-medium">
+                    <Crown className="h-3 w-3" />
+                    Space Admin
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
