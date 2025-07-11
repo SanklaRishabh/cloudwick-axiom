@@ -70,23 +70,37 @@ const SpaceDetail = () => {
     setIsUpdating(true);
     try {
       const response = await apiClient.put(`/spaces/${spaceId}`, editForm);
-      const result = await response.json();
+      console.log('Update space response status:', response.status);
       
-      if (result.Message) {
+      // Handle 204 No Content (successful update with no response body)
+      if (response.status === 204) {
         setSpace(prev => prev ? { ...prev, ...editForm } : null);
         setIsEditDialogOpen(false);
         toast({
           title: "Success! 🎉",
-          description: result.Message,
+          description: "Space updated successfully",
           className: "bg-green-50 border-green-200 text-green-800",
         });
-      } else if (result.Error) {
-        toast({
-          title: "Oops! 😔",
-          description: result.Error,
-          variant: "destructive",
-          className: "bg-red-50 border-red-200 text-red-800",
-        });
+      } else {
+        // Parse JSON for other successful responses
+        const result = await response.json();
+        
+        if (result.Message) {
+          setSpace(prev => prev ? { ...prev, ...editForm } : null);
+          setIsEditDialogOpen(false);
+          toast({
+            title: "Success! 🎉",
+            description: result.Message,
+            className: "bg-green-50 border-green-200 text-green-800",
+          });
+        } else if (result.Error) {
+          toast({
+            title: "Oops! 😔",
+            description: result.Error,
+            variant: "destructive",
+            className: "bg-red-50 border-red-200 text-red-800",
+          });
+        }
       }
     } catch (error) {
       console.error('Error updating space:', error);

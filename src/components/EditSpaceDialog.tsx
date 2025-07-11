@@ -38,17 +38,29 @@ const EditSpaceDialog = ({ space, onSpaceUpdated, onClose }: EditSpaceDialogProp
     setIsLoading(true);
 
     try {
-      await apiClient.put(`/spaces/${space.SpaceId}`, {
+      const response = await apiClient.put(`/spaces/${space.SpaceId}`, {
         SpaceDescription: description.trim() || undefined,
         SpaceAdmin: spaceAdmin.trim() || undefined,
       });
+      
+      console.log('Edit space response status:', response.status);
 
-      toast({
-        title: "Success",
-        description: "Space updated successfully",
-      });
-
-      onSpaceUpdated();
+      // Handle 204 No Content (successful update with no response body)
+      if (response.status === 204) {
+        toast({
+          title: "Success",
+          description: "Space updated successfully",
+        });
+        onSpaceUpdated();
+      } else {
+        // Parse JSON for other successful responses
+        const result = await response.json();
+        toast({
+          title: "Success",
+          description: result.Message || "Space updated successfully",
+        });
+        onSpaceUpdated();
+      }
     } catch (error) {
       console.error('Error updating space:', error);
       toast({
