@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
-import { Users, Mail, Badge } from 'lucide-react';
+import { Users, Mail, Badge, ArrowLeft } from 'lucide-react';
+import { Button } from "@/components/ui/button";
 import { apiClient } from '@/lib/api';
 
 interface User {
@@ -68,6 +69,17 @@ const People = () => {
 
   return (
     <div className="space-y-6">
+      <div className="flex items-center gap-4">
+        <Button 
+          variant="ghost" 
+          onClick={() => navigate('/dashboard')}
+          className="flex items-center gap-2 font-lexend"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to Dashboard
+        </Button>
+      </div>
+
       <div>
         <h1 className="text-3xl font-bold text-gray-900 font-lexend">People</h1>
         <p className="text-gray-600 font-lexend mt-2">Manage platform users</p>

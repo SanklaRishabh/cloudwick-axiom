@@ -32,6 +32,14 @@ const DashboardHome = () => {
   };
 
   const isSystemAdmin = user?.role === 'SystemAdmin';
+  
+  // Debug logging
+  console.log('🔍 DashboardHome - User role check:', {
+    user: !!user,
+    userRole: user?.role,
+    isSystemAdmin,
+    userObject: user
+  });
 
   return (
     <div className="space-y-8">
