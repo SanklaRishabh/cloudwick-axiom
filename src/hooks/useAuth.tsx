@@ -35,14 +35,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       // If user is authenticated, fetch their profile to get role
       if (user && isAuthenticated) {
         console.log('🔍 Fetching user profile for role...');
-        const userProfile = await authService.getUserProfile(user.username);
-        if (userProfile) {
-          enrichedUser = {
-            ...user,
-            firstName: userProfile.FirstName || user.firstName,
-            lastName: userProfile.LastName || user.lastName,
-            role: userProfile.Role,
-          };
+        try {
+          const userProfile = await authService.getUserProfile(user.username);
+          if (userProfile) {
+            enrichedUser = {
+              ...user,
+              firstName: userProfile.FirstName || user.firstName,
+              lastName: userProfile.LastName || user.lastName,
+              role: userProfile.Role,
+            };
+            console.log('✅ User profile fetched successfully:', {
+              username: user.username,
+              role: userProfile.Role,
+              firstName: userProfile.FirstName,
+              lastName: userProfile.LastName
+            });
+          } else {
+            console.warn('⚠️ No user profile returned from API');
+          }
+        } catch (profileError) {
+          console.error('❌ Failed to fetch user profile:', profileError);
+          // Continue with basic user info even if profile fetch fails
         }
       }
       
@@ -81,14 +94,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         // Fetch user profile to get role
         let enrichedUser = user;
         if (user && isAuthenticated) {
-          const userProfile = await authService.getUserProfile(user.username);
-          if (userProfile) {
-            enrichedUser = {
-              ...user,
-              firstName: userProfile.FirstName || user.firstName,
-              lastName: userProfile.LastName || user.lastName,
-              role: userProfile.Role,
-            };
+          try {
+            const userProfile = await authService.getUserProfile(user.username);
+            if (userProfile) {
+              enrichedUser = {
+                ...user,
+                firstName: userProfile.FirstName || user.firstName,
+                lastName: userProfile.LastName || user.lastName,
+                role: userProfile.Role,
+              };
+              console.log('✅ Sign in - User profile fetched:', {
+                username: user.username,
+                role: userProfile.Role
+              });
+            }
+          } catch (profileError) {
+            console.error('❌ Sign in - Failed to fetch user profile:', profileError);
           }
         }
         
