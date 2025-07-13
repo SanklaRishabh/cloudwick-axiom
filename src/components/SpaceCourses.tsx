@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { BookOpen, Users, Clock, Plus } from 'lucide-react';
@@ -49,6 +50,12 @@ const mockCourses: Course[] = [
 ];
 
 const SpaceCourses: React.FC<SpaceCoursesProps> = ({ spaceId }) => {
+  const navigate = useNavigate();
+
+  const handleCourseClick = (courseId: string) => {
+    navigate(`/dashboard/spaces/${spaceId}/courses/${courseId}`);
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
@@ -61,7 +68,11 @@ const SpaceCourses: React.FC<SpaceCoursesProps> = ({ spaceId }) => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {mockCourses.map((course) => (
-          <Card key={course.id} className="hover:shadow-md transition-shadow cursor-pointer">
+          <Card 
+            key={course.id} 
+            className="hover:shadow-md transition-shadow cursor-pointer"
+            onClick={() => handleCourseClick(course.id)}
+          >
             <CardHeader>
               <div className="flex items-start justify-between">
                 <BookOpen className="h-8 w-8 text-blue-600" />
