@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from "@/components/ui/button";
-import { Box, Users } from 'lucide-react';
+import { Box, Users, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const DashboardHome = () => {
@@ -31,6 +31,10 @@ const DashboardHome = () => {
     navigate('/dashboard/people');
   };
 
+  const handleNavigateToAIChat = () => {
+    navigate('/dashboard/ai-chat');
+  };
+
   const isSystemAdmin = user?.role === 'SystemAdmin';
   
   // Debug logging
@@ -55,6 +59,14 @@ const DashboardHome = () => {
           >
             <Box className="h-5 w-5" />
             Spaces
+          </Button>
+          
+          <Button 
+            onClick={handleNavigateToAIChat}
+            className="bg-purple-600 hover:bg-purple-700 font-lexend flex items-center gap-2"
+          >
+            <Sparkles className="h-5 w-5" />
+            AI Chat
           </Button>
           
           {isSystemAdmin && (

@@ -70,6 +70,7 @@ export default {
 			fontFamily: {
 				'lato': ['Lato', 'sans-serif'],
 				'lexend': ['Lexend', 'sans-serif'],
+				'helvetica': ['Helvetica', 'Arial', 'sans-serif'],
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
