@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, BookOpen, Clock, Users, Play } from 'lucide-react';
+import { ArrowLeft, BookOpen, Clock, Users, Play, Settings, Frame } from 'lucide-react';
 
 interface CourseSection {
   id: string;
@@ -161,7 +161,12 @@ const CourseDetail: React.FC = () => {
       <div className="space-y-6">
         {/* Course Header */}
         <div className="space-y-4">
-          <h1 className="text-3xl font-bold text-gray-900 font-lexend">{course.title}</h1>
+          <div className="flex items-center justify-between">
+            <h1 className="text-3xl font-bold text-gray-900 font-lexend">{course.title}</h1>
+            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+              <Settings className="h-4 w-4" />
+            </Button>
+          </div>
           
           <div className="flex items-center gap-6 text-sm text-gray-600">
             <div className="flex items-center gap-2">
@@ -221,7 +226,12 @@ const CourseDetail: React.FC = () => {
 
         {/* Course Sections */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-900 font-lexend">Course Content</h3>
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-gray-900 font-lexend">Course Content</h3>
+            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+              <Frame className="h-4 w-4" />
+            </Button>
+          </div>
           <div className="space-y-3">
             {course.sections.map((section, index) => (
               <Card 
@@ -229,6 +239,7 @@ const CourseDetail: React.FC = () => {
                 className={`hover:shadow-md transition-shadow cursor-pointer ${
                   section.completed ? 'bg-green-50 border-green-200' : ''
                 }`}
+                onClick={() => navigate(`/dashboard/spaces/${spaceId}/courses/${courseId}/sections/${section.id}`)}
               >
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">

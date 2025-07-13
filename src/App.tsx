@@ -15,6 +15,7 @@ import UserDetail from "./pages/UserDetail";
 import Documents from "./pages/Documents";
 import Courses from "./pages/Courses";
 import CourseDetail from "./pages/CourseDetail";
+import SectionDetail from "./pages/SectionDetail";
 import Exams from "./pages/Exams";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
@@ -36,6 +37,7 @@ const App = () => (
               <Route path="spaces" element={<Spaces />} />
               <Route path="spaces/:spaceId" element={<SpaceDetail />} />
               <Route path="spaces/:spaceId/courses/:courseId" element={<CourseDetail />} />
+              <Route path="spaces/:spaceId/courses/:courseId/sections/:sectionId" element={<SectionDetail />} />
               <Route path="people" element={<People />} />
               <Route path="people/:userId" element={<UserDetail />} />
               <Route path="documents" element={<Documents />} />
