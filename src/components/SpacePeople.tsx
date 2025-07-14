@@ -201,6 +201,8 @@ const SpacePeople: React.FC<SpacePeopleProps> = ({ spaceId }) => {
     try {
       const response = await apiClient.delete(`/spaces/${spaceId}/users/${userId}`);
       
+      console.log('Remove user response status:', response.status);
+      
       // Handle 204 No Content response (successful deletion)
       if (response.status === 204) {
         toast({
@@ -210,12 +212,31 @@ const SpacePeople: React.FC<SpacePeopleProps> = ({ spaceId }) => {
         });
         fetchSpaceMembers(); // Refresh the members list
       } else {
-        toast({
-          title: "Oops! 😔",
-          description: "Failed to remove user from space",
-          variant: "destructive",
-          className: "bg-red-50 border-red-200 text-red-800",
-        });
+        // Parse JSON for other successful responses (e.g., 200 with message)
+        const result = await response.json();
+        
+        if (result.Message) {
+          toast({
+            title: "Success! 🎉",
+            description: result.Message,
+            className: "bg-green-50 border-green-200 text-green-800",
+          });
+          fetchSpaceMembers(); // Refresh the members list
+        } else if (result.Error) {
+          toast({
+            title: "Oops! 😔",
+            description: result.Error,
+            variant: "destructive",
+            className: "bg-red-50 border-red-200 text-red-800",
+          });
+        } else {
+          toast({
+            title: "Oops! 😔",
+            description: "Failed to remove user from space",
+            variant: "destructive",
+            className: "bg-red-50 border-red-200 text-red-800",
+          });
+        }
       }
     } catch (error) {
       console.error('Error removing user from space:', error);
