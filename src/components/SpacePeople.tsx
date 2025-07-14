@@ -6,8 +6,9 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { UserPlus, MoreVertical, Mail, Shield, User, Crown, UserCheck } from 'lucide-react';
+import { UserPlus, MoreVertical, Shield, User, Crown, UserCheck, UserMinus } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { apiClient } from '@/lib/api';
 import { useAuth } from '@/hooks/useAuth';
@@ -48,6 +49,7 @@ const SpacePeople: React.FC<SpacePeopleProps> = ({ spaceId }) => {
   const [selectedUserId, setSelectedUserId] = useState<string>('');
   const [isAdding, setIsAdding] = useState(false);
   const [isAssigningAdmin, setIsAssigningAdmin] = useState(false);
+  const [isRemoving, setIsRemoving] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
 
@@ -194,6 +196,40 @@ const SpacePeople: React.FC<SpacePeopleProps> = ({ spaceId }) => {
     }
   };
 
+  const handleRemoveUser = async (userId: string) => {
+    setIsRemoving(true);
+    try {
+      const response = await apiClient.delete(`/spaces/${spaceId}/users/${userId}`);
+      
+      // Handle 204 No Content response (successful deletion)
+      if (response.status === 204) {
+        toast({
+          title: "Success! 🎉",
+          description: "User removed from space successfully",
+          className: "bg-green-50 border-green-200 text-green-800",
+        });
+        fetchSpaceMembers(); // Refresh the members list
+      } else {
+        toast({
+          title: "Oops! 😔",
+          description: "Failed to remove user from space",
+          variant: "destructive",
+          className: "bg-red-50 border-red-200 text-red-800",
+        });
+      }
+    } catch (error) {
+      console.error('Error removing user from space:', error);
+      toast({
+        title: "Something went wrong 😞",
+        description: "Failed to remove user from space. Please try again.",
+        variant: "destructive",
+        className: "bg-red-50 border-red-200 text-red-800",
+      });
+    } finally {
+      setIsRemoving(false);
+    }
+  };
+
   // Filter out users who are already in the space
   const availableUsers = allUsers.filter(user => 
     !members.some(member => member.UserId === user.UserId)
@@ -289,10 +325,6 @@ const SpacePeople: React.FC<SpacePeopleProps> = ({ spaceId }) => {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem>
-                        <Mail className="h-4 w-4 mr-2" />
-                        Send Message
-                      </DropdownMenuItem>
                       {space?.SpaceAdmin !== member.UserId && (
                         <DropdownMenuItem
                           onClick={() => handleAssignAdmin(member.UserId)}
@@ -302,10 +334,35 @@ const SpacePeople: React.FC<SpacePeopleProps> = ({ spaceId }) => {
                           Make Space Admin
                         </DropdownMenuItem>
                       )}
-                      <DropdownMenuItem className="text-red-600">
-                        <User className="h-4 w-4 mr-2" />
-                        Remove from Space
-                      </DropdownMenuItem>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <DropdownMenuItem 
+                            className="text-red-600"
+                            onSelect={(e) => e.preventDefault()}
+                          >
+                            <UserMinus className="h-4 w-4 mr-2" />
+                            Remove from Space
+                          </DropdownMenuItem>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Remove User from Space</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Are you sure you want to remove {member.FirstName} {member.LastName} from this space? This action cannot be undone.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => handleRemoveUser(member.UserId)}
+                              disabled={isRemoving}
+                              className="bg-red-600 hover:bg-red-700"
+                            >
+                              {isRemoving ? 'Removing...' : 'Remove User'}
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 )}
