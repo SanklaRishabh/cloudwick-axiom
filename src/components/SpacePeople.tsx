@@ -211,6 +211,7 @@ const SpacePeople: React.FC<SpacePeopleProps> = ({ spaceId }) => {
           className: "bg-green-50 border-green-200 text-green-800",
         });
         fetchSpaceMembers(); // Refresh the members list
+        fetchSpaceDetails(); // Refresh space details to update admin badge
       } else {
         // Parse JSON for other successful responses (e.g., 200 with message)
         const result = await response.json();
@@ -222,6 +223,7 @@ const SpacePeople: React.FC<SpacePeopleProps> = ({ spaceId }) => {
             className: "bg-green-50 border-green-200 text-green-800",
           });
           fetchSpaceMembers(); // Refresh the members list
+          fetchSpaceDetails(); // Refresh space details to update admin badge
         } else if (result.Error) {
           toast({
             title: "Oops! 😔",
