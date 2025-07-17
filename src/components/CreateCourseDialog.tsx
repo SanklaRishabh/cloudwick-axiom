@@ -77,45 +77,44 @@ const CreateCourseDialog: React.FC<CreateCourseDialogProps> = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-blue-600 hover:bg-blue-700 font-lexend flex items-center gap-2">
+        <Button className="bg-blue-600 hover:bg-blue-700 flex items-center gap-2">
           <Plus className="h-4 w-4" />
           Create Course
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle className="font-lexend">Create New Course</DialogTitle>
-          <DialogDescription className="font-lexend">
+          <DialogTitle>Create New Course</DialogTitle>
+          <DialogDescription>
             Add a new course to this space. Fill in the details below.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="title" className="font-lexend">Course Title</Label>
+            <Label htmlFor="title">Course Title</Label>
             <Input
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Enter course title"
-              className="font-lexend"
               required
             />
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="description" className="font-lexend">Description</Label>
+            <Label htmlFor="description">Description</Label>
             <Textarea
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Enter course description"
-              className="font-lexend min-h-[100px]"
+              className="min-h-[100px]"
               required
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="tags" className="font-lexend">Tags</Label>
+            <Label htmlFor="tags">Tags</Label>
             <div className="flex gap-2">
               <Input
                 id="tags"
@@ -123,7 +122,6 @@ const CreateCourseDialog: React.FC<CreateCourseDialogProps> = ({
                 onChange={(e) => setTagInput(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Add tags (press Enter)"
-                className="font-lexend"
               />
               <Button
                 type="button"
@@ -140,7 +138,7 @@ const CreateCourseDialog: React.FC<CreateCourseDialogProps> = ({
                   <Badge
                     key={tag}
                     variant="outline"
-                    className="font-lexend flex items-center gap-1"
+                    className="flex items-center gap-1"
                   >
                     {tag}
                     <button
@@ -161,14 +159,14 @@ const CreateCourseDialog: React.FC<CreateCourseDialogProps> = ({
               type="button"
               variant="outline"
               onClick={() => setOpen(false)}
-              className="font-lexend"
+            
             >
               Cancel
             </Button>
             <Button
               type="submit"
               disabled={isLoading || !title.trim() || !description.trim()}
-              className="font-lexend"
+              
             >
               {isLoading ? 'Creating...' : 'Create Course'}
             </Button>

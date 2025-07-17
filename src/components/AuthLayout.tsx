@@ -18,8 +18,8 @@ const AuthLayout = ({ children, title, showWireframe = true }: AuthLayoutProps) 
               <span className="text-cloudwick-blue font-lato text-lg font-medium">Cloudwick</span>
               <span className="text-white font-lato text-lg font-light">Axiom</span>
             </div>
-            <h1 className="text-white text-2xl font-lexend font-medium mb-2">{title}</h1>
-            <p className="text-gray-400 font-lexend text-sm">Knowledge awaits you</p>
+            <h1 className="text-white text-2xl font-medium mb-2">{title}</h1>
+            <p className="text-gray-400 text-sm">Knowledge awaits you</p>
           </div>
           {children}
         </div>

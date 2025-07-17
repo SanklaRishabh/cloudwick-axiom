@@ -64,7 +64,7 @@ export function AppSidebar() {
                     >
                       <item.icon className="h-5 w-5" />
                       {state === "expanded" && (
-                        <span className="font-lexend text-sm">{item.title}</span>
+                        <span className="text-sm">{item.title}</span>
                       )}
                     </NavLink>
                   </SidebarMenuButton>

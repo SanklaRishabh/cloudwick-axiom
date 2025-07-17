@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import {
@@ -95,29 +94,28 @@ const CreateSpaceDialog = ({ onSpaceCreated }: CreateSpaceDialogProps) => {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle className="font-lexend">Create a new space</DialogTitle>
+          <DialogTitle>Create a new space</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="spaceName" className="font-lexend">Space Name</Label>
+            <Label htmlFor="spaceName">Space Name</Label>
             <Input
               id="spaceName"
               value={spaceName}
               onChange={(e) => setSpaceName(e.target.value)}
               placeholder="Enter space name"
-              className="font-lexend"
               required
             />
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="description" className="font-lexend">Description</Label>
+            <Label htmlFor="description">Description</Label>
             <Textarea
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Enter a short description"
-              className="font-lexend resize-none"
+              className="resize-none"
               rows={3}
             />
           </div>
@@ -127,14 +125,13 @@ const CreateSpaceDialog = ({ onSpaceCreated }: CreateSpaceDialogProps) => {
               type="button"
               variant="outline"
               onClick={() => setOpen(false)}
-              className="font-lexend"
             >
               Cancel
             </Button>
             <Button
               type="submit"
               disabled={isLoading}
-              className="bg-blue-600 hover:bg-blue-700 font-lexend"
+              className="bg-blue-600 hover:bg-blue-700"
             >
               {isLoading ? 'Creating...' : 'Create'}
             </Button>

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,7 +21,7 @@ const SpaceCourses: React.FC<SpaceCoursesProps> = ({ spaceId }) => {
     return (
       <div className="space-y-4">
         <div className="flex justify-between items-center">
-          <h2 className="text-xl font-semibold text-gray-900 font-lexend">Courses</h2>
+          <h2 className="text-xl font-semibold text-gray-900">Courses</h2>
           <div className="h-10 w-32 bg-gray-200 rounded animate-pulse"></div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -37,7 +36,7 @@ const SpaceCourses: React.FC<SpaceCoursesProps> = ({ spaceId }) => {
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold text-gray-900 font-lexend">Courses</h2>
+        <h2 className="text-xl font-semibold text-gray-900">Courses</h2>
         <CreateCourseDialog onCreateCourse={createCourse} />
       </div>
 
@@ -52,14 +51,14 @@ const SpaceCourses: React.FC<SpaceCoursesProps> = ({ spaceId }) => {
               <div className="flex items-start justify-between">
                 <BookOpen className="h-8 w-8 text-blue-600" />
               </div>
-              <CardTitle className="font-lexend">{course.CourseTitle}</CardTitle>
-              <CardDescription className="font-lexend">
+              <CardTitle>{course.CourseTitle}</CardTitle>
+              <CardDescription>
                 {course.Description}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                <div className="text-sm text-gray-700 font-lexend">
+                <div className="text-sm text-gray-700">
                   Created by: {course.CreatedBy}
                 </div>
               </div>

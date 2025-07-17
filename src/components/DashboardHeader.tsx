@@ -60,10 +60,10 @@ export function DashboardHeader() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56" align="end" forceMount>
-            <DropdownMenuItem onClick={handleSettingsClick} className="font-lexend">
+            <DropdownMenuItem onClick={handleSettingsClick}>
               Settings
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleSignOut} className="font-lexend">
+            <DropdownMenuItem onClick={handleSignOut}>
               Sign Out
             </DropdownMenuItem>
           </DropdownMenuContent>

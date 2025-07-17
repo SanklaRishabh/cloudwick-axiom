@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -105,8 +104,8 @@ const SpaceFiles: React.FC<SpaceFilesProps> = ({ spaceId }) => {
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold text-gray-900 font-lexend">Files</h2>
-        <Button className="bg-blue-600 hover:bg-blue-700 font-lexend flex items-center gap-2">
+        <h2 className="text-xl font-semibold text-gray-900">Files</h2>
+        <Button className="bg-blue-600 hover:bg-blue-700 flex items-center gap-2">
           <Plus className="h-4 w-4" />
           Upload File
         </Button>
@@ -116,10 +115,10 @@ const SpaceFiles: React.FC<SpaceFilesProps> = ({ spaceId }) => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="font-lexend">Name</TableHead>
-              <TableHead className="font-lexend">Owner</TableHead>
-              <TableHead className="font-lexend">Last Modified</TableHead>
-              <TableHead className="font-lexend">Size</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Owner</TableHead>
+              <TableHead>Last Modified</TableHead>
+              <TableHead>Size</TableHead>
               <TableHead className="w-12"></TableHead>
             </TableRow>
           </TableHeader>
@@ -129,12 +128,12 @@ const SpaceFiles: React.FC<SpaceFilesProps> = ({ spaceId }) => {
                 <TableCell className="font-medium">
                   <div className="flex items-center gap-3">
                     {getFileIcon(item)}
-                    <span className="font-lexend">{item.name}</span>
+                    <span>{item.name}</span>
                   </div>
                 </TableCell>
-                <TableCell className="font-lexend text-gray-600">{item.owner}</TableCell>
-                <TableCell className="font-lexend text-gray-600">{item.lastModified}</TableCell>
-                <TableCell className="font-lexend text-gray-600">{item.size || '—'}</TableCell>
+                <TableCell className="text-gray-600">{item.owner}</TableCell>
+                <TableCell className="text-gray-600">{item.lastModified}</TableCell>
+                <TableCell className="text-gray-600">{item.size || '—'}</TableCell>
                 <TableCell>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>

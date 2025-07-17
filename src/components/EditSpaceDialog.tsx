@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import {
@@ -77,29 +76,28 @@ const EditSpaceDialog = ({ space, onSpaceUpdated, onClose }: EditSpaceDialogProp
     <Dialog open={true} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle className="font-lexend">Edit space: {space.SpaceName}</DialogTitle>
+          <DialogTitle>Edit space: {space.SpaceName}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="description" className="font-lexend">Description</Label>
+            <Label htmlFor="description">Description</Label>
             <Textarea
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Enter a short description"
-              className="font-lexend resize-none"
+              className="resize-none"
               rows={3}
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="spaceAdmin" className="font-lexend">Space Admin</Label>
+            <Label htmlFor="spaceAdmin">Space Admin</Label>
             <Input
               id="spaceAdmin"
               value={spaceAdmin}
               onChange={(e) => setSpaceAdmin(e.target.value)}
               placeholder="Enter space admin"
-              className="font-lexend"
             />
           </div>
 
@@ -108,14 +106,13 @@ const EditSpaceDialog = ({ space, onSpaceUpdated, onClose }: EditSpaceDialogProp
               type="button"
               variant="outline"
               onClick={onClose}
-              className="font-lexend"
             >
               Cancel
             </Button>
             <Button
               type="submit"
               disabled={isLoading}
-              className="bg-blue-600 hover:bg-blue-700 font-lexend"
+              className="bg-blue-600 hover:bg-blue-700"
             >
               {isLoading ? 'Updating...' : 'Update'}
             </Button>

@@ -48,14 +48,14 @@ const DashboardHome = () => {
   return (
     <div className="space-y-8">
       <div className="space-y-4">
-        <h1 className="text-3xl font-bold text-gray-900 font-lexend">
+        <h1 className="text-3xl font-bold text-gray-900">
           {getTimeOfDayGreeting()}, {getUserDisplayName()}!
         </h1>
         
         <div className="flex gap-4">
           <Button 
             onClick={handleNavigateToSpaces}
-            className="bg-blue-600 hover:bg-blue-700 font-lexend flex items-center gap-2"
+            className="bg-blue-600 hover:bg-blue-700 flex items-center gap-2"
           >
             <Box className="h-5 w-5" />
             Spaces
@@ -63,7 +63,7 @@ const DashboardHome = () => {
           
           <Button 
             onClick={handleNavigateToAIChat}
-            className="bg-purple-600 hover:bg-purple-700 font-lexend flex items-center gap-2"
+            className="bg-purple-600 hover:bg-purple-700 flex items-center gap-2"
           >
             <Sparkles className="h-5 w-5" />
             AI Chat
@@ -72,7 +72,7 @@ const DashboardHome = () => {
           {isSystemAdmin && (
             <Button 
               onClick={handleNavigateToPeople}
-              className="bg-blue-600 hover:bg-blue-700 font-lexend flex items-center gap-2"
+              className="bg-blue-600 hover:bg-blue-700 flex items-center gap-2"
             >
               <Users className="h-5 w-5" />
               People
@@ -101,7 +101,7 @@ const DashboardHome = () => {
       </div>
 
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold text-gray-900 font-lexend">Recent Activity</h2>
+        <h2 className="text-xl font-semibold text-gray-900">Recent Activity</h2>
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 h-48">
           <div className="w-full h-full bg-gray-100 rounded-lg flex items-center justify-center">
             <div className="w-32 h-8 bg-gray-300 rounded"></div>

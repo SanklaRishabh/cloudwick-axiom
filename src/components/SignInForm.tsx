@@ -37,7 +37,7 @@ const SignInForm = ({ onSwitchToSignUp }: SignInFormProps) => {
             placeholder="john.doe@cloudwick.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="bg-white border-gray-300 font-lexend text-gray-900 placeholder:text-gray-500"
+            className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-500"
             required
           />
         </div>
@@ -48,7 +48,7 @@ const SignInForm = ({ onSwitchToSignUp }: SignInFormProps) => {
             placeholder="••••••••"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="bg-white border-gray-300 font-lexend text-gray-900"
+            className="bg-white border-gray-300 text-gray-900"
             required
           />
         </div>
@@ -57,7 +57,7 @@ const SignInForm = ({ onSwitchToSignUp }: SignInFormProps) => {
       <div className="flex justify-end">
         <button
           type="button"
-          className="text-gray-400 hover:text-gray-300 text-sm font-lexend transition-colors"
+          className="text-gray-400 hover:text-gray-300 text-sm transition-colors"
         >
           Forgot password?
         </button>
@@ -66,13 +66,13 @@ const SignInForm = ({ onSwitchToSignUp }: SignInFormProps) => {
       <Button
         type="submit"
         disabled={isLoading}
-        className="w-full bg-cloudwick-blue hover:bg-blue-600 text-white font-lexend font-medium py-2.5 transition-colors"
+        className="w-full bg-cloudwick-blue hover:bg-blue-600 text-white font-medium py-2.5 transition-colors"
       >
         {isLoading ? 'Signing In...' : 'Sign In'}
       </Button>
 
       <div className="text-center">
-        <span className="text-gray-400 font-lexend text-sm">
+        <span className="text-gray-400 text-sm">
           Don't have an account?{' '}
           <button
             type="button"
