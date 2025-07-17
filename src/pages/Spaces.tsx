@@ -1,7 +1,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Trash2 } from 'lucide-react';
+import { ArrowLeft, Settings, Trash2 } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import CreateSpaceDialog from '@/components/CreateSpaceDialog';
@@ -91,11 +97,11 @@ const Spaces = () => {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 font-lexend">Spaces</h1>
-          <p className="text-gray-600 font-lexend mt-2">Manage your workspace environments</p>
+          <h1 className="text-3xl font-bold text-gray-900">Spaces</h1>
+          <p className="text-gray-600 mt-2">Manage your workspace environments</p>
         </div>
         <div className="flex items-center justify-center h-64">
-          <p className="text-gray-500 font-lexend">Loading spaces...</p>
+          <p className="text-gray-500">Loading spaces...</p>
         </div>
       </div>
     );
@@ -107,7 +113,7 @@ const Spaces = () => {
         <Button 
           variant="ghost" 
           onClick={() => navigate('/dashboard')}
-          className="flex items-center gap-2 font-lexend"
+          className="flex items-center gap-2"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Dashboard
@@ -115,13 +121,13 @@ const Spaces = () => {
       </div>
 
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 font-lexend">Spaces</h1>
-        <p className="text-gray-600 font-lexend mt-2">Manage your workspace environments</p>
+        <h1 className="text-3xl font-bold text-gray-900">Spaces</h1>
+        <p className="text-gray-600 mt-2">Manage your workspace environments</p>
       </div>
 
       {spaces.length === 0 ? (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
-          <p className="text-gray-500 font-lexend">No spaces found. Create your first space to get started.</p>
+          <p className="text-gray-500">No spaces found. Create your first space to get started.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -132,17 +138,32 @@ const Spaces = () => {
               onClick={() => handleSpaceClick(space.SpaceId)}
             >
               {isSystemAdmin && (
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  className="absolute top-4 right-4 h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDeleteSpace(space.SpaceId);
-                  }}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="absolute top-4 right-4 h-8 w-8 text-gray-600 hover:text-gray-700 hover:bg-gray-50"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                      }}
+                    >
+                      <Settings className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem 
+                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteSpace(space.SpaceId);
+                      }}
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Delete Space
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               )}
 
               <div className="space-y-4">
@@ -152,9 +173,9 @@ const Spaces = () => {
                 </div>
                 
                 <div className="text-center">
-                  <h3 className="text-xl font-bold text-gray-900 font-lexend">{space.SpaceName}</h3>
+                  <h3 className="text-xl font-bold text-gray-900 font-lato">{space.SpaceName}</h3>
                   {space.SpaceDescription && (
-                    <p className="text-sm text-gray-600 font-lexend mt-1">{space.SpaceDescription}</p>
+                    <p className="text-sm text-gray-600 mt-1">{space.SpaceDescription}</p>
                   )}
                 </div>
               </div>
