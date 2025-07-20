@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
@@ -56,7 +55,7 @@ const Index = () => {
       </div>
 
       {/* Navigation */}
-      <nav className="relative z-10 flex items-center justify-between px-6 py-6 lg:px-12 xl:px-16 max-w-7xl mx-auto">
+      <nav className="relative z-10 flex items-center justify-between px-4 py-6 lg:px-6">
         <div className="flex items-center gap-2">
           <span className="text-white font-lato text-2xl font-bold">Cloudwick</span>
           <span className="text-gray-300 font-lato text-2xl font-light">Axiom</span>
