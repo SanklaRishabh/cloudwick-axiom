@@ -15,7 +15,7 @@ const AuthLayout = ({ children, title, showWireframe = true }: AuthLayoutProps) 
   const { isDark, toggleTheme } = useAuthTheme();
 
   return (
-    <div className={`min-h-screen flex ${isDark ? 'bg-[#333333]' : 'bg-[#fafafa]'}`}>
+    <div className={`min-h-screen flex ${isDark ? 'bg-[#222222]' : 'bg-[#fafafa]'}`}>
       {/* Theme Toggle - Top Right */}
       <div className="absolute top-6 right-6 z-20 flex items-center gap-3">
         <Sun className={`w-4 h-4 ${isDark ? 'text-gray-400' : 'text-amber-500'}`} />
