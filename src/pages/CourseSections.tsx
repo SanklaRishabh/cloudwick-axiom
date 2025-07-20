@@ -69,6 +69,8 @@ const CourseSections: React.FC = () => {
     const nodes: Node[] = [];
     const edges: Edge[] = [];
 
+    console.log('Creating roadmap with sections:', sections);
+
     // Add course title node at the top center
     if (course) {
       nodes.push({
@@ -108,35 +110,54 @@ const CourseSections: React.FC = () => {
       // Create sequential connections
       if (index === 0 && course) {
         // Connect course title to first section
-        edges.push({
+        const edge = {
           id: `course-to-${nodeId}`,
           source: 'course-title',
           target: nodeId,
-          type: 'smoothstep',
+          type: 'straight',
           animated: true,
-          style: { stroke: '#3b82f6', strokeWidth: 3 },
+          style: { 
+            stroke: '#1d4ed8', 
+            strokeWidth: 4,
+            filter: 'drop-shadow(0 2px 4px rgba(29, 78, 216, 0.3))'
+          },
           markerEnd: {
             type: MarkerType.ArrowClosed,
-            color: '#3b82f6',
+            color: '#1d4ed8',
+            width: 20,
+            height: 20,
           },
-        });
+        };
+        edges.push(edge);
+        console.log('Added edge from course to first section:', edge);
       } else if (index > 0) {
         // Connect each section to the next one in sequence
         const prevSectionId = sections[index - 1].SectionId;
-        edges.push({
+        const edge = {
           id: `${prevSectionId}-to-${nodeId}`,
           source: prevSectionId,
           target: nodeId,
-          type: 'smoothstep',
+          type: 'straight',
           animated: false,
-          style: { stroke: '#3b82f6', strokeWidth: 3 },
+          style: { 
+            stroke: '#1d4ed8', 
+            strokeWidth: 4,
+            filter: 'drop-shadow(0 2px 4px rgba(29, 78, 216, 0.3))'
+          },
           markerEnd: {
             type: MarkerType.ArrowClosed,
-            color: '#3b82f6',
+            color: '#1d4ed8',
+            width: 20,
+            height: 20,
           },
-        });
+        };
+        edges.push(edge);
+        console.log(`Added edge from section ${index-1} to section ${index}:`, edge);
       }
     });
+
+    console.log('Final nodes:', nodes);
+    console.log('Final edges:', edges);
 
     return { nodes, edges };
   }, [sections, course]);
@@ -146,6 +167,7 @@ const CourseSections: React.FC = () => {
 
   // Update nodes when sections change
   React.useEffect(() => {
+    console.log('Updating nodes and edges:', { initialNodes, initialEdges });
     setNodes(initialNodes);
     setEdges(initialEdges);
   }, [initialNodes, initialEdges, setNodes, setEdges]);
@@ -211,7 +233,7 @@ const CourseSections: React.FC = () => {
           )}
         </div>
       ) : (
-        <div className="h-[700px] border rounded-lg bg-gradient-to-b from-blue-50/30 to-white">
+        <div className="h-[700px] border rounded-lg bg-gradient-to-b from-background to-muted/10 relative">
           <ReactFlow
             nodes={nodes}
             edges={edges}
@@ -226,9 +248,18 @@ const CourseSections: React.FC = () => {
             nodesConnectable={false}
             elementsSelectable={false}
             defaultEdgeOptions={{
-              type: 'smoothstep',
-              style: { stroke: '#3b82f6', strokeWidth: 3 },
-              markerEnd: { type: MarkerType.ArrowClosed, color: '#3b82f6' },
+              type: 'straight',
+              style: { 
+                stroke: '#1d4ed8', 
+                strokeWidth: 4,
+                filter: 'drop-shadow(0 2px 4px rgba(29, 78, 216, 0.3))'
+              },
+              markerEnd: { 
+                type: MarkerType.ArrowClosed, 
+                color: '#1d4ed8',
+                width: 20,
+                height: 20,
+              },
             }}
           >
             <Controls showInteractive={false} />
