@@ -11,7 +11,6 @@ export interface FileItem {
   FileDescription: string;
   Tags: string[];
   FileStatus: string;
-  URL: string;
 }
 
 export interface CreateFileData {
@@ -29,11 +28,14 @@ export interface FileUploadResponse {
   Message: string;
   FileId: string;
   PresignedUrl: string;
+  FilePath: string;
+  FileType: string;
 }
 
 export interface WebsiteResponse {
   Message: string;
   FileId: string;
+  FilePath: string;
 }
 
 export const useFiles = (spaceId: string) => {

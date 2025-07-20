@@ -53,7 +53,7 @@ const SpaceFiles: React.FC<SpaceFilesProps> = ({ spaceId }) => {
       return <Archive className="h-5 w-5 text-yellow-600" />;
     }
     
-    if (fileType === 'website' || item.URL?.startsWith('http')) {
+    if (fileType === 'website') {
       return <Globe className="h-5 w-5 text-cyan-600" />;
     }
     
@@ -61,9 +61,9 @@ const SpaceFiles: React.FC<SpaceFilesProps> = ({ spaceId }) => {
   };
 
   const handleDownload = (item: FileItem) => {
-    if (item.URL) {
-      window.open(item.URL, '_blank');
-    }
+    // For now, we'll show a message that download functionality needs to be implemented
+    // The actual download would likely need a separate API endpoint to get signed URLs
+    console.log('Download requested for file:', item.FileName);
   };
 
   const getStatusColor = (status: string) => {
@@ -168,21 +168,19 @@ const SpaceFiles: React.FC<SpaceFilesProps> = ({ spaceId }) => {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        {item.URL && (
-                          <DropdownMenuItem onClick={() => handleDownload(item)}>
-                            {item.FileType === 'website' ? (
-                              <>
-                                <ExternalLink className="h-4 w-4 mr-2" />
-                                Open Link
-                              </>
-                            ) : (
-                              <>
-                                <Download className="h-4 w-4 mr-2" />
-                                Download
-                              </>
-                            )}
-                          </DropdownMenuItem>
-                        )}
+                        <DropdownMenuItem onClick={() => handleDownload(item)}>
+                          {item.FileType === 'website' ? (
+                            <>
+                              <ExternalLink className="h-4 w-4 mr-2" />
+                              Open Link
+                            </>
+                          ) : (
+                            <>
+                              <Download className="h-4 w-4 mr-2" />
+                              Download
+                            </>
+                          )}
+                        </DropdownMenuItem>
                         <DropdownMenuItem>
                           <Share className="h-4 w-4 mr-2" />
                           Share
