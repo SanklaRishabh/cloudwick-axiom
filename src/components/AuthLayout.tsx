@@ -8,10 +8,11 @@ import { useAuthTheme } from '@/contexts/AuthThemeContext';
 interface AuthLayoutProps {
   children: React.ReactNode;
   title: string;
+  subtitle?: string;
   showWireframe?: boolean;
 }
 
-const AuthLayout = ({ children, title, showWireframe = true }: AuthLayoutProps) => {
+const AuthLayout = ({ children, title, subtitle = "Knowledge awaits you", showWireframe = true }: AuthLayoutProps) => {
   const { isDark, toggleTheme } = useAuthTheme();
 
   return (
@@ -36,7 +37,7 @@ const AuthLayout = ({ children, title, showWireframe = true }: AuthLayoutProps) 
               <span className={`font-lato text-lg font-light ${isDark ? 'text-white' : 'text-gray-800'}`}>Axiom</span>
             </div>
             <h1 className={`text-2xl font-medium mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>{title}</h1>
-            <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Knowledge awaits you</p>
+            <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{subtitle}</p>
           </div>
           {children}
         </div>

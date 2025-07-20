@@ -12,6 +12,7 @@ const Auth = () => {
     <AuthThemeProvider>
       <AuthLayout
         title={isSignUp ? 'Create Account' : 'Welcome Back'}
+        subtitle={isSignUp ? 'You are just one step away from unlocking your potential' : 'Knowledge awaits you'}
         showWireframe={true}
       >
         {isSignUp ? (
