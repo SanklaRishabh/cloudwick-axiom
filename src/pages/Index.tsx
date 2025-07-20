@@ -1,17 +1,46 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const Index = () => {
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuth();
+  
+  const [currentWordIndex, setCurrentWordIndex] = useState(0);
+  const [currentText, setCurrentText] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+  
+  const words = ["upskilling", "knowledge transfer", "learning"];
 
   useEffect(() => {
     if (isAuthenticated && user) {
       navigate('/dashboard');
     }
   }, [isAuthenticated, user, navigate]);
+
+  useEffect(() => {
+    const word = words[currentWordIndex];
+    
+    const timeout = setTimeout(() => {
+      if (isDeleting) {
+        setCurrentText(word.substring(0, currentText.length - 1));
+        
+        if (currentText.length === 0) {
+          setIsDeleting(false);
+          setCurrentWordIndex((prev) => (prev + 1) % words.length);
+        }
+      } else {
+        setCurrentText(word.substring(0, currentText.length + 1));
+        
+        if (currentText === word) {
+          setTimeout(() => setIsDeleting(true), 2000);
+        }
+      }
+    }, isDeleting ? 50 : 100);
+
+    return () => clearTimeout(timeout);
+  }, [currentText, isDeleting, currentWordIndex, words]);
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-teal-900 via-slate-800 to-teal-900">
@@ -48,12 +77,11 @@ const Index = () => {
         <div className="max-w-7xl mx-auto w-full">
           <div className="max-w-3xl">
             <h1 className="text-6xl md:text-7xl font-bold text-white mb-8 leading-tight">
-              The platform for reliable agents.
+              Redefining <span className="inline-block min-w-[200px] text-left">{currentText}</span><span className="animate-pulse">|</span> for every professional.
             </h1>
             
             <p className="text-xl text-gray-300 mb-12 max-w-2xl leading-relaxed">
-              Tools for every step of the agent development lifecycle
-              – built to unlock powerful AI in production.
+              Resources to succeed at every step of the corporate ladder.
             </p>
             
             <div className="flex items-center gap-4">
