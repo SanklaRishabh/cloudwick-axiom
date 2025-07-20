@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
@@ -10,6 +11,7 @@ const Index = () => {
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [currentText, setCurrentText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
   
   const words = ["upskilling", "knowledge transfer", "learning"];
 
@@ -20,15 +22,23 @@ const Index = () => {
   }, [isAuthenticated, user, navigate]);
 
   useEffect(() => {
+    if (isPaused) return;
+    
     const word = words[currentWordIndex];
     
     const timeout = setTimeout(() => {
       if (isDeleting) {
         setCurrentText(word.substring(0, currentText.length - 1));
         
-        if (currentText.length === 0) {
-          setIsDeleting(false);
-          setCurrentWordIndex((prev) => (prev + 1) % words.length);
+        if (currentText.length === 1) {
+          // About to become empty, pause briefly to show empty state
+          setIsPaused(true);
+          setTimeout(() => {
+            setCurrentText("");
+            setIsDeleting(false);
+            setCurrentWordIndex((prev) => (prev + 1) % words.length);
+            setIsPaused(false);
+          }, 300);
         }
       } else {
         setCurrentText(word.substring(0, currentText.length + 1));
@@ -40,7 +50,7 @@ const Index = () => {
     }, isDeleting ? 75 : 120);
 
     return () => clearTimeout(timeout);
-  }, [currentText, isDeleting, currentWordIndex, words]);
+  }, [currentText, isDeleting, currentWordIndex, words, isPaused]);
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-teal-900 via-slate-800 to-teal-900">
@@ -72,12 +82,12 @@ const Index = () => {
         </div>
       </nav>
 
-      {/* Main Content */}
-      <div className="relative z-10 flex items-center min-h-[calc(100vh-100px)] px-6">
+      {/* Main Content - Positioned lower with more padding */}
+      <div className="relative z-10 flex items-center min-h-[calc(100vh-140px)] px-6 pt-16 md:pt-24">
         <div className="max-w-7xl mx-auto w-full">
           <div className="max-w-4xl">
-            <h1 className="text-6xl md:text-7xl font-bold text-white mb-8 leading-tight">
-              Redefining <span className="inline-block min-w-[280px] text-left">{currentText}</span><span className="w-0.5 h-16 bg-white inline-block animate-pulse ml-1"></span>
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-8 leading-tight">
+              Redefining <span className="inline-block min-w-[380px] text-left whitespace-nowrap">{currentText}</span><span className="w-0.5 h-12 md:h-16 bg-white inline-block animate-pulse ml-1"></span>
               <br />
               for every professional.
             </h1>

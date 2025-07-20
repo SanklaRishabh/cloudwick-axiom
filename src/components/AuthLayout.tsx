@@ -1,5 +1,6 @@
 
 import React from 'react';
+import WavyAnimation from './WavyAnimation';
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -25,33 +26,11 @@ const AuthLayout = ({ children, title, showWireframe = true }: AuthLayoutProps) 
         </div>
       </div>
 
-      {/* Right Panel - Wireframe */}
+      {/* Right Panel - Animated Waves */}
       {showWireframe && (
-        <div className="flex-1 flex items-center justify-center p-8 lg:p-16">
-          <div className="w-full max-w-lg aspect-square bg-gray-200 rounded-lg flex items-center justify-center relative border-4 border-cloudwick-blue">
-            {/* X wireframe pattern */}
-            <svg 
-              className="w-full h-full absolute inset-0" 
-              viewBox="0 0 400 400" 
-              fill="none"
-            >
-              <line 
-                x1="50" 
-                y1="50" 
-                x2="350" 
-                y2="350" 
-                stroke="#3374DF" 
-                strokeWidth="3"
-              />
-              <line 
-                x1="350" 
-                y1="50" 
-                x2="50" 
-                y2="350" 
-                stroke="#3374DF" 
-                strokeWidth="3"
-              />
-            </svg>
+        <div className="flex-1 flex items-center justify-center p-8 lg:p-16 bg-gradient-to-br from-teal-900/20 via-slate-800/30 to-teal-900/20">
+          <div className="w-full max-w-lg aspect-square bg-gradient-to-br from-teal-900/10 to-slate-800/20 rounded-lg flex items-center justify-center relative border-4 border-cloudwick-blue overflow-hidden">
+            <WavyAnimation />
           </div>
         </div>
       )}
