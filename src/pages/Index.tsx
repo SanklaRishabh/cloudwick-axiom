@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
@@ -86,8 +85,8 @@ const Index = () => {
       <div className="relative z-10 flex items-center min-h-[calc(100vh-140px)] px-6 pt-16 md:pt-24">
         <div className="max-w-7xl mx-auto w-full">
           <div className="max-w-4xl">
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-8 leading-tight">
-              Redefining <span className="inline-block min-w-[380px] text-left whitespace-nowrap">{currentText}</span><span className="w-0.5 h-12 md:h-16 bg-white inline-block animate-pulse ml-1"></span>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-8 leading-tight">
+              Redefining <span className="inline-block min-w-[420px] text-left whitespace-nowrap">{currentText}</span>
               <br />
               for every professional.
             </h1>
