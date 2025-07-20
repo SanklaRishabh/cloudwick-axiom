@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -12,7 +11,9 @@ import {
   useNodesState,
   useEdgesState,
   NodeTypes,
-  MarkerType
+  MarkerType,
+  Handle,
+  Position
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { useSections } from '@/hooks/useSections';
@@ -23,13 +24,41 @@ import CreateSectionDialog from '@/components/CreateSectionDialog';
 // Custom section node component
 const SectionNode = ({ data }: { data: any }) => {
   return (
-    <div className="bg-white border-2 border-primary/20 rounded-lg p-4 min-w-[220px] max-w-[220px] shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer hover:border-primary/40">
+    <div className="bg-white border-2 border-primary/20 rounded-lg p-4 min-w-[220px] max-w-[220px] shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer hover:border-primary/40 relative">
+      {/* Target handle at the top for incoming connections */}
+      <Handle
+        type="target"
+        position={Position.Top}
+        style={{
+          background: 'transparent',
+          border: 'none',
+          width: '1px',
+          height: '1px',
+          minWidth: '1px',
+          minHeight: '1px',
+        }}
+      />
+      
       <div className="flex items-center gap-2 mb-2">
         <div className="w-2 h-2 bg-primary rounded-full"></div>
         <h3 className="font-semibold text-sm font-lexend">{data.title}</h3>
       </div>
       <p className="text-xs text-gray-600 font-lexend line-clamp-2 mb-2">{data.description}</p>
       <p className="text-xs text-gray-500 font-lexend">by {data.createdBy}</p>
+      
+      {/* Source handle at the bottom for outgoing connections */}
+      <Handle
+        type="source"
+        position={Position.Bottom}
+        style={{
+          background: 'transparent',
+          border: 'none',
+          width: '1px',
+          height: '1px',
+          minWidth: '1px',
+          minHeight: '1px',
+        }}
+      />
     </div>
   );
 };
@@ -37,8 +66,22 @@ const SectionNode = ({ data }: { data: any }) => {
 // Course title node component
 const CourseTitleNode = ({ data }: { data: any }) => {
   return (
-    <div className="bg-primary text-primary-foreground rounded-lg p-6 text-center shadow-lg">
+    <div className="bg-primary text-primary-foreground rounded-lg p-6 text-center shadow-lg relative">
       <h1 className="text-2xl font-bold font-lexend">{data.title}</h1>
+      
+      {/* Source handle at the bottom for outgoing connections */}
+      <Handle
+        type="source"
+        position={Position.Bottom}
+        style={{
+          background: 'transparent',
+          border: 'none',
+          width: '1px',
+          height: '1px',
+          minWidth: '1px',
+          minHeight: '1px',
+        }}
+      />
     </div>
   );
 };
