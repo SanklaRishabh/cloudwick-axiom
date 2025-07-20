@@ -34,10 +34,10 @@ const Index = () => {
         setCurrentText(word.substring(0, currentText.length + 1));
         
         if (currentText === word) {
-          setTimeout(() => setIsDeleting(true), 2000);
+          setTimeout(() => setIsDeleting(true), 1500);
         }
       }
-    }, isDeleting ? 50 : 100);
+    }, isDeleting ? 75 : 120);
 
     return () => clearTimeout(timeout);
   }, [currentText, isDeleting, currentWordIndex, words]);
@@ -65,7 +65,7 @@ const Index = () => {
           <Button
             onClick={() => navigate('/auth')}
             variant="outline"
-            className="border-white/20 text-white hover:bg-white/10 hover:text-white"
+            className="border-white/30 bg-white/10 text-white hover:bg-white/20 hover:text-white rounded-full px-6 py-2"
           >
             Log In
           </Button>
@@ -75,29 +75,16 @@ const Index = () => {
       {/* Main Content */}
       <div className="relative z-10 flex items-center min-h-[calc(100vh-100px)] px-6">
         <div className="max-w-7xl mx-auto w-full">
-          <div className="max-w-3xl">
+          <div className="max-w-4xl">
             <h1 className="text-6xl md:text-7xl font-bold text-white mb-8 leading-tight">
-              Redefining <span className="inline-block min-w-[200px] text-left">{currentText}</span><span className="animate-pulse">|</span> for every professional.
+              Redefining <span className="inline-block min-w-[280px] text-left">{currentText}</span><span className="w-0.5 h-16 bg-white inline-block animate-pulse ml-1"></span>
+              <br />
+              for every professional.
             </h1>
             
             <p className="text-xl text-gray-300 mb-12 max-w-2xl leading-relaxed">
               Resources to succeed at every step of the corporate ladder.
             </p>
-            
-            <div className="flex items-center gap-4">
-              <Button
-                onClick={() => navigate('/auth')}
-                className="bg-purple-500 hover:bg-purple-600 text-white px-8 py-3 text-lg rounded-full"
-              >
-                Request a demo
-              </Button>
-              <Button
-                variant="outline"
-                className="border-white/20 text-white hover:bg-white/10 hover:text-white px-8 py-3 text-lg rounded-full"
-              >
-                See the docs
-              </Button>
-            </div>
           </div>
         </div>
       </div>
