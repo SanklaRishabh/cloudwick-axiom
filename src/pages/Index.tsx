@@ -26,10 +26,9 @@ const Index = () => {
       if (isDeleting) {
         setCurrentText(word.substring(0, currentText.length - 1));
         
-        if (currentText.length === 1) {
+        if (currentText.length === 0) {
           setIsDeleting(false);
           setCurrentWordIndex((prev) => (prev + 1) % words.length);
-          setCurrentText("");
         }
       } else {
         setCurrentText(word.substring(0, currentText.length + 1));
@@ -56,15 +55,13 @@ const Index = () => {
       </div>
 
       {/* Navigation */}
-      <nav className="relative z-10 flex items-center justify-between max-w-7xl mx-auto">
-        <div className="pl-6">
-          <div className="flex items-center gap-2">
-            <span className="text-white font-lato text-2xl font-bold">Cloudwick</span>
-            <span className="text-gray-300 font-lato text-2xl font-light">Axiom</span>
-          </div>
+      <nav className="relative z-10 flex items-center justify-between p-6 max-w-7xl mx-auto">
+        <div className="flex items-center gap-2">
+          <span className="text-white font-lato text-2xl font-bold">Cloudwick</span>
+          <span className="text-gray-300 font-lato text-2xl font-light">Axiom</span>
         </div>
         
-        <div className="flex items-center gap-4 pr-8">
+        <div className="flex items-center gap-4">
           <Button
             onClick={() => navigate('/auth')}
             variant="outline"
@@ -87,8 +84,6 @@ const Index = () => {
             
             <p className="text-xl text-gray-300 mb-12 max-w-2xl leading-relaxed">
               Resources to succeed at every step of the corporate ladder.
-              <br /><br />
-              Empower your future by learning new skills anytime and anywhere.
             </p>
           </div>
         </div>
