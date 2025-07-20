@@ -13,11 +13,11 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus, Upload, Globe } from 'lucide-react';
-import { CreateFileData, CreateWebsiteData } from '@/hooks/useFiles';
+import { CreateFileData, CreateWebsiteData, FileUploadResponse, WebsiteResponse } from '@/hooks/useFiles';
 
 interface FileUploadDialogProps {
-  onFileUpload: (data: CreateFileData) => Promise<void>;
-  onWebsiteSubmit: (data: CreateWebsiteData) => Promise<void>;
+  onFileUpload: (data: CreateFileData) => Promise<FileUploadResponse>;
+  onWebsiteSubmit: (data: CreateWebsiteData) => Promise<WebsiteResponse>;
 }
 
 const FileUploadDialog = ({ onFileUpload, onWebsiteSubmit }: FileUploadDialogProps) => {
