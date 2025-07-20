@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
@@ -6,7 +5,7 @@ import { useEffect } from "react";
 
 const Index = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, user, signOut, isLoading } = useAuth();
+  const { isAuthenticated, user } = useAuth();
 
   useEffect(() => {
     if (isAuthenticated && user) {
@@ -14,86 +13,177 @@ const Index = () => {
     }
   }, [isAuthenticated, user, navigate]);
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cloudwick-blue mx-auto mb-4"></div>
-          <p className="text-gray-600 font-lexend">Loading...</p>
+  return (
+    <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-teal-900 via-slate-800 to-teal-900">
+      {/* Animated Background */}
+      <div className="absolute inset-0">
+        <div className="flowing-lines">
+          <div className="flow-line flow-line-1"></div>
+          <div className="flow-line flow-line-2"></div>
+          <div className="flow-line flow-line-3"></div>
+          <div className="flow-line flow-line-4"></div>
         </div>
       </div>
-    );
-  }
 
-  const getUserDisplayName = () => {
-    if (!user) return '';
-    if (user.firstName && user.lastName) {
-      return `${user.firstName} ${user.lastName}`;
-    }
-    if (user.firstName) {
-      return user.firstName;
-    }
-    return user.username;
-  };
-
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
-      <div className="text-center space-y-8 p-8">
-        <div className="space-y-4">
-          <div className="flex items-center justify-center gap-2 mb-6">
-            <span className="text-cloudwick-blue font-lato text-3xl font-bold">Cloudwick</span>
-            <span className="text-gray-800 font-lato text-3xl font-light">Axiom</span>
-          </div>
-          
-          {isAuthenticated && user ? (
-            <>
-              <h1 className="text-4xl font-bold font-lexend text-gray-900 mb-4">
-                Welcome back, {getUserDisplayName()}!
-              </h1>
-              <p className="text-xl text-gray-600 font-lexend max-w-md mx-auto">
-                You're successfully signed in to Cloudwick Axiom.
-              </p>
-            </>
-          ) : (
-            <>
-              <h1 className="text-4xl font-bold font-lexend text-gray-900 mb-4">
-                Welcome to Cloudwick Axiom
-              </h1>
-              <p className="text-xl text-gray-600 font-lexend max-w-md mx-auto">
-                Knowledge awaits you. Sign in to access your account and explore the platform.
-              </p>
-            </>
-          )}
+      {/* Navigation */}
+      <nav className="relative z-10 flex items-center justify-between p-6 max-w-7xl mx-auto">
+        <div className="flex items-center gap-2">
+          <span className="text-white font-lato text-2xl font-bold">Cloudwick</span>
+          <span className="text-gray-300 font-lato text-2xl font-light">Axiom</span>
         </div>
         
-        <div className="space-y-4">
-          {isAuthenticated ? (
-            <div className="space-y-4">
-              <Button
-                onClick={() => signOut()}
-                className="bg-gray-600 hover:bg-gray-700 text-white font-lexend font-medium px-8 py-3 text-lg transition-colors"
-              >
-                Sign Out
-              </Button>
-              <p className="text-sm text-gray-500 font-lexend">
-                Signed in as {user?.email}
-              </p>
-            </div>
-          ) : (
-            <>
+        <div className="flex items-center gap-4">
+          <Button
+            onClick={() => navigate('/auth')}
+            variant="outline"
+            className="border-white/20 text-white hover:bg-white/10 hover:text-white"
+          >
+            Log In
+          </Button>
+        </div>
+      </nav>
+
+      {/* Main Content */}
+      <div className="relative z-10 flex items-center min-h-[calc(100vh-100px)] px-6">
+        <div className="max-w-7xl mx-auto w-full">
+          <div className="max-w-3xl">
+            <h1 className="text-6xl md:text-7xl font-bold text-white mb-8 leading-tight">
+              The platform for reliable agents.
+            </h1>
+            
+            <p className="text-xl text-gray-300 mb-12 max-w-2xl leading-relaxed">
+              Tools for every step of the agent development lifecycle
+              – built to unlock powerful AI in production.
+            </p>
+            
+            <div className="flex items-center gap-4">
               <Button
                 onClick={() => navigate('/auth')}
-                className="bg-cloudwick-blue hover:bg-blue-600 text-white font-lexend font-medium px-8 py-3 text-lg transition-colors"
+                className="bg-purple-500 hover:bg-purple-600 text-white px-8 py-3 text-lg rounded-full"
               >
-                Get Started
+                Request a demo
               </Button>
-              <p className="text-sm text-gray-500 font-lexend">
-                Access your Cloudwick Axiom dashboard
-              </p>
-            </>
-          )}
+              <Button
+                variant="outline"
+                className="border-white/20 text-white hover:bg-white/10 hover:text-white px-8 py-3 text-lg rounded-full"
+              >
+                See the docs
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
+
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          .flowing-lines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+          }
+
+          .flow-line {
+            position: absolute;
+            width: 200%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.6), rgba(236, 72, 153, 0.6), transparent);
+            animation: flow 15s infinite linear;
+            opacity: 0.8;
+          }
+
+          .flow-line-1 {
+            top: 20%;
+            transform: rotate(-15deg);
+            animation-delay: 0s;
+            animation-duration: 12s;
+          }
+
+          .flow-line-2 {
+            top: 40%;
+            transform: rotate(-10deg);
+            animation-delay: -3s;
+            animation-duration: 15s;
+            background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.5), rgba(168, 85, 247, 0.5), transparent);
+          }
+
+          .flow-line-3 {
+            top: 60%;
+            transform: rotate(-20deg);
+            animation-delay: -6s;
+            animation-duration: 18s;
+            background: linear-gradient(90deg, transparent, rgba(236, 72, 153, 0.4), rgba(244, 114, 182, 0.4), transparent);
+          }
+
+          .flow-line-4 {
+            top: 80%;
+            transform: rotate(-8deg);
+            animation-delay: -9s;
+            animation-duration: 20s;
+            background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.3), rgba(139, 92, 246, 0.3), transparent);
+          }
+
+          @keyframes flow {
+            0% {
+              transform: translateX(-100%) rotate(-15deg);
+              opacity: 0;
+            }
+            10% {
+              opacity: 1;
+            }
+            90% {
+              opacity: 1;
+            }
+            100% {
+              transform: translateX(100%) rotate(-15deg);
+              opacity: 0;
+            }
+          }
+
+          .flow-line-1 {
+            animation: flow-1 12s infinite linear;
+          }
+          .flow-line-2 {
+            animation: flow-2 15s infinite linear;
+            animation-delay: -3s;
+          }
+          .flow-line-3 {
+            animation: flow-3 18s infinite linear;
+            animation-delay: -6s;
+          }
+          .flow-line-4 {
+            animation: flow-4 20s infinite linear;
+            animation-delay: -9s;
+          }
+
+          @keyframes flow-1 {
+            0% { transform: translateX(-100%) rotate(-15deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateX(100%) rotate(-15deg); opacity: 0; }
+          }
+          @keyframes flow-2 {
+            0% { transform: translateX(-100%) rotate(-10deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateX(100%) rotate(-10deg); opacity: 0; }
+          }
+          @keyframes flow-3 {
+            0% { transform: translateX(-100%) rotate(-20deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateX(100%) rotate(-20deg); opacity: 0; }
+          }
+          @keyframes flow-4 {
+            0% { transform: translateX(-100%) rotate(-8deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateX(100%) rotate(-8deg); opacity: 0; }
+          }
+        `
+      }} />
     </div>
   );
 };
