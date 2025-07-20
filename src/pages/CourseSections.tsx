@@ -157,7 +157,7 @@ const CourseSections: React.FC = () => {
           id: `course-to-${nodeId}`,
           source: 'course-title',
           target: nodeId,
-          type: 'straight',
+          type: 'smoothstep',
           animated: true,
           style: { 
             stroke: '#1d4ed8', 
@@ -180,7 +180,7 @@ const CourseSections: React.FC = () => {
           id: `${prevSectionId}-to-${nodeId}`,
           source: prevSectionId,
           target: nodeId,
-          type: 'straight',
+          type: 'smoothstep',
           animated: false,
           style: { 
             stroke: '#1d4ed8', 
@@ -291,8 +291,8 @@ const CourseSections: React.FC = () => {
             nodesConnectable={false}
             elementsSelectable={false}
             defaultEdgeOptions={{
-              type: 'straight',
-              style: { 
+              type: 'smoothstep',
+              style: {
                 stroke: '#1d4ed8', 
                 strokeWidth: 4,
                 filter: 'drop-shadow(0 2px 4px rgba(29, 78, 216, 0.3))'
