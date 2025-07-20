@@ -66,11 +66,6 @@ const SignUpForm = ({ onSwitchToSignIn }: SignUpFormProps) => {
 
   return (
     <div>
-      <div className="mb-6">
-        <h2 className="text-white text-xl font-medium mb-2">Get Started Now</h2>
-        <p className="text-gray-400 text-sm">Enter your credentials to access your account</p>
-      </div>
-
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="username" className="text-white text-sm">Username</Label>
