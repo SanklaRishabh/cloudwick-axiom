@@ -1,10 +1,16 @@
 
 import React from 'react';
 
-const WavyAnimation = () => {
+interface WavyAnimationProps {
+  isDark?: boolean;
+}
+
+const WavyAnimation = ({ isDark = true }: WavyAnimationProps) => {
+  const waveOpacity = isDark ? 1 : 0.6;
+  
   return (
     <div className="w-full h-full relative overflow-hidden">
-      {/* Background waves */}
+      {/* Background waves filling entire panel */}
       <div className="absolute inset-0">
         <div className="wave-container">
           <div className="wave wave-1"></div>
@@ -32,34 +38,35 @@ const WavyAnimation = () => {
             height: 100%;
             background: linear-gradient(45deg, transparent, rgba(168, 85, 247, 0.1), rgba(236, 72, 153, 0.1), transparent);
             will-change: transform;
+            opacity: ${waveOpacity};
           }
 
           .wave-1 {
-            background: linear-gradient(45deg, transparent, rgba(20, 184, 166, 0.15), rgba(168, 85, 247, 0.1), transparent);
+            background: linear-gradient(45deg, transparent, rgba(20, 184, 166, ${isDark ? '0.15' : '0.25'}), rgba(168, 85, 247, ${isDark ? '0.1' : '0.2'}), transparent);
             animation: wave-flow-1 8s infinite linear;
             transform-origin: center;
           }
 
           .wave-2 {
-            background: linear-gradient(-45deg, transparent, rgba(139, 92, 246, 0.12), rgba(236, 72, 153, 0.08), transparent);
+            background: linear-gradient(-45deg, transparent, rgba(139, 92, 246, ${isDark ? '0.12' : '0.22'}), rgba(236, 72, 153, ${isDark ? '0.08' : '0.18'}), transparent);
             animation: wave-flow-2 12s infinite linear;
             animation-delay: -2s;
           }
 
           .wave-3 {
-            background: linear-gradient(30deg, transparent, rgba(236, 72, 153, 0.1), rgba(244, 114, 182, 0.06), transparent);
+            background: linear-gradient(30deg, transparent, rgba(236, 72, 153, ${isDark ? '0.1' : '0.2'}), rgba(244, 114, 182, ${isDark ? '0.06' : '0.16'}), transparent);
             animation: wave-flow-3 10s infinite linear;
             animation-delay: -4s;
           }
 
           .wave-4 {
-            background: linear-gradient(-30deg, transparent, rgba(20, 184, 166, 0.08), rgba(139, 92, 246, 0.06), transparent);
+            background: linear-gradient(-30deg, transparent, rgba(20, 184, 166, ${isDark ? '0.08' : '0.18'}), rgba(139, 92, 246, ${isDark ? '0.06' : '0.16'}), transparent);
             animation: wave-flow-4 14s infinite linear;
             animation-delay: -6s;
           }
 
           .wave-5 {
-            background: linear-gradient(60deg, transparent, rgba(168, 85, 247, 0.06), rgba(20, 184, 166, 0.04), transparent);
+            background: linear-gradient(60deg, transparent, rgba(168, 85, 247, ${isDark ? '0.06' : '0.16'}), rgba(20, 184, 166, ${isDark ? '0.04' : '0.14'}), transparent);
             animation: wave-flow-5 16s infinite linear;
             animation-delay: -8s;
           }
@@ -70,10 +77,10 @@ const WavyAnimation = () => {
               opacity: 0;
             }
             10% {
-              opacity: 1;
+              opacity: ${waveOpacity};
             }
             90% {
-              opacity: 1;
+              opacity: ${waveOpacity};
             }
             100% {
               transform: translateX(100%) translateY(10%) skewX(5deg);
@@ -87,10 +94,10 @@ const WavyAnimation = () => {
               opacity: 0;
             }
             15% {
-              opacity: 1;
+              opacity: ${waveOpacity};
             }
             85% {
-              opacity: 1;
+              opacity: ${waveOpacity};
             }
             100% {
               transform: translateX(100%) translateY(-10%) skewX(-3deg);
@@ -104,10 +111,10 @@ const WavyAnimation = () => {
               opacity: 0;
             }
             12% {
-              opacity: 1;
+              opacity: ${waveOpacity};
             }
             88% {
-              opacity: 1;
+              opacity: ${waveOpacity};
             }
             100% {
               transform: translateX(100%) translateY(-5%) skewX(8deg);
@@ -121,10 +128,10 @@ const WavyAnimation = () => {
               opacity: 0;
             }
             8% {
-              opacity: 1;
+              opacity: ${waveOpacity};
             }
             92% {
-              opacity: 1;
+              opacity: ${waveOpacity};
             }
             100% {
               transform: translateX(100%) translateY(5%) skewX(-6deg);
@@ -138,10 +145,10 @@ const WavyAnimation = () => {
               opacity: 0;
             }
             6% {
-              opacity: 1;
+              opacity: ${waveOpacity};
             }
             94% {
-              opacity: 1;
+              opacity: ${waveOpacity};
             }
             100% {
               transform: translateX(100%) translateY(-8%) skewX(4deg);

@@ -30,7 +30,6 @@ const Index = () => {
         setCurrentText(word.substring(0, currentText.length - 1));
         
         if (currentText.length === 1) {
-          // About to become empty, pause briefly to show empty state
           setIsPaused(true);
           setTimeout(() => {
             setCurrentText("");
@@ -81,8 +80,8 @@ const Index = () => {
         </div>
       </nav>
 
-      {/* Main Content - Positioned lower with more padding */}
-      <div className="relative z-10 flex items-center min-h-[calc(100vh-140px)] px-6 pt-16 md:pt-24">
+      {/* Main Content - Positioned much lower */}
+      <div className="relative z-10 flex items-center min-h-[calc(100vh-160px)] px-6 pt-24 md:pt-32">
         <div className="max-w-7xl mx-auto w-full">
           <div className="max-w-4xl">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-8 leading-tight">
