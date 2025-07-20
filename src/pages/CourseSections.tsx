@@ -11,7 +11,8 @@ import {
   Background,
   useNodesState,
   useEdgesState,
-  NodeTypes
+  NodeTypes,
+  MarkerType
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { useSections } from '@/hooks/useSections';
@@ -22,10 +23,13 @@ import CreateSectionDialog from '@/components/CreateSectionDialog';
 // Custom section node component
 const SectionNode = ({ data }: { data: any }) => {
   return (
-    <div className="bg-white border-2 border-gray-300 rounded-lg p-4 min-w-[200px] shadow-md hover:shadow-lg transition-shadow cursor-pointer">
-      <h3 className="font-semibold text-sm font-lexend mb-2">{data.title}</h3>
-      <p className="text-xs text-gray-600 font-lexend line-clamp-2">{data.description}</p>
-      <p className="text-xs text-gray-500 font-lexend mt-2">by {data.createdBy}</p>
+    <div className="bg-white border-2 border-primary/20 rounded-lg p-4 min-w-[220px] max-w-[220px] shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer hover:border-primary/40">
+      <div className="flex items-center gap-2 mb-2">
+        <div className="w-2 h-2 bg-primary rounded-full"></div>
+        <h3 className="font-semibold text-sm font-lexend">{data.title}</h3>
+      </div>
+      <p className="text-xs text-gray-600 font-lexend line-clamp-2 mb-2">{data.description}</p>
+      <p className="text-xs text-gray-500 font-lexend">by {data.createdBy}</p>
     </div>
   );
 };
@@ -65,7 +69,7 @@ const CourseSections: React.FC = () => {
     const nodes: Node[] = [];
     const edges: Edge[] = [];
 
-    // Add course title node at the top
+    // Add course title node at the top center
     if (course) {
       nodes.push({
         id: 'course-title',
@@ -76,16 +80,21 @@ const CourseSections: React.FC = () => {
       });
     }
 
-    // Add section nodes in a vertical flow layout
+    // Create a zigzag pattern for better roadmap visualization
     sections.forEach((section, index) => {
       const nodeId = section.SectionId;
+      
+      // Zigzag pattern: alternate left and right
+      const isEven = index % 2 === 0;
+      const xOffset = isEven ? -200 : 200;
+      const yPosition = (index + 1) * 200 + 150; // Start after course title
       
       nodes.push({
         id: nodeId,
         type: 'section',
         position: { 
-          x: (index % 3) * 300 - 300, // 3 columns layout, centered
-          y: Math.floor(index / 3) * 150 + 150 // Row spacing
+          x: xOffset,
+          y: yPosition
         },
         data: {
           title: section.SectionTitle,
@@ -96,22 +105,35 @@ const CourseSections: React.FC = () => {
         draggable: false,
       });
 
-      // Connect course title to first section, and sections to each other
+      // Create sequential connections
       if (index === 0 && course) {
+        // Connect course title to first section
         edges.push({
           id: `course-to-${nodeId}`,
           source: 'course-title',
           target: nodeId,
           type: 'smoothstep',
           animated: true,
+          style: { stroke: '#3b82f6', strokeWidth: 3 },
+          markerEnd: {
+            type: MarkerType.ArrowClosed,
+            color: '#3b82f6',
+          },
         });
       } else if (index > 0) {
+        // Connect each section to the next one in sequence
         const prevSectionId = sections[index - 1].SectionId;
         edges.push({
           id: `${prevSectionId}-to-${nodeId}`,
           source: prevSectionId,
           target: nodeId,
           type: 'smoothstep',
+          animated: false,
+          style: { stroke: '#3b82f6', strokeWidth: 3 },
+          markerEnd: {
+            type: MarkerType.ArrowClosed,
+            color: '#3b82f6',
+          },
         });
       }
     });
@@ -189,7 +211,7 @@ const CourseSections: React.FC = () => {
           )}
         </div>
       ) : (
-        <div className="h-[600px] border rounded-lg bg-gray-50/50">
+        <div className="h-[700px] border rounded-lg bg-gradient-to-b from-blue-50/30 to-white">
           <ReactFlow
             nodes={nodes}
             edges={edges}
@@ -198,14 +220,19 @@ const CourseSections: React.FC = () => {
             onNodeClick={handleNodeClick}
             nodeTypes={nodeTypes}
             fitView
-            fitViewOptions={{ padding: 0.2 }}
+            fitViewOptions={{ padding: 0.15, includeHiddenNodes: false }}
             style={{ background: 'transparent' }}
             nodesDraggable={false}
             nodesConnectable={false}
             elementsSelectable={false}
+            defaultEdgeOptions={{
+              type: 'smoothstep',
+              style: { stroke: '#3b82f6', strokeWidth: 3 },
+              markerEnd: { type: MarkerType.ArrowClosed, color: '#3b82f6' },
+            }}
           >
-            <Controls />
-            <Background color="#e5e7eb" gap={20} />
+            <Controls showInteractive={false} />
+            <Background color="#e2e8f0" gap={25} size={1} />
           </ReactFlow>
         </div>
       )}
