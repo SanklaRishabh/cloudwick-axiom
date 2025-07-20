@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -15,6 +16,7 @@ import UserDetail from "./pages/UserDetail";
 import Documents from "./pages/Documents";
 import Courses from "./pages/Courses";
 import CourseDetail from "./pages/CourseDetail";
+import CourseSections from "./pages/CourseSections";
 import SectionDetail from "./pages/SectionDetail";
 import AIChat from "./pages/AIChat";
 import Exams from "./pages/Exams";
@@ -38,6 +40,7 @@ const App = () => (
               <Route path="spaces" element={<Spaces />} />
             <Route path="spaces/:spaceId" element={<SpaceDetail />} />
             <Route path="spaces/:spaceId/courses/:courseId" element={<CourseDetail />} />
+            <Route path="spaces/:spaceId/courses/:courseId/sections" element={<CourseSections />} />
             <Route path="spaces/:spaceId/courses/:courseId/sections/:sectionId" element={<SectionDetail />} />
             <Route path="ai-chat" element={<AIChat />} />
               <Route path="people" element={<People />} />

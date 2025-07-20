@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -148,7 +149,13 @@ const CourseDetail: React.FC = () => {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold text-gray-900 font-lexend">Course Content</h3>
-            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="h-8 w-8 p-0"
+              onClick={() => navigate(`/dashboard/spaces/${spaceId}/courses/${courseId}/sections`)}
+              title="View all sections"
+            >
               <Frame className="h-4 w-4" />
             </Button>
           </div>
