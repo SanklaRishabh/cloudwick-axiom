@@ -19,7 +19,7 @@ const CourseSections: React.FC = () => {
   const { course } = useCourseDetail(spaceId || '', courseId || '');
 
   // Check if user can add sections (Space Admin or System Admin)
-  const canAddSections = user?.role === 'SystemAdmin' || user?.userId === course?.CreatedBy;
+  const canAddSections = user?.role === 'SystemAdmin' || user?.username === course?.CreatedBy;
 
   const handleSectionCreated = () => {
     fetchSections();
