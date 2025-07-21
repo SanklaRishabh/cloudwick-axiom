@@ -1,4 +1,6 @@
 
+import { authService } from './cognito';
+
 export interface WebSocketMessage {
   Query: string;
   SpaceId: string;
@@ -12,21 +14,30 @@ export interface WebSocketResponse {
 
 export class WebSocketService {
   private ws: WebSocket | null = null;
-  private url: string;
+  private baseUrl: string;
   private messageHandlers: ((message: string) => void)[] = [];
   private connectionHandlers: (() => void)[] = [];
   private errorHandlers: ((error: Event) => void)[] = [];
   private closeHandlers: (() => void)[] = [];
 
-  constructor(url: string = 'wss://ct3ranhp35.execute-api.us-east-1.amazonaws.com/production') {
-    this.url = url;
+  constructor(baseUrl: string = 'wss://ct3ranhp35.execute-api.us-east-1.amazonaws.com/production') {
+    this.baseUrl = baseUrl;
   }
 
-  connect(): Promise<void> {
-    return new Promise((resolve, reject) => {
+  async connect(): Promise<void> {
+    return new Promise(async (resolve, reject) => {
       try {
-        console.log('🔌 Connecting to WebSocket:', this.url);
-        this.ws = new WebSocket(this.url);
+        // Get auth token and construct URL with query parameter
+        const tokens = await authService.getTokens();
+        if (!tokens?.idToken) {
+          reject(new Error('No authentication token available'));
+          return;
+        }
+
+        const url = `${this.baseUrl}?Authorization=${encodeURIComponent(tokens.idToken)}`;
+        console.log('🔌 Connecting to WebSocket with auth token:', url.replace(/Authorization=[^&]+/, 'Authorization=***'));
+        
+        this.ws = new WebSocket(url);
 
         this.ws.onopen = () => {
           console.log('✅ WebSocket connected successfully');
