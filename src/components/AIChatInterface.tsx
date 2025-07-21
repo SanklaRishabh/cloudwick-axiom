@@ -147,10 +147,6 @@ const AIChatInterface: React.FC<AIChatInterfaceProps> = ({
       return newMessages;
     });
 
-    // Trigger course creation completion after a short delay
-    setTimeout(() => {
-      onCourseCreated();
-    }, 1000);
   };
 
   const addMessage = (content: string, sender: 'user' | 'ai', isLoading: boolean = false) => {
@@ -214,14 +210,24 @@ const AIChatInterface: React.FC<AIChatInterfaceProps> = ({
             <div className="w-2 h-2 bg-red-500 rounded-full" title="Disconnected" />
           )}
         </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={clearConversation}
-          disabled={messages.length === 0}
-        >
-          Clear
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant="default"
+            size="sm"
+            onClick={onCourseCreated}
+            disabled={messages.length === 0}
+          >
+            Complete Course
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={clearConversation}
+            disabled={messages.length === 0}
+          >
+            Clear
+          </Button>
+        </div>
       </div>
 
       <ScrollArea className="flex-1 p-4">
