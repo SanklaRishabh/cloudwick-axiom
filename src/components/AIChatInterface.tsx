@@ -4,13 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Send, Bot, User, Loader2 } from 'lucide-react';
-import { WebSocketService, WebSocketResponse } from '@/lib/websocket';
+import { WebSocketService } from '@/lib/websocket';
 
 interface ChatMessage {
   id: string;
   content: string;
   sender: 'user' | 'ai';
   timestamp: Date;
+  isLoading?: boolean;
 }
 
 interface AIChatInterfaceProps {
@@ -62,7 +63,7 @@ const AIChatInterface: React.FC<AIChatInterfaceProps> = ({
         addMessage('Welcome! I\'m here to help you create a course using AI. Please describe what kind of course you\'d like to create.', 'ai');
       });
 
-      wsService.current.onMessage((message: WebSocketResponse) => {
+      wsService.current.onMessage((message: string) => {
         handleWebSocketMessage(message);
       });
 
@@ -85,32 +86,75 @@ const AIChatInterface: React.FC<AIChatInterfaceProps> = ({
     }
   };
 
-  const handleWebSocketMessage = (message: WebSocketResponse) => {
-    setIsLoading(false);
-
-    if (message.status === 'in_progress') {
-      // Just acknowledge that the request is being processed
+  const handleWebSocketMessage = (message: string) => {
+    console.log('Handling WebSocket message:', message);
+    
+    // Check if this is the in_progress status response
+    if (message === "{'status': 'in_progress'}") {
+      setIsLoading(false);
+      // Replace the loading message with "Creating course..." message
+      setMessages(prev => {
+        const newMessages = [...prev];
+        const lastMessage = newMessages[newMessages.length - 1];
+        if (lastMessage && lastMessage.isLoading) {
+          newMessages[newMessages.length - 1] = {
+            ...lastMessage,
+            content: 'Creating course...',
+            isLoading: false
+          };
+        } else {
+          // If no loading message exists, add the creating course message
+          newMessages.push({
+            id: Date.now().toString(),
+            content: 'Creating course...',
+            sender: 'ai',
+            timestamp: new Date(),
+            isLoading: false
+          });
+        }
+        return newMessages;
+      });
       return;
     }
 
-    if (message.message) {
-      addMessage(message.message, 'ai');
-    }
+    // Handle final AI response - replace the "Creating course..." message
+    setMessages(prev => {
+      const newMessages = [...prev];
+      const lastMessage = newMessages[newMessages.length - 1];
+      
+      if (lastMessage && lastMessage.content === 'Creating course...') {
+        // Replace the "Creating course..." message with the final response
+        newMessages[newMessages.length - 1] = {
+          ...lastMessage,
+          content: message,
+          timestamp: new Date()
+        };
+      } else {
+        // Add as new message if no "Creating course..." message exists
+        newMessages.push({
+          id: Date.now().toString(),
+          content: message,
+          sender: 'ai',
+          timestamp: new Date()
+        });
+      }
+      
+      return newMessages;
+    });
 
-    // Check if this is a course creation completion
-    if (message.type === 'course_created' || message.status === 'completed') {
-      setTimeout(() => {
-        onCourseCreated();
-      }, 1000);
-    }
+    // Trigger course creation completion after a short delay
+    setTimeout(() => {
+      onCourseCreated();
+    }, 1000);
   };
 
-  const addMessage = (content: string, sender: 'user' | 'ai') => {
+  const addMessage = (content: string, sender: 'user' | 'ai', isLoading: boolean = false) => {
     const newMessage: ChatMessage = {
       id: Date.now().toString(),
       content,
       sender,
-      timestamp: new Date()
+      timestamp: new Date(),
+      isLoading
     };
     setMessages(prev => [...prev, newMessage]);
   };
@@ -123,6 +167,9 @@ const AIChatInterface: React.FC<AIChatInterfaceProps> = ({
     const userMessage = inputValue.trim();
     setInputValue('');
     addMessage(userMessage, 'user');
+    
+    // Add loading message
+    addMessage('AI is thinking...', 'ai', true);
     setIsLoading(true);
 
     try {
@@ -130,6 +177,8 @@ const AIChatInterface: React.FC<AIChatInterfaceProps> = ({
     } catch (error) {
       console.error('Failed to send message:', error);
       setIsLoading(false);
+      // Remove the loading message on error
+      setMessages(prev => prev.slice(0, -1));
       onError('Failed to send message. Please try again.');
     }
   };
@@ -188,7 +237,10 @@ const AIChatInterface: React.FC<AIChatInterfaceProps> = ({
                   {message.sender === 'ai' && <Bot className="h-4 w-4 mt-0.5 flex-shrink-0" />}
                   {message.sender === 'user' && <User className="h-4 w-4 mt-0.5 flex-shrink-0" />}
                   <div className="flex-1">
-                    <p className="text-sm">{message.content}</p>
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                      {message.isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
+                    </div>
                     <p className={`text-xs mt-1 ${
                       message.sender === 'user' ? 'text-blue-100' : 'text-gray-500'
                     }`}>
@@ -199,17 +251,6 @@ const AIChatInterface: React.FC<AIChatInterfaceProps> = ({
               </div>
             </div>
           ))}
-          {isLoading && (
-            <div className="flex justify-start">
-              <div className="bg-gray-100 text-gray-900 rounded-lg p-3">
-                <div className="flex items-center gap-2">
-                  <Bot className="h-4 w-4" />
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  <span className="text-sm">AI is thinking...</span>
-                </div>
-              </div>
-            </div>
-          )}
           <div ref={messagesEndRef} />
         </div>
       </ScrollArea>

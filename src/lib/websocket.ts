@@ -14,7 +14,7 @@ export interface WebSocketResponse {
 export class WebSocketService {
   private ws: WebSocket | null = null;
   private url: string;
-  private messageHandlers: ((message: WebSocketResponse) => void)[] = [];
+  private messageHandlers: ((message: string) => void)[] = [];
   private connectionHandlers: (() => void)[] = [];
   private errorHandlers: ((error: Event) => void)[] = [];
   private closeHandlers: (() => void)[] = [];
@@ -36,11 +36,12 @@ export class WebSocketService {
 
         this.ws.onmessage = (event) => {
           try {
-            const message: WebSocketResponse = JSON.parse(event.data);
-            console.log('WebSocket message received:', message);
-            this.messageHandlers.forEach(handler => handler(message));
+            // Handle all responses as strings since the server sends string responses
+            const messageData = event.data;
+            console.log('WebSocket message received:', messageData);
+            this.messageHandlers.forEach(handler => handler(messageData));
           } catch (error) {
-            console.error('Error parsing WebSocket message:', error);
+            console.error('Error handling WebSocket message:', error);
           }
         };
 
@@ -76,7 +77,7 @@ export class WebSocketService {
     this.ws.send(JSON.stringify(message));
   }
 
-  onMessage(handler: (message: WebSocketResponse) => void): void {
+  onMessage(handler: (message: string) => void): void {
     this.messageHandlers.push(handler);
   }
 
