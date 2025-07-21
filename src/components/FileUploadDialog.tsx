@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -12,7 +12,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Upload, Globe } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Plus, Upload, Globe, FileText, X } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 import { CreateFileData, CreateWebsiteData, FileUploadResponse, WebsiteResponse } from '@/hooks/useFiles';
 
 interface FileUploadDialogProps {
@@ -23,6 +25,11 @@ interface FileUploadDialogProps {
 const FileUploadDialog = ({ onFileUpload, onWebsiteSubmit }: FileUploadDialogProps) => {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isDragOver, setIsDragOver] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
   
   // File upload form state
   const [fileForm, setFileForm] = useState<CreateFileData>({
@@ -39,23 +46,124 @@ const FileUploadDialog = ({ onFileUpload, onWebsiteSubmit }: FileUploadDialogPro
 
   const [tagsInput, setTagsInput] = useState('');
 
+  const fileTypes = [
+    { value: 'document', label: 'Document' },
+    { value: 'audio', label: 'Audio' },
+    { value: 'video', label: 'Video' },
+    { value: 'image', label: 'Image' },
+  ];
+
+  const handleFileSelect = (file: File) => {
+    setSelectedFile(file);
+    setFileForm(prev => ({ 
+      ...prev, 
+      FileName: file.name.replace(/\.[^/.]+$/, "") // Remove extension
+    }));
+  };
+
+  const handleFileRemove = () => {
+    setSelectedFile(null);
+    setFileForm(prev => ({ ...prev, FileName: '' }));
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      handleFileSelect(files[0]);
+    }
+  };
+
+  const uploadToS3 = async (presignedUrl: string, file: File) => {
+    return new Promise<void>((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+
+      xhr.upload.onprogress = (event) => {
+        if (event.lengthComputable) {
+          const progress = (event.loaded / event.total) * 100;
+          setUploadProgress(progress);
+        }
+      };
+
+      xhr.onload = () => {
+        if (xhr.status === 200) {
+          resolve();
+        } else {
+          reject(new Error(`Upload failed with status ${xhr.status}`));
+        }
+      };
+
+      xhr.onerror = () => reject(new Error('Upload failed'));
+
+      xhr.open('PUT', presignedUrl);
+      xhr.setRequestHeader('Content-Type', file.type);
+      xhr.send(file);
+    });
+  };
+
   const handleFileSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!fileForm.FileName.trim()) return;
+    if (!fileForm.FileName.trim() || !fileForm.FileType || !selectedFile) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required fields and select a file.",
+        variant: "destructive",
+      });
+      return;
+    }
 
     setIsLoading(true);
+    setUploadProgress(0);
+    
     try {
       const tags = tagsInput.split(',').map(tag => tag.trim()).filter(tag => tag);
-      await onFileUpload({ ...fileForm, Tags: tags });
+      
+      // Get presigned URL from backend
+      const response = await onFileUpload({ ...fileForm, Tags: tags });
+      
+      // Upload file to S3 using presigned URL
+      await uploadToS3(response.PresignedUrl, selectedFile);
+      
+      toast({
+        title: "Success",
+        description: "File uploaded successfully!",
+      });
       
       // Reset form
       setFileForm({ FileName: '', FileDescription: '', FileType: '', Tags: [] });
       setTagsInput('');
+      setSelectedFile(null);
+      setUploadProgress(0);
       setOpen(false);
+      
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     } catch (error) {
       console.error('File upload error:', error);
+      toast({
+        title: "Upload Failed",
+        description: "There was an error uploading your file. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
+      setUploadProgress(0);
     }
   };
 
@@ -104,6 +212,84 @@ const FileUploadDialog = ({ onFileUpload, onWebsiteSubmit }: FileUploadDialogPro
           
           <TabsContent value="file">
             <form onSubmit={handleFileSubmit} className="space-y-4">
+              {/* File Drop Zone */}
+              <div className="space-y-2">
+                <Label>Select File</Label>
+                <div
+                  className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+                    isDragOver
+                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/20'
+                      : 'border-gray-300 dark:border-gray-600'
+                  }`}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                >
+                  {selectedFile ? (
+                    <div className="flex items-center justify-between p-2 bg-gray-100 dark:bg-gray-800 rounded">
+                      <div className="flex items-center gap-2">
+                        <FileText className="h-4 w-4" />
+                        <span className="text-sm font-medium">{selectedFile.name}</span>
+                        <span className="text-xs text-gray-500">
+                          ({(selectedFile.size / 1024 / 1024).toFixed(2)} MB)
+                        </span>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleFileRemove}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <Upload className="h-8 w-8 mx-auto text-gray-400" />
+                      <div>
+                        <p className="text-sm font-medium">Drag and drop your file here</p>
+                        <p className="text-xs text-gray-500">or</p>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => fileInputRef.current?.click()}
+                          className="mt-2"
+                        >
+                          Choose File
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                  
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) handleFileSelect(file);
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Upload Progress */}
+              {isLoading && uploadProgress > 0 && (
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span>Uploading...</span>
+                    <span>{Math.round(uploadProgress)}%</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div
+                      className="bg-blue-600 h-2 rounded-full transition-all"
+                      style={{ width: `${uploadProgress}%` }}
+                    />
+                  </div>
+                </div>
+              )}
+              
               <div className="space-y-2">
                 <Label htmlFor="fileName">File Name</Label>
                 <Input
@@ -117,12 +303,21 @@ const FileUploadDialog = ({ onFileUpload, onWebsiteSubmit }: FileUploadDialogPro
               
               <div className="space-y-2">
                 <Label htmlFor="fileType">File Type</Label>
-                <Input
-                  id="fileType"
+                <Select
                   value={fileForm.FileType}
-                  onChange={(e) => setFileForm(prev => ({ ...prev, FileType: e.target.value }))}
-                  placeholder="e.g., pdf, docx, xlsx"
-                />
+                  onValueChange={(value) => setFileForm(prev => ({ ...prev, FileType: value }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select file type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {fileTypes.map((type) => (
+                      <SelectItem key={type.value} value={type.value}>
+                        {type.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               
               <div className="space-y-2">
@@ -150,7 +345,11 @@ const FileUploadDialog = ({ onFileUpload, onWebsiteSubmit }: FileUploadDialogPro
                 <Button type="button" variant="outline" onClick={() => setOpen(false)}>
                   Cancel
                 </Button>
-                <Button type="submit" disabled={isLoading} className="bg-blue-600 hover:bg-blue-700">
+                <Button 
+                  type="submit" 
+                  disabled={isLoading || !selectedFile} 
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
                   {isLoading ? 'Uploading...' : 'Upload File'}
                 </Button>
               </div>
