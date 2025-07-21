@@ -36,6 +36,7 @@ const FileUploadDialog = ({ onFileUpload, onWebsiteSubmit }: FileUploadDialogPro
     FileDescription: '',
     FileType: '',
     Tags: [],
+    ContentType: '',
   });
   
   // Website form state
@@ -54,15 +55,24 @@ const FileUploadDialog = ({ onFileUpload, onWebsiteSubmit }: FileUploadDialogPro
 
   const handleFileSelect = (file: File) => {
     setSelectedFile(file);
+    const contentType = file.type || 'application/octet-stream';
+    console.log('📁 Selected file:', {
+      name: file.name,
+      type: file.type,
+      size: file.size,
+      contentType
+    });
+    
     setFileForm(prev => ({ 
       ...prev, 
-      FileName: file.name.replace(/\.[^/.]+$/, "") // Remove extension
+      FileName: file.name.replace(/\.[^/.]+$/, ""), // Remove extension
+      ContentType: contentType
     }));
   };
 
   const handleFileRemove = () => {
     setSelectedFile(null);
-    setFileForm(prev => ({ ...prev, FileName: '' }));
+    setFileForm(prev => ({ ...prev, FileName: '', ContentType: '' }));
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -88,21 +98,22 @@ const FileUploadDialog = ({ onFileUpload, onWebsiteSubmit }: FileUploadDialogPro
     }
   };
 
-  const uploadToS3 = async (presignedUrl: string, file: File) => {
-    console.log('🚀 Starting S3 upload with corrected headers');
+  const uploadToS3 = async (presignedUrl: string, file: File, contentType: string) => {
+    console.log('🚀 Starting S3 upload with exact ContentType matching');
     console.log('📁 File details:', {
       name: file.name,
       type: file.type,
-      size: file.size
+      size: file.size,
+      contentTypeFromPOST: contentType
     });
     console.log('🔗 Presigned URL:', presignedUrl);
 
     try {
-      // Use fetch() with ONLY the Content-Type header that matches the presigned URL signature
+      // Use fetch() with ONLY the Content-Type header that matches the POST request
       const response = await fetch(presignedUrl, {
         method: 'PUT',
         headers: {
-          'Content-Type': file.type, // This MUST match what the backend used to generate the signature
+          'Content-Type': contentType, // This MUST match what was sent in the POST request
         },
         body: file,
       });
@@ -151,9 +162,9 @@ const FileUploadDialog = ({ onFileUpload, onWebsiteSubmit }: FileUploadDialogPro
           reject(new Error('Upload failed due to network error'));
         };
 
-        console.log('🔄 Trying XMLHttpRequest with Content-Type header...');
+        console.log('🔄 Trying XMLHttpRequest with exact ContentType header...');
         xhr.open('PUT', presignedUrl);
-        xhr.setRequestHeader('Content-Type', file.type); // Only set Content-Type header
+        xhr.setRequestHeader('Content-Type', contentType); // Use exact ContentType from POST
         xhr.send(file);
       });
     }
@@ -176,11 +187,18 @@ const FileUploadDialog = ({ onFileUpload, onWebsiteSubmit }: FileUploadDialogPro
     try {
       const tags = tagsInput.split(',').map(tag => tag.trim()).filter(tag => tag);
       
-      // Get presigned URL from backend
+      console.log('📤 Sending POST request with ContentType:', fileForm.ContentType);
+      
+      // Get presigned URL from backend - include ContentType in the request
       const response = await onFileUpload({ ...fileForm, Tags: tags });
       
-      // Upload file to S3 using presigned URL
-      await uploadToS3(response.PresignedUrl, selectedFile);
+      console.log('📥 Received presigned URL response:', {
+        hasPresignedUrl: !!response.PresignedUrl,
+        message: response.Message
+      });
+      
+      // Upload file to S3 using presigned URL with exact ContentType
+      await uploadToS3(response.PresignedUrl, selectedFile, fileForm.ContentType);
       
       toast({
         title: "Success",
@@ -188,7 +206,7 @@ const FileUploadDialog = ({ onFileUpload, onWebsiteSubmit }: FileUploadDialogPro
       });
       
       // Reset form
-      setFileForm({ FileName: '', FileDescription: '', FileType: '', Tags: [] });
+      setFileForm({ FileName: '', FileDescription: '', FileType: '', Tags: [], ContentType: '' });
       setTagsInput('');
       setSelectedFile(null);
       setUploadProgress(0);

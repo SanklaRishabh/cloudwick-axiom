@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { apiClient } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
@@ -18,6 +17,7 @@ export interface CreateFileData {
   FileDescription: string;
   FileType: string;
   Tags: string[];
+  ContentType: string;
 }
 
 export interface CreateWebsiteData {
