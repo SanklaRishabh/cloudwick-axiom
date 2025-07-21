@@ -18,6 +18,7 @@ import Courses from "./pages/Courses";
 import CourseDetail from "./pages/CourseDetail";
 import CourseSections from "./pages/CourseSections";
 import SectionDetail from "./pages/SectionDetail";
+import LessonDetail from "./pages/LessonDetail";
 import AIChat from "./pages/AIChat";
 import Exams from "./pages/Exams";
 import Settings from "./pages/Settings";
@@ -42,6 +43,7 @@ const App = () => (
             <Route path="spaces/:spaceId/courses/:courseId" element={<CourseDetail />} />
             <Route path="spaces/:spaceId/courses/:courseId/sections" element={<CourseSections />} />
             <Route path="spaces/:spaceId/courses/:courseId/sections/:sectionId" element={<SectionDetail />} />
+            <Route path="spaces/:spaceId/courses/:courseId/sections/:sectionId/lessons/:lessonId" element={<LessonDetail />} />
             <Route path="ai-chat" element={<AIChat />} />
               <Route path="people" element={<People />} />
               <Route path="people/:userId" element={<UserDetail />} />

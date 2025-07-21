@@ -4,11 +4,12 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, BookOpen, Clock, Users, Play, Settings, Edit, Trash2 } from 'lucide-react';
+import { ArrowLeft, BookOpen, Clock, Users, Play, Settings, Edit, Trash2, Plus } from 'lucide-react';
 import { useSectionDetail, useDeleteSection } from '@/hooks/useSections';
 import { useAuth } from '@/hooks/useAuth';
 import { useCourseDetail } from '@/hooks/useCourses';
 import EditSectionDialog from '@/components/EditSectionDialog';
+import CreateLessonDialog from '@/components/CreateLessonDialog';
 
 const getLessonIcon = (type: string) => {
   switch (type) {
@@ -28,6 +29,7 @@ const SectionDetail: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [createLessonDialogOpen, setCreateLessonDialogOpen] = useState(false);
 
   const { section, loading, fetchSectionDetail } = useSectionDetail(spaceId || '', courseId || '', sectionId || '');
   const { course } = useCourseDetail(spaceId || '', courseId || '');
@@ -37,6 +39,10 @@ const SectionDetail: React.FC = () => {
   const canEditSection = user?.role === 'SystemAdmin' || user?.username === course?.CreatedBy;
 
   const handleSectionUpdated = () => {
+    fetchSectionDetail();
+  };
+
+  const handleLessonCreated = () => {
     fetchSectionDetail();
   };
 
@@ -144,13 +150,26 @@ const SectionDetail: React.FC = () => {
 
         {/* Section Contents/Lessons */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-900 font-lexend">Contents</h3>
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-gray-900 font-lexend">Contents</h3>
+            {canEditSection && (
+              <Button
+                onClick={() => setCreateLessonDialogOpen(true)}
+                size="sm"
+                className="font-lexend"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add Lesson
+              </Button>
+            )}
+          </div>
           {section.Contents && section.Contents.length > 0 ? (
             <div className="space-y-3">
               {section.Contents.map((content, index) => (
                 <Card 
                   key={content.LessonId} 
                   className="hover:shadow-md transition-shadow cursor-pointer"
+                  onClick={() => navigate(`/dashboard/spaces/${spaceId}/courses/${courseId}/sections/${sectionId}/lessons/${content.LessonId}`)}
                 >
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
@@ -192,6 +211,15 @@ const SectionDetail: React.FC = () => {
         open={editDialogOpen}
         onOpenChange={setEditDialogOpen}
         onSectionUpdated={handleSectionUpdated}
+      />
+
+      <CreateLessonDialog
+        spaceId={spaceId || ''}
+        courseId={courseId || ''}
+        sectionId={sectionId || ''}
+        open={createLessonDialogOpen}
+        onOpenChange={setCreateLessonDialogOpen}
+        onLessonCreated={handleLessonCreated}
       />
     </div>
   );
