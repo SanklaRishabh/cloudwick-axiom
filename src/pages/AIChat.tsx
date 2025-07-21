@@ -2,11 +2,17 @@ import React, { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Paperclip, Sparkles, Send } from 'lucide-react';
+import { Sparkles, Send } from 'lucide-react';
+import { AttachMenu } from '@/components/AttachMenu';
+import AIChatInterface from '@/components/AIChatInterface';
+import { useToast } from '@/hooks/use-toast';
 
 const AIChat = () => {
   const { user } = useAuth();
   const [message, setMessage] = useState('');
+  const [attachment, setAttachment] = useState<{ type: 'space' | 'file'; spaceId: string; spaceName: string; fileName?: string } | null>(null);
+  const [showChat, setShowChat] = useState(false);
+  const { toast } = useToast();
 
   const getTimeOfDayGreeting = () => {
     const hour = new Date().getHours();
@@ -68,14 +74,10 @@ const AIChat = () => {
             
             <div className="flex items-center justify-between pt-4 border-t border-gray-100">
               <div className="flex gap-3">
-                <Button 
-                  variant="outline" 
-                  className="rounded-full px-4 py-2 text-sm font-medium border-gray-300 hover:bg-gray-50"
-                  style={{ fontFamily: 'Helvetica, Arial, sans-serif' }}
-                >
-                  <Paperclip className="h-4 w-4 mr-2" />
-                  Attach
-                </Button>
+                <AttachMenu 
+                  onAttach={setAttachment}
+                  currentAttachment={attachment}
+                />
                 <Button 
                   variant="outline" 
                   className="rounded-full px-4 py-2 text-sm font-medium border-gray-300 hover:bg-gray-50"
@@ -87,13 +89,48 @@ const AIChat = () => {
               
               <Button 
                 className="bg-[#2E2E2E] hover:bg-[#1E1E1E] rounded-lg w-10 h-10 p-0 flex items-center justify-center"
-                disabled={!message.trim()}
+                disabled={!message.trim() || !attachment}
+                onClick={() => {
+                  setShowChat(true);
+                  // Clear the initial message after starting chat
+                  setMessage('');
+                }}
               >
                 <Send className="h-4 w-4 text-white" />
               </Button>
             </div>
           </div>
         </div>
+
+        {/* Chat Interface */}
+        {showChat && attachment && (
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+            <div className="mb-4">
+              <h3 className="text-lg font-medium text-gray-900 mb-2">AI Chat</h3>
+              <div className="text-sm text-gray-600">
+                Attached: {attachment.type === 'space' ? attachment.spaceName : `${attachment.fileName} (${attachment.spaceName})`}
+              </div>
+            </div>
+            <AIChatInterface
+              spaceId={attachment.spaceId}
+              fileName={attachment.type === 'file' ? attachment.fileName : undefined}
+              onCourseCreated={() => {
+                toast({
+                  title: "Course Created",
+                  description: "Your course has been successfully created!",
+                });
+                setShowChat(false);
+              }}
+              onError={(error) => {
+                toast({
+                  title: "Error",
+                  description: error,
+                  variant: "destructive",
+                });
+              }}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

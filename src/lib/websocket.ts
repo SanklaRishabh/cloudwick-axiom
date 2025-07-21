@@ -1,14 +1,13 @@
 
 export interface WebSocketMessage {
-  UserPrompt: string;
+  Query: string;
   SpaceId: string;
+  FileName?: string;
 }
 
 export interface WebSocketResponse {
-  status?: string;
-  message?: string;
-  type?: string;
-  data?: any;
+  Query?: string;
+  Content?: string;
 }
 
 export class WebSocketService {
@@ -19,7 +18,7 @@ export class WebSocketService {
   private errorHandlers: ((error: Event) => void)[] = [];
   private closeHandlers: (() => void)[] = [];
 
-  constructor(url: string = 'wss://pgnyjmjo7a.execute-api.us-east-1.amazonaws.com/production/') {
+  constructor(url: string = 'wss://ct3ranhp35.execute-api.us-east-1.amazonaws.com/production/') {
     this.url = url;
   }
 
@@ -63,14 +62,15 @@ export class WebSocketService {
     });
   }
 
-  sendMessage(userPrompt: string, spaceId: string): void {
+  sendMessage(query: string, spaceId: string, fileName?: string): void {
     if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
       throw new Error('WebSocket is not connected');
     }
 
     const message: WebSocketMessage = {
-      UserPrompt: userPrompt,
-      SpaceId: spaceId
+      Query: query,
+      SpaceId: spaceId,
+      ...(fileName && { FileName: fileName })
     };
 
     console.log('Sending WebSocket message:', message);
