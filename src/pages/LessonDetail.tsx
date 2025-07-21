@@ -1,9 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, BookOpen } from 'lucide-react';
-import { useLessonDetail } from '@/hooks/useLessons';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { ArrowLeft, BookOpen, Edit, Trash2 } from 'lucide-react';
+import { useLessonDetail, useDeleteLesson } from '@/hooks/useLessons';
+import EditLessonDialog from '@/components/EditLessonDialog';
 
 const LessonDetail: React.FC = () => {
   const { spaceId, courseId, sectionId, lessonId } = useParams<{
@@ -13,13 +24,36 @@ const LessonDetail: React.FC = () => {
     lessonId: string;
   }>();
   const navigate = useNavigate();
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
-  const { lesson, loading } = useLessonDetail(
+  const { lesson, loading, fetchLessonDetail } = useLessonDetail(
     spaceId || '',
     courseId || '',
     sectionId || '',
     lessonId || ''
   );
+
+  const { deleteLesson } = useDeleteLesson(
+    spaceId || '',
+    courseId || '',
+    sectionId || '',
+    lessonId || ''
+  );
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    try {
+      await deleteLesson();
+      navigate(`/dashboard/spaces/${spaceId}/courses/${courseId}/sections/${sectionId}`);
+    } catch (error) {
+      // Error is handled by the hook
+    } finally {
+      setIsDeleting(false);
+      setDeleteDialogOpen(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -53,14 +87,37 @@ const LessonDetail: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <Button
-        variant="ghost"
-        onClick={() => navigate(`/dashboard/spaces/${spaceId}/courses/${courseId}/sections/${sectionId}`)}
-        className="mb-4 font-lexend"
-      >
-        <ArrowLeft className="h-4 w-4 mr-2" />
-        Back to Section
-      </Button>
+      <div className="flex items-center justify-between">
+        <Button
+          variant="ghost"
+          onClick={() => navigate(`/dashboard/spaces/${spaceId}/courses/${courseId}/sections/${sectionId}`)}
+          className="font-lexend"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to Section
+        </Button>
+
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setEditDialogOpen(true)}
+            className="font-lexend"
+          >
+            <Edit className="h-4 w-4 mr-2" />
+            Edit
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setDeleteDialogOpen(true)}
+            className="font-lexend text-destructive hover:text-destructive"
+          >
+            <Trash2 className="h-4 w-4 mr-2" />
+            Delete
+          </Button>
+        </div>
+      </div>
 
       <div className="space-y-6">
         {/* Lesson Header */}
@@ -95,6 +152,41 @@ const LessonDetail: React.FC = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Edit Dialog */}
+      {lesson && (
+        <EditLessonDialog
+          open={editDialogOpen}
+          onOpenChange={setEditDialogOpen}
+          lesson={lesson}
+          spaceId={spaceId || ''}
+          courseId={courseId || ''}
+          sectionId={sectionId || ''}
+          onLessonUpdated={fetchLessonDetail}
+        />
+      )}
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="font-lexend">Delete Lesson</AlertDialogTitle>
+            <AlertDialogDescription className="font-lexend">
+              Are you sure you want to delete this lesson? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="font-lexend">Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              disabled={isDeleting}
+              className="font-lexend bg-destructive hover:bg-destructive/90"
+            >
+              {isDeleting ? "Deleting..." : "Delete"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

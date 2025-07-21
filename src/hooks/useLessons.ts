@@ -41,6 +41,58 @@ export const useCreateLesson = (spaceId: string, courseId: string, sectionId: st
   return { createLesson };
 };
 
+export const useUpdateLesson = (spaceId: string, courseId: string, sectionId: string, lessonId: string) => {
+  const { toast } = useToast();
+
+  const updateLesson = async (lessonData: CreateLessonData) => {
+    try {
+      const response = await apiClient.put(`/spaces/${spaceId}/courses/${courseId}/sections/${sectionId}/lessons/${lessonId}`, lessonData);
+      const data = await response.json();
+      toast({
+        title: "Success",
+        description: data.Message || "Lesson updated successfully",
+      });
+      return data;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to update lesson';
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
+      throw err;
+    }
+  };
+
+  return { updateLesson };
+};
+
+export const useDeleteLesson = (spaceId: string, courseId: string, sectionId: string, lessonId: string) => {
+  const { toast } = useToast();
+
+  const deleteLesson = async () => {
+    try {
+      const response = await apiClient.delete(`/spaces/${spaceId}/courses/${courseId}/sections/${sectionId}/lessons/${lessonId}`);
+      const data = await response.json();
+      toast({
+        title: "Success",
+        description: data.Message || "Lesson deleted successfully",
+      });
+      return data;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to delete lesson';
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
+      throw err;
+    }
+  };
+
+  return { deleteLesson };
+};
+
 export const useLessonDetail = (spaceId: string, courseId: string, sectionId: string, lessonId: string) => {
   const [lesson, setLesson] = useState<LessonDetail | null>(null);
   const [loading, setLoading] = useState(true);
