@@ -89,29 +89,76 @@ const FileUploadDialog = ({ onFileUpload, onWebsiteSubmit }: FileUploadDialogPro
   };
 
   const uploadToS3 = async (presignedUrl: string, file: File) => {
-    return new Promise<void>((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-
-      xhr.upload.onprogress = (event) => {
-        if (event.lengthComputable) {
-          const progress = (event.loaded / event.total) * 100;
-          setUploadProgress(progress);
-        }
-      };
-
-      xhr.onload = () => {
-        if (xhr.status === 200) {
-          resolve();
-        } else {
-          reject(new Error(`Upload failed with status ${xhr.status}`));
-        }
-      };
-
-      xhr.onerror = () => reject(new Error('Upload failed'));
-
-      xhr.open('PUT', presignedUrl);
-      xhr.send(file);
+    console.log('🚀 Starting S3 upload with fetch()');
+    console.log('📁 File details:', {
+      name: file.name,
+      type: file.type,
+      size: file.size
     });
+    console.log('🔗 Presigned URL:', presignedUrl);
+
+    try {
+      // Use fetch() with headers matching Postman setup
+      const response = await fetch(presignedUrl, {
+        method: 'PUT',
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Accept': '*/*',
+        },
+        body: file, // Send file as binary blob
+      });
+
+      console.log('📥 S3 Response status:', response.status);
+      console.log('📥 S3 Response headers:', Object.fromEntries(response.headers.entries()));
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('❌ S3 Error Response:', errorText);
+        throw new Error(`S3 upload failed: ${response.status} ${response.statusText} - ${errorText}`);
+      }
+
+      console.log('✅ S3 upload successful');
+      setUploadProgress(100);
+      
+    } catch (error) {
+      console.error('❌ Fetch upload failed, trying XMLHttpRequest fallback:', error);
+      
+      // Fallback to XMLHttpRequest with progress tracking
+      return new Promise<void>((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+
+        xhr.upload.onprogress = (event) => {
+          if (event.lengthComputable) {
+            const progress = (event.loaded / event.total) * 100;
+            setUploadProgress(progress);
+          }
+        };
+
+        xhr.onload = () => {
+          console.log('📥 XMLHttpRequest Response status:', xhr.status);
+          console.log('📥 XMLHttpRequest Response:', xhr.responseText);
+          
+          if (xhr.status === 200) {
+            console.log('✅ XMLHttpRequest upload successful');
+            resolve();
+          } else {
+            console.error('❌ XMLHttpRequest upload failed:', xhr.responseText);
+            reject(new Error(`Upload failed with status ${xhr.status}: ${xhr.responseText}`));
+          }
+        };
+
+        xhr.onerror = () => {
+          console.error('❌ XMLHttpRequest network error');
+          reject(new Error('Upload failed due to network error'));
+        };
+
+        console.log('🔄 Trying XMLHttpRequest with headers...');
+        xhr.open('PUT', presignedUrl);
+        xhr.setRequestHeader('Cache-Control', 'no-cache');
+        xhr.setRequestHeader('Accept', '*/*');
+        xhr.send(file);
+      });
+    }
   };
 
   const handleFileSubmit = async (e: React.FormEvent) => {
