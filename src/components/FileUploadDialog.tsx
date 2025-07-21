@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import {
@@ -111,7 +110,6 @@ const FileUploadDialog = ({ onFileUpload, onWebsiteSubmit }: FileUploadDialogPro
       xhr.onerror = () => reject(new Error('Upload failed'));
 
       xhr.open('PUT', presignedUrl);
-      xhr.setRequestHeader('Content-Type', file.type);
       xhr.send(file);
     });
   };
