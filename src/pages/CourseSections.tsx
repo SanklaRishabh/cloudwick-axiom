@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Plus, BookOpen } from 'lucide-react';
+import { ArrowLeft, Plus, BookOpen, MoreVertical, Edit, Trash2 } from 'lucide-react';
 import { 
   ReactFlow, 
   Node, 
@@ -16,13 +16,46 @@ import {
   Position
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { useSections } from '@/hooks/useSections';
+import { useSections, useDeleteSection } from '@/hooks/useSections';
 import { useCourseDetail } from '@/hooks/useCourses';
 import { useAuth } from '@/hooks/useAuth';
 import CreateSectionDialog from '@/components/CreateSectionDialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 // Custom section node component
 const SectionNode = ({ data }: { data: any }) => {
+  const { spaceId, courseId } = useParams<{ spaceId: string; courseId: string }>();
+  const { user } = useAuth();
+  const { deleteSection } = useDeleteSection(spaceId || '', courseId || '');
+  const navigate = useNavigate();
+
+  const canEditSection = user?.role === 'SystemAdmin' || user?.username === data.courseCreatedBy;
+
+  const handleDeleteSection = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    
+    const confirmed = window.confirm('Are you sure you want to delete this section? This action cannot be undone.');
+    if (!confirmed) return;
+
+    try {
+      await deleteSection(data.sectionId);
+      // The parent component will refresh the sections
+      window.location.reload();
+    } catch (error) {
+      // Error is handled in the hook
+    }
+  };
+
+  const handleEditSection = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigate(`/dashboard/spaces/${spaceId}/courses/${courseId}/sections/${data.sectionId}`);
+  };
+
   return (
     <div className="bg-white border-2 border-primary/20 rounded-lg p-4 min-w-[220px] max-w-[220px] shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer hover:border-primary/40 relative">
       {/* Target handle at the top for incoming connections */}
@@ -39,10 +72,33 @@ const SectionNode = ({ data }: { data: any }) => {
         }}
       />
       
-      <div className="flex items-center gap-2 mb-2">
-        <div className="w-2 h-2 bg-primary rounded-full"></div>
-        <h3 className="font-semibold text-sm font-lexend">{data.title}</h3>
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-2">
+          <div className="w-2 h-2 bg-primary rounded-full"></div>
+          <h3 className="font-semibold text-sm font-lexend">{data.title}</h3>
+        </div>
+        
+        {canEditSection && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={(e) => e.stopPropagation()}>
+                <MoreVertical className="h-3 w-3" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={handleEditSection}>
+                <Edit className="h-4 w-4 mr-2" />
+                Edit
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleDeleteSection} className="text-red-600">
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
       </div>
+      
       <p className="text-xs text-gray-600 font-lexend line-clamp-2 mb-2">{data.description}</p>
       <p className="text-xs text-gray-500 font-lexend">by {data.createdBy}</p>
       
@@ -146,6 +202,7 @@ const CourseSections: React.FC = () => {
           description: section.Description,
           createdBy: section.CreatedBy,
           sectionId: section.SectionId,
+          courseCreatedBy: course?.CreatedBy,
         },
         draggable: false,
       });
