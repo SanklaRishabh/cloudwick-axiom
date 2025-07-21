@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -37,7 +38,7 @@ const SpaceCourses: React.FC<SpaceCoursesProps> = ({ spaceId }) => {
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold text-gray-900">Courses</h2>
-        <CreateCourseDialog onCreateCourse={createCourse} />
+        <CreateCourseDialog onCreateCourse={createCourse} spaceId={spaceId} />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
