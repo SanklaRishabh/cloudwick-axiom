@@ -16,7 +16,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Plus, X, Bot, User } from 'lucide-react';
-import AIChatInterface from './AIChatInterface';
+import { useNavigate } from 'react-router-dom';
 
 interface CreateCourseDialogProps {
   onCreateCourse: (courseData: {
@@ -33,6 +33,7 @@ const CreateCourseDialog: React.FC<CreateCourseDialogProps> = ({
   spaceId,
   isLoading = false 
 }) => {
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [creationMode, setCreationMode] = useState<'manual' | 'ai'>('manual');
   const [title, setTitle] = useState('');
@@ -227,13 +228,23 @@ const CreateCourseDialog: React.FC<CreateCourseDialogProps> = ({
           ) : (
             <div className="space-y-4">
               <div className="text-sm text-gray-600">
-                Describe your course requirements and our AI will help you create a comprehensive course structure.
+                Use our AI Chat to generate course content and structure. The AI will help you create a comprehensive course based on your requirements.
               </div>
-              <AIChatInterface
-                spaceId={spaceId}
-                onCourseCreated={handleAICourseCreated}
-                onError={handleAIError}
-              />
+              <div className="p-4 bg-gray-50 rounded-lg border">
+                <p className="text-sm text-gray-600 mb-3">
+                  Click the button below to open AI Chat where you can describe your course requirements.
+                </p>
+                <Button 
+                  onClick={() => {
+                    setOpen(false);
+                    navigate('/dashboard/ai-chat');
+                  }}
+                  className="w-full"
+                >
+                  <Bot className="h-4 w-4 mr-2" />
+                  Open AI Chat
+                </Button>
+              </div>
               <DialogFooter>
                 <Button
                   type="button"
