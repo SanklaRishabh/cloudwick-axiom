@@ -92,21 +92,21 @@ const AIChatInterface: React.FC<AIChatInterfaceProps> = ({
     // Check if this is the in_progress status response
     if (message === "{'status': 'in_progress'}") {
       setIsLoading(false);
-      // Replace the loading message with "Creating course..." message
+      // Replace the loading message with "Processing..." message
       setMessages(prev => {
         const newMessages = [...prev];
         const lastMessage = newMessages[newMessages.length - 1];
         if (lastMessage && lastMessage.isLoading) {
           newMessages[newMessages.length - 1] = {
             ...lastMessage,
-            content: 'Creating course...',
+            content: 'Processing...',
             isLoading: false
           };
         } else {
-          // If no loading message exists, add the creating course message
+          // If no loading message exists, add the processing message
           newMessages.push({
             id: Date.now().toString(),
-            content: 'Creating course...',
+            content: 'Processing...',
             sender: 'ai',
             timestamp: new Date(),
             isLoading: false
@@ -117,20 +117,20 @@ const AIChatInterface: React.FC<AIChatInterfaceProps> = ({
       return;
     }
 
-    // Handle final AI response - replace the "Creating course..." message
+    // Handle final AI response - replace the "Processing..." message
     setMessages(prev => {
       const newMessages = [...prev];
       const lastMessage = newMessages[newMessages.length - 1];
       
-      if (lastMessage && lastMessage.content === 'Creating course...') {
-        // Replace the "Creating course..." message with the final response
+      if (lastMessage && lastMessage.content === 'Processing...') {
+        // Replace the "Processing..." message with the final response
         newMessages[newMessages.length - 1] = {
           ...lastMessage,
           content: message,
           timestamp: new Date()
         };
       } else {
-        // Add as new message if no "Creating course..." message exists
+        // Add as new message if no "Processing..." message exists
         newMessages.push({
           id: Date.now().toString(),
           content: message,
