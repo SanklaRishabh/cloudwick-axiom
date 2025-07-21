@@ -89,7 +89,7 @@ const FileUploadDialog = ({ onFileUpload, onWebsiteSubmit }: FileUploadDialogPro
   };
 
   const uploadToS3 = async (presignedUrl: string, file: File) => {
-    console.log('🚀 Starting S3 upload with fetch()');
+    console.log('🚀 Starting S3 upload with corrected headers');
     console.log('📁 File details:', {
       name: file.name,
       type: file.type,
@@ -98,14 +98,13 @@ const FileUploadDialog = ({ onFileUpload, onWebsiteSubmit }: FileUploadDialogPro
     console.log('🔗 Presigned URL:', presignedUrl);
 
     try {
-      // Use fetch() with headers matching Postman setup
+      // Use fetch() with ONLY the Content-Type header that matches the presigned URL signature
       const response = await fetch(presignedUrl, {
         method: 'PUT',
         headers: {
-          'Cache-Control': 'no-cache',
-          'Accept': '*/*',
+          'Content-Type': file.type, // This MUST match what the backend used to generate the signature
         },
-        body: file, // Send file as binary blob
+        body: file,
       });
 
       console.log('📥 S3 Response status:', response.status);
@@ -117,7 +116,7 @@ const FileUploadDialog = ({ onFileUpload, onWebsiteSubmit }: FileUploadDialogPro
         throw new Error(`S3 upload failed: ${response.status} ${response.statusText} - ${errorText}`);
       }
 
-      console.log('✅ S3 upload successful');
+      console.log('✅ S3 upload successful with fetch()');
       setUploadProgress(100);
       
     } catch (error) {
@@ -152,10 +151,9 @@ const FileUploadDialog = ({ onFileUpload, onWebsiteSubmit }: FileUploadDialogPro
           reject(new Error('Upload failed due to network error'));
         };
 
-        console.log('🔄 Trying XMLHttpRequest with headers...');
+        console.log('🔄 Trying XMLHttpRequest with Content-Type header...');
         xhr.open('PUT', presignedUrl);
-        xhr.setRequestHeader('Cache-Control', 'no-cache');
-        xhr.setRequestHeader('Accept', '*/*');
+        xhr.setRequestHeader('Content-Type', file.type); // Only set Content-Type header
         xhr.send(file);
       });
     }
