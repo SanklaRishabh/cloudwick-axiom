@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,6 +31,12 @@ const AIChatInterface: React.FC<AIChatInterfaceProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const wsService = useRef<WebSocketService | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messageIdCounter = useRef(0);
+
+  const generateUniqueId = () => {
+    messageIdCounter.current += 1;
+    return `${Date.now()}-${messageIdCounter.current}`;
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -89,8 +94,8 @@ const AIChatInterface: React.FC<AIChatInterfaceProps> = ({
   const handleWebSocketMessage = (message: string) => {
     console.log('Handling WebSocket message:', message);
     
-    // Check if this is the in_progress status response
-    if (message === "{'status': 'in_progress'}") {
+    // Check if this is the in_progress status response (JSON format with double quotes)
+    if (message === '{"status": "in_progress"}') {
       setIsLoading(false);
       // Replace the loading message with "Processing..." message
       setMessages(prev => {
@@ -105,7 +110,7 @@ const AIChatInterface: React.FC<AIChatInterfaceProps> = ({
         } else {
           // If no loading message exists, add the processing message
           newMessages.push({
-            id: Date.now().toString(),
+            id: generateUniqueId(),
             content: 'Processing...',
             sender: 'ai',
             timestamp: new Date(),
@@ -132,7 +137,7 @@ const AIChatInterface: React.FC<AIChatInterfaceProps> = ({
       } else {
         // Add as new message if no "Processing..." message exists
         newMessages.push({
-          id: Date.now().toString(),
+          id: generateUniqueId(),
           content: message,
           sender: 'ai',
           timestamp: new Date()
@@ -150,7 +155,7 @@ const AIChatInterface: React.FC<AIChatInterfaceProps> = ({
 
   const addMessage = (content: string, sender: 'user' | 'ai', isLoading: boolean = false) => {
     const newMessage: ChatMessage = {
-      id: Date.now().toString(),
+      id: generateUniqueId(),
       content,
       sender,
       timestamp: new Date(),
