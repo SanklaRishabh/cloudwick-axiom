@@ -17,6 +17,8 @@ export class WebSocketService {
   private connectionHandlers: (() => void)[] = [];
   private errorHandlers: ((error: Event) => void)[] = [];
   private closeHandlers: (() => void)[] = [];
+  private reconnectAttempts = 0;
+  private maxReconnectAttempts = 3;
 
   constructor(url: string = 'wss://ct3ranhp35.execute-api.us-east-1.amazonaws.com/production/') {
     this.url = url;
@@ -25,20 +27,20 @@ export class WebSocketService {
   connect(): Promise<void> {
     return new Promise((resolve, reject) => {
       try {
+        console.log('Attempting to connect to WebSocket:', this.url);
         this.ws = new WebSocket(this.url);
 
         this.ws.onopen = () => {
-          console.log('WebSocket connected');
+          console.log('WebSocket connected successfully');
+          this.reconnectAttempts = 0;
           this.connectionHandlers.forEach(handler => handler());
           resolve();
         };
 
         this.ws.onmessage = (event) => {
           try {
-            // Handle all responses as strings since the server sends string responses
-            const messageData = event.data;
-            console.log('WebSocket message received:', messageData);
-            this.messageHandlers.forEach(handler => handler(messageData));
+            console.log('WebSocket message received:', event.data);
+            this.messageHandlers.forEach(handler => handler(event.data));
           } catch (error) {
             console.error('Error handling WebSocket message:', error);
           }
@@ -50,13 +52,21 @@ export class WebSocketService {
           reject(error);
         };
 
-        this.ws.onclose = () => {
-          console.log('WebSocket disconnected');
+        this.ws.onclose = (event) => {
+          console.log('WebSocket disconnected:', event.code, event.reason);
           this.closeHandlers.forEach(handler => handler());
           this.ws = null;
+          
+          // Attempt reconnection if it wasn't a clean close
+          if (event.code !== 1000 && this.reconnectAttempts < this.maxReconnectAttempts) {
+            this.reconnectAttempts++;
+            console.log(`Attempting reconnection ${this.reconnectAttempts}/${this.maxReconnectAttempts}`);
+            setTimeout(() => this.connect(), 2000);
+          }
         };
 
       } catch (error) {
+        console.error('Failed to create WebSocket connection:', error);
         reject(error);
       }
     });
@@ -95,7 +105,8 @@ export class WebSocketService {
 
   disconnect(): void {
     if (this.ws) {
-      this.ws.close();
+      console.log('Disconnecting WebSocket');
+      this.ws.close(1000, 'User navigated away');
       this.ws = null;
     }
   }
