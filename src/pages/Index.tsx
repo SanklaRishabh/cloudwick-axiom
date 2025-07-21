@@ -12,7 +12,7 @@ const Index = () => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   
-  const words = ["upskilling", "knowledge transfer", "learning"];
+  const words = ["learning", "upskilling", "knowledge transfer"];
 
   useEffect(() => {
     if (isAuthenticated && user) {
