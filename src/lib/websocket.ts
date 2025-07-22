@@ -35,9 +35,11 @@ export class WebSocketService {
           return;
         }
 
-        // Use the base URL without query parameters - browsers will send Authorization header via subprotocols
-        const url = this.baseUrl;
-        console.log('🔌 Connecting to WebSocket with Authorization header:', this.baseUrl);
+        // AWS API Gateway WebSocket expects the token as a query parameter
+        // Based on the Postman logs showing Authorization header working,
+        // we need to pass the token in a way that the authorizer can access it
+        const url = `${this.baseUrl}?Authorization=${encodeURIComponent(`Bearer ${tokens.idToken}`)}`;
+        console.log('🔌 Connecting to WebSocket with Authorization query parameter:', this.baseUrl + '?Authorization=Bearer***');
         
         // Set connection timeout
         this.connectionTimeout = setTimeout(() => {
@@ -48,8 +50,7 @@ export class WebSocketService {
           }
         }, 10000); // 10 second timeout
 
-        // Create WebSocket with Authorization subprotocol to pass the token
-        this.ws = new WebSocket(url, [`Bearer ${tokens.idToken}`]);
+        this.ws = new WebSocket(url);
 
         this.ws.onopen = () => {
           console.log('✅ WebSocket connected successfully');
