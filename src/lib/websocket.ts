@@ -28,17 +28,16 @@ export class WebSocketService {
   async connect(): Promise<void> {
     return new Promise(async (resolve, reject) => {
       try {
-        // Get auth token and construct URL with query parameter
+        // Get auth token
         const tokens = await authService.getTokens();
         if (!tokens?.idToken) {
           reject(new Error('No authentication token available'));
           return;
         }
 
-        // Try different query parameter names that AWS API Gateway might expect
-        // Based on the logs, we need to pass the token so the Lambda authorizer can access it
-        const url = `${this.baseUrl}?token=${encodeURIComponent(tokens.idToken)}`;
-        console.log('🔌 Connecting to WebSocket with token as query parameter:', this.baseUrl + '?token=***');
+        // Use the base URL without query parameters - browsers will send Authorization header via subprotocols
+        const url = this.baseUrl;
+        console.log('🔌 Connecting to WebSocket with Authorization header:', this.baseUrl);
         
         // Set connection timeout
         this.connectionTimeout = setTimeout(() => {
@@ -49,7 +48,8 @@ export class WebSocketService {
           }
         }, 10000); // 10 second timeout
 
-        this.ws = new WebSocket(url);
+        // Create WebSocket with Authorization subprotocol to pass the token
+        this.ws = new WebSocket(url, [`Bearer ${tokens.idToken}`]);
 
         this.ws.onopen = () => {
           console.log('✅ WebSocket connected successfully');
