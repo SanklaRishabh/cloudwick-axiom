@@ -34,6 +34,15 @@ const AIChat = () => {
     scrollToBottom();
   }, [messages]);
 
+  useEffect(() => {
+    initializeWebSocket();
+    return () => {
+      if (wsRef.current) {
+        wsRef.current.disconnect();
+      }
+    };
+  }, []);
+
   const initializeWebSocket = async () => {
     try {
       const wsBaseUrl = import.meta.env.VITE_WS_BASE_URL;
@@ -157,15 +166,9 @@ const AIChat = () => {
     }
   };
 
-  const startNewChat = async () => {
-    if (!attachment) return;
-    
-    setMessages([]);
-    setIsLoading(false);
-    
-    if (!isConnected) {
-      await initializeWebSocket();
-    }
+  const startNewChat = () => {
+    if (!message.trim() || !attachment) return;
+    sendMessage();
   };
 
   const getUserDisplayName = () => {
@@ -182,6 +185,39 @@ const AIChat = () => {
     if (hour < 17) return 'Good Afternoon';
     return 'Good Evening';
   };
+
+  // Show loading state while connecting
+  if (!isConnected) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
+        <div className="w-full max-w-2xl space-y-8 text-center">
+          {/* Connecting Animation */}
+          <div className="flex justify-center">
+            <div className="relative">
+              <div className="w-32 h-32 rounded-full bg-gradient-to-br from-purple-400 via-pink-400 to-purple-600 shadow-2xl animate-spin" 
+                   style={{
+                     background: 'radial-gradient(circle at 30% 30%, #E879F9, #C084FC, #A855F7, #9333EA)',
+                     boxShadow: '0 20px 40px rgba(168, 85, 247, 0.3), 0 0 60px rgba(168, 85, 247, 0.2)',
+                     animation: 'spin 2s linear infinite'
+                   }}>
+              </div>
+              <div className="absolute inset-4 rounded-full bg-gradient-to-br from-white/30 to-transparent animate-pulse"></div>
+            </div>
+          </div>
+
+          {/* Connecting Text */}
+          <div className="space-y-2">
+            <h1 className="text-3xl font-normal text-gray-800">
+              Connecting to AI Assistant...
+            </h1>
+            <p className="text-gray-600">
+              Please wait while we establish a secure connection
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Show welcome screen if no messages
   if (messages.length === 0) {
