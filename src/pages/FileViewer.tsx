@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ArrowLeft, Download, Share, Edit, Trash2, Calendar, User, FileText, Eye, List, MessageSquare } from 'lucide-react';
+import { PDFViewer } from '@/components/PDFViewer';
 import { useFiles, FileItem, FileDetails } from '@/hooks/useFiles';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
@@ -237,15 +238,14 @@ const FileViewer = () => {
     // PDF preview
     if (fileType === 'pdf') {
       return (
-        <div className="w-full h-96 bg-gray-100 rounded-lg">
+        <div className="w-full h-96">
           {fileDetails.PresignedUrl ? (
-            <iframe
-              src={fileDetails.PresignedUrl}
-              className="w-full h-full rounded-lg"
-              title={fileDetails.FileName}
+            <PDFViewer 
+              url={fileDetails.PresignedUrl} 
+              className="w-full h-full"
             />
           ) : (
-            <div className="flex items-center justify-center h-full text-gray-500">
+            <div className="flex items-center justify-center h-full text-gray-500 bg-gray-100 rounded-lg">
               PDF preview not available
             </div>
           )}

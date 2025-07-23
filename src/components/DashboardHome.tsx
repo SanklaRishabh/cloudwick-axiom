@@ -84,7 +84,7 @@ const DashboardHome = () => {
 
       {/* Spaces Section */}
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold text-gray-900">Your Spaces</h2>
+        <h2 className="text-2xl font-semibold text-gray-900">Your Spaces</h2>
         {spacesLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3].map((i) => (
@@ -130,7 +130,7 @@ const DashboardHome = () => {
       {/* Tech Articles Section */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-gray-900">Latest Tech Articles</h2>
+          <h2 className="text-2xl font-semibold text-gray-900">Trending Articles</h2>
           <Button
             variant="outline"
             size="sm"
