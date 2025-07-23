@@ -237,7 +237,7 @@ const AIChat = () => {
                 </div>
                 
                 <Button 
-                  className="bg-gray-800 hover:bg-gray-900 rounded-lg w-10 h-10 p-0 flex items-center justify-center"
+                  className="bg-gray-800 hover:bg-gray-900 disabled:bg-gray-400 disabled:opacity-100 rounded-lg w-10 h-10 p-0 flex items-center justify-center"
                   disabled={!message.trim() || !attachment}
                   onClick={startNewChat}
                 >
@@ -318,7 +318,7 @@ const AIChat = () => {
           <Button
             onClick={sendMessage}
             disabled={!message.trim() || isLoading}
-            className="bg-gray-800 hover:bg-gray-900 rounded-xl w-10 h-10 p-0"
+            className="bg-gray-800 hover:bg-gray-900 disabled:bg-gray-400 disabled:opacity-100 rounded-xl w-10 h-10 p-0"
           >
             <Send className="h-4 w-4 text-white" />
           </Button>
