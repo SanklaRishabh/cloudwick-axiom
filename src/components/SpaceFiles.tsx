@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { 
@@ -24,15 +25,19 @@ import {
 import { useFiles, FileItem } from '@/hooks/useFiles';
 import FileUploadDialog from './FileUploadDialog';
 import FileDetailDialog from './FileDetailDialog';
+import EditFileDialog from './EditFileDialog';
 
 interface SpaceFilesProps {
   spaceId: string;
 }
 
 const SpaceFiles: React.FC<SpaceFilesProps> = ({ spaceId }) => {
-  const { files, loading, error, uploadFile, submitWebsite } = useFiles(spaceId);
+  const { files, loading, error, uploadFile, submitWebsite, updateFile, deleteFile } = useFiles(spaceId);
   const [selectedFile, setSelectedFile] = useState<FileItem | null>(null);
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [fileToDelete, setFileToDelete] = useState<FileItem | null>(null);
 
   const getFileIcon = (item: FileItem) => {
     const fileType = item.FileType?.toLowerCase();
@@ -73,6 +78,24 @@ const SpaceFiles: React.FC<SpaceFilesProps> = ({ spaceId }) => {
     // For now, we'll show a message that download functionality needs to be implemented
     // The actual download would likely need a separate API endpoint to get signed URLs
     console.log('Download requested for file:', item.FileName);
+  };
+
+  const handleEdit = (file: FileItem) => {
+    setSelectedFile(file);
+    setIsEditDialogOpen(true);
+  };
+
+  const handleDelete = (file: FileItem) => {
+    setFileToDelete(file);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (fileToDelete) {
+      await deleteFile(fileToDelete.FileId);
+      setIsDeleteDialogOpen(false);
+      setFileToDelete(null);
+    }
   };
 
   const getStatusColor = (status: string) => {
@@ -217,13 +240,21 @@ const SpaceFiles: React.FC<SpaceFilesProps> = ({ spaceId }) => {
                           <Share className="h-4 w-4 mr-2" />
                           Share
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
+                        <DropdownMenuItem 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEdit(item);
+                          }}
+                        >
                           <Edit className="h-4 w-4 mr-2" />
                           Edit
                         </DropdownMenuItem>
                         <DropdownMenuItem 
                           className="text-red-600"
-                          onClick={(e) => e.stopPropagation()}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDelete(item);
+                          }}
                         >
                           <Trash2 className="h-4 w-4 mr-2" />
                           Delete
@@ -252,6 +283,37 @@ const SpaceFiles: React.FC<SpaceFilesProps> = ({ spaceId }) => {
           spaceId={spaceId}
         />
       )}
+
+      {/* Edit File Dialog */}
+      {selectedFile && (
+        <EditFileDialog
+          isOpen={isEditDialogOpen}
+          onClose={() => {
+            setIsEditDialogOpen(false);
+            setSelectedFile(null);
+          }}
+          file={selectedFile}
+          onUpdate={updateFile}
+        />
+      )}
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete File</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete "{fileToDelete?.FileName}"? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

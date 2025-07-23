@@ -164,6 +164,48 @@ export const useFiles = (spaceId: string) => {
     }
   };
 
+  const updateFile = async (fileId: string, updateData: { FileName: string; FileDescription: string; Tags: string[] }) => {
+    try {
+      const response = await apiClient.put(`/spaces/${spaceId}/files/${fileId}`, updateData);
+      const data = await response.json();
+      toast({
+        title: "Success",
+        description: data.Message || "File updated successfully",
+      });
+      await fetchFiles(); // Refresh the list
+      return data;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to update file';
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
+      throw err;
+    }
+  };
+
+  const deleteFile = async (fileId: string) => {
+    try {
+      const response = await apiClient.delete(`/spaces/${spaceId}/files/${fileId}`);
+      const data = await response.json();
+      toast({
+        title: "Success",
+        description: data.Message || "File deleted successfully",
+      });
+      await fetchFiles(); // Refresh the list
+      return data;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to delete file';
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
+      throw err;
+    }
+  };
+
   useEffect(() => {
     if (spaceId) {
       fetchFiles();
@@ -178,5 +220,7 @@ export const useFiles = (spaceId: string) => {
     uploadFile,
     submitWebsite,
     getFileDetails,
+    updateFile,
+    deleteFile,
   };
 };
