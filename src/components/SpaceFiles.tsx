@@ -21,7 +21,8 @@ import {
   Globe,
   ExternalLink,
   Eye,
-  FileType
+  FileType,
+  Plus
 } from 'lucide-react';
 import { useFiles, FileItem } from '@/hooks/useFiles';
 import FileUploadDialog from './FileUploadDialog';
@@ -65,7 +66,7 @@ const SpaceFiles: React.FC<SpaceFilesProps> = ({ spaceId, space }) => {
     }
     
     if (fileType === 'pdf') {
-      return <FileType className="h-5 w-5 text-red-600" />;
+      return <File className="h-5 w-5 text-red-600" />;
     }
     
     if (['doc', 'docx', 'txt', 'rtf'].includes(fileType)) {
@@ -182,9 +183,9 @@ const SpaceFiles: React.FC<SpaceFilesProps> = ({ spaceId, space }) => {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6 animate-fade-in">
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold text-gray-900">Files</h2>
+        <h2 className="text-2xl font-bold text-gray-900">Files</h2>
         <FileUploadDialog 
           onFileUpload={uploadFile}
           onWebsiteSubmit={submitWebsite}
@@ -196,14 +197,14 @@ const SpaceFiles: React.FC<SpaceFilesProps> = ({ spaceId, space }) => {
           <p className="text-gray-500">No files uploaded yet. Start by uploading your first file or adding a website.</p>
         </div>
       ) : (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 border">
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Tags</TableHead>
+              <TableRow className="bg-gradient-to-r from-gray-50 to-gray-100">
+                <TableHead className="font-semibold text-gray-700">Name</TableHead>
+                <TableHead className="font-semibold text-gray-700">Type</TableHead>
+                <TableHead className="font-semibold text-gray-700">Status</TableHead>
+                <TableHead className="font-semibold text-gray-700">Tags</TableHead>
                 <TableHead className="w-12"></TableHead>
               </TableRow>
             </TableHeader>
@@ -211,7 +212,7 @@ const SpaceFiles: React.FC<SpaceFilesProps> = ({ spaceId, space }) => {
               {files.map((item) => (
                 <TableRow 
                   key={item.FileId} 
-                  className="hover:bg-gray-50 cursor-pointer"
+                  className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 cursor-pointer transition-all duration-200 hover:shadow-sm group"
                   onClick={() => handleFileClick(item)}
                 >
                   <TableCell className="font-medium">
@@ -234,7 +235,7 @@ const SpaceFiles: React.FC<SpaceFilesProps> = ({ spaceId, space }) => {
                   <TableCell>
                     <div className="flex flex-wrap gap-1">
                       {item.Tags?.map((tag, index) => (
-                        <Badge key={index} className={`text-xs border ${getTagColor(index)}`}>
+                        <Badge key={index} className={`text-xs border hover-scale transition-all duration-200 ${getTagColor(index)}`}>
                           {tag}
                         </Badge>
                       ))}
@@ -246,7 +247,7 @@ const SpaceFiles: React.FC<SpaceFilesProps> = ({ spaceId, space }) => {
                         <Button 
                           variant="ghost" 
                           size="icon" 
-                          className="h-8 w-8"
+                          className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-gray-100"
                           onClick={(e) => e.stopPropagation()}
                         >
                           <MoreVertical className="h-4 w-4" />

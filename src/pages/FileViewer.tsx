@@ -75,7 +75,7 @@ const FileViewer = () => {
         title: "Success",
         description: "File deleted successfully",
       });
-      navigate(`/dashboard/spaces/${spaceId}`);
+      navigate('/dashboard');
     } catch (error) {
       toast({
         title: "Error",
@@ -247,14 +247,14 @@ const FileViewer = () => {
       <div className="bg-white border-b border-gray-200 px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Button 
-              variant="ghost" 
-              onClick={() => navigate(`/dashboard/spaces/${spaceId}`)}
-              className="flex items-center gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Back to Space
-            </Button>
+        <Button 
+          variant="ghost" 
+          onClick={() => navigate('/dashboard')}
+          className="flex items-center gap-2 hover-scale transition-all duration-200"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to Dashboard
+        </Button>
             <div>
               <h1 className="text-2xl font-bold text-gray-900">{fileDetails.FileName}</h1>
               <p className="text-gray-600">{fileDetails.FileType}</p>

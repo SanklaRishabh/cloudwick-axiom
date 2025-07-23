@@ -75,7 +75,11 @@ const FileDetailDialog: React.FC<FileDetailDialogProps> = ({
       return <Music className="h-8 w-8 text-orange-600" />;
     }
     
-    if (['pdf', 'doc', 'docx', 'txt', 'rtf'].includes(type)) {
+    if (type === 'pdf') {
+      return <File className="h-8 w-8 text-red-600" />;
+    }
+    
+    if (['doc', 'docx', 'txt', 'rtf'].includes(type)) {
       return <FileText className="h-8 w-8 text-blue-600" />;
     }
     

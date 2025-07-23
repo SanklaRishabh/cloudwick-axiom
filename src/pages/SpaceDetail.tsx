@@ -140,11 +140,11 @@ const SpaceDetail = () => {
       <div className="flex items-center gap-4">
         <Button 
           variant="ghost" 
-          onClick={() => navigate('/dashboard/spaces')}
-          className="flex items-center gap-2 font-lexend"
+          onClick={() => navigate('/dashboard')}
+          className="flex items-center gap-2 font-lexend hover-scale transition-all duration-200"
         >
           <ArrowLeft className="h-4 w-4" />
-          Back to Spaces
+          Back to Dashboard
         </Button>
       </div>
 

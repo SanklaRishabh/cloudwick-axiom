@@ -233,7 +233,7 @@ export const AttachMenu: React.FC<AttachMenuProps> = ({ onAttach, currentAttachm
                       setSelectedSpaceName('');
                     }}
                   >
-                    ← Back to spaces
+                    ← Back to dashboard
                   </Button>
                 </div>
               )}
