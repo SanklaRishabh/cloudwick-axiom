@@ -13,7 +13,7 @@ const DashboardHome = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { spaces, loading: spacesLoading } = useSpaces();
-  const { articles, loading: articlesLoading, error: articlesError, refetch } = useDevArticles(6);
+  const { articles, loading: articlesLoading, error: articlesError, refetch } = useDevArticles(3);
 
   const getTimeOfDayGreeting = () => {
     const hour = new Date().getHours();
@@ -144,18 +144,18 @@ const DashboardHome = () => {
         </div>
 
         {articlesLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <Card key={i} className="h-80">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[1, 2, 3].map((i) => (
+              <Card key={i} className="h-96 shadow-lg border-0 bg-gradient-to-br from-slate-50 to-blue-50">
                 <CardHeader className="p-0">
-                  <Skeleton className="h-40 w-full rounded-t-lg" />
+                  <Skeleton className="h-48 w-full rounded-t-lg" />
                 </CardHeader>
-                <CardContent className="p-4 space-y-3">
-                  <Skeleton className="h-4 w-full" />
+                <CardContent className="p-6 space-y-4">
+                  <Skeleton className="h-5 w-full" />
                   <Skeleton className="h-4 w-3/4" />
                   <div className="flex items-center gap-2">
-                    <Skeleton className="h-6 w-6 rounded-full" />
-                    <Skeleton className="h-3 w-20" />
+                    <Skeleton className="h-8 w-8 rounded-full" />
+                    <Skeleton className="h-4 w-24" />
                   </div>
                 </CardContent>
               </Card>
@@ -169,67 +169,76 @@ const DashboardHome = () => {
             </Button>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {articles.map((article) => (
-              <Card key={article.id} className="group cursor-pointer hover:shadow-lg transition-all duration-300 overflow-hidden">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {articles.slice(0, 3).map((article, index) => (
+              <Card key={article.id} className={`group cursor-pointer hover:shadow-2xl transition-all duration-500 overflow-hidden border-0 shadow-lg ${
+                index === 0 ? 'bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-100' :
+                index === 1 ? 'bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-100' :
+                'bg-gradient-to-br from-rose-50 via-pink-50 to-orange-100'
+              }`}>
                 <CardHeader className="p-0">
                   {article.cover_image ? (
-                    <div className="h-40 overflow-hidden">
+                    <div className="h-48 overflow-hidden">
                       <img 
                         src={article.cover_image} 
                         alt={article.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                       />
                     </div>
                   ) : (
-                    <div className="h-40 bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
-                      <div className="text-2xl font-bold text-gray-400">DEV</div>
+                    <div className={`h-48 flex items-center justify-center ${
+                      index === 0 ? 'bg-gradient-to-br from-purple-200 to-indigo-300' :
+                      index === 1 ? 'bg-gradient-to-br from-emerald-200 to-cyan-300' :
+                      'bg-gradient-to-br from-rose-200 to-orange-300'
+                    }`}>
+                      <div className="text-3xl font-bold text-white/80">DEV</div>
                     </div>
                   )}
                 </CardHeader>
-                <CardContent className="p-4 space-y-3">
-                  <div className="space-y-2">
-                    <h3 className="font-semibold text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                <CardContent className="p-6 space-y-4">
+                  <div className="space-y-3">
+                    <h3 className="font-bold text-lg text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors leading-tight">
                       {article.title}
                     </h3>
                     {article.description && (
-                      <p className="text-sm text-gray-600 line-clamp-2">{article.description}</p>
+                      <p className="text-sm text-gray-600 line-clamp-2 leading-relaxed">{article.description}</p>
                     )}
                   </div>
 
-                  <div className="flex items-center gap-2 text-xs text-gray-500">
+                  <div className="flex items-center gap-3 text-sm text-gray-500">
                     <img 
                       src={article.user.profile_image_90} 
                       alt={article.user.name}
-                      className="w-6 h-6 rounded-full"
+                      className="w-8 h-8 rounded-full ring-2 ring-white shadow-sm"
                     />
-                    <span>{article.user.name}</span>
-                    <span>•</span>
-                    <span>{article.readable_publish_date}</span>
+                    <div className="flex flex-col">
+                      <span className="font-medium text-gray-700">{article.user.name}</span>
+                      <span className="text-xs">{article.readable_publish_date}</span>
+                    </div>
                   </div>
 
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between pt-2">
                     <div className="flex items-center gap-4 text-xs text-gray-500">
                       <div className="flex items-center gap-1">
-                        <Heart className="h-3 w-3" />
-                        {article.positive_reactions_count}
+                        <Heart className="h-4 w-4" />
+                        <span className="font-medium">{article.positive_reactions_count}</span>
                       </div>
                       <div className="flex items-center gap-1">
-                        <MessageCircle className="h-3 w-3" />
-                        {article.comments_count}
+                        <MessageCircle className="h-4 w-4" />
+                        <span className="font-medium">{article.comments_count}</span>
                       </div>
                       <div className="flex items-center gap-1">
-                        <Clock className="h-3 w-3" />
-                        {article.reading_time_minutes}m
+                        <Clock className="h-4 w-4" />
+                        <span className="font-medium">{article.reading_time_minutes}m</span>
                       </div>
                     </div>
-                    <ExternalLink className="h-4 w-4 text-gray-400 group-hover:text-blue-600 transition-colors" />
+                    <ExternalLink className="h-5 w-5 text-gray-400 group-hover:text-blue-600 transition-colors" />
                   </div>
 
                   {article.tag_list.length > 0 && (
-                    <div className="flex flex-wrap gap-1">
+                    <div className="flex flex-wrap gap-2 pt-2">
                       {article.tag_list.slice(0, 3).map((tag) => (
-                        <Badge key={tag} variant="secondary" className="text-xs">
+                        <Badge key={tag} variant="secondary" className="text-xs px-3 py-1 bg-white/60 text-gray-700 hover:bg-white/80 transition-colors">
                           #{tag}
                         </Badge>
                       ))}
