@@ -62,7 +62,14 @@ const AIChatInterface: React.FC<AIChatInterfaceProps> = ({
   const initializeWebSocket = async () => {
     try {
       setIsConnecting(true);
-      wsService.current = new WebSocketService();
+      
+      // Use the AI Course Creator WebSocket URL
+      const wsUrl = import.meta.env.VITE_AI_COURSE_CREATOR_WS_URL;
+      if (!wsUrl) {
+        throw new Error('AI Course Creator WebSocket URL not configured');
+      }
+      
+      wsService.current = new WebSocketService(wsUrl);
 
       wsService.current.onConnection(() => {
         setIsConnected(true);
