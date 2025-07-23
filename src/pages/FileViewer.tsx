@@ -75,7 +75,7 @@ const FileViewer = () => {
         title: "Success",
         description: "File deleted successfully",
       });
-      navigate('/dashboard');
+      navigate(`/dashboard/spaces/${spaceId}`);
     } catch (error) {
       toast({
         title: "Error",
@@ -249,11 +249,11 @@ const FileViewer = () => {
           <div className="flex items-center gap-4">
         <Button 
           variant="ghost" 
-          onClick={() => navigate('/dashboard')}
+          onClick={() => navigate(`/dashboard/spaces/${spaceId}`)}
           className="flex items-center gap-2 hover-scale transition-all duration-200"
         >
           <ArrowLeft className="h-4 w-4" />
-          Back to Dashboard
+          Back to Space
         </Button>
             <div>
               <h1 className="text-2xl font-bold text-gray-900">{fileDetails.FileName}</h1>
@@ -262,6 +262,26 @@ const FileViewer = () => {
           </div>
           
           <div className="flex items-center gap-2">
+            {/* AI Content Buttons */}
+            {fileDetails.DocSummary && (
+              <Button variant="outline" size="sm">
+                <FileText className="h-4 w-4 mr-2" />
+                Summary
+              </Button>
+            )}
+            {fileDetails.ActionItems && (
+              <Button variant="outline" size="sm">
+                <Eye className="h-4 w-4 mr-2" />
+                Action Items
+              </Button>
+            )}
+            {fileDetails.BdaTranscriptS3KeyUrl && (
+              <Button variant="outline" size="sm">
+                <FileText className="h-4 w-4 mr-2" />
+                Transcript
+              </Button>
+            )}
+            
             <Button variant="outline" onClick={handleDownload}>
               <Download className="h-4 w-4 mr-2" />
               Download
@@ -289,8 +309,8 @@ const FileViewer = () => {
       {/* Main Content */}
       <div className="flex-1 flex">
         {/* File Preview - Left Pane */}
-        <div className="flex-1 p-6">
-          <Card className="h-full">
+        <div className="w-[60%] p-6">
+          <Card className="h-full shadow-lg hover:shadow-xl transition-shadow duration-300">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Eye className="h-5 w-5" />
@@ -304,9 +324,9 @@ const FileViewer = () => {
         </div>
 
         {/* File Details - Right Pane */}
-        <div className="w-96 p-6 space-y-6">
+        <div className="w-[40%] p-6 space-y-6">
           {/* Basic Information */}
-          <Card>
+          <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300">
             <CardHeader>
               <CardTitle>File Information</CardTitle>
             </CardHeader>
@@ -376,7 +396,7 @@ const FileViewer = () => {
 
           {/* AI-Generated Content */}
           {(fileDetails.DocSummary || fileDetails.ActionItems) && (
-            <Card>
+            <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300">
               <CardHeader>
                 <CardTitle>AI Analysis</CardTitle>
               </CardHeader>
