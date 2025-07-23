@@ -23,6 +23,7 @@ import AIChat from "./pages/AIChat";
 import Exams from "./pages/Exams";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
+import FileViewer from "./pages/FileViewer";
 
 const queryClient = new QueryClient();
 
@@ -38,8 +39,9 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/dashboard" element={<Dashboard />}>
               <Route index element={<DashboardHome />} />
-              <Route path="spaces" element={<Spaces />} />
+            <Route path="spaces" element={<Spaces />} />
             <Route path="spaces/:spaceId" element={<SpaceDetail />} />
+            <Route path="spaces/:spaceId/files/:fileId" element={<FileViewer />} />
             <Route path="spaces/:spaceId/courses/:courseId" element={<CourseDetail />} />
             <Route path="spaces/:spaceId/courses/:courseId/sections" element={<CourseSections />} />
             <Route path="spaces/:spaceId/courses/:courseId/sections/:sectionId" element={<SectionDetail />} />

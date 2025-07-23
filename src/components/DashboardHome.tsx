@@ -1,12 +1,14 @@
 import React from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from "@/components/ui/button";
-import { Box, Users, Sparkles } from 'lucide-react';
+import { Users, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useSpaces } from '@/hooks/useSpaces';
 
 const DashboardHome = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { spaces, loading: spacesLoading } = useSpaces();
 
   const getTimeOfDayGreeting = () => {
     const hour = new Date().getHours();
@@ -23,16 +25,16 @@ const DashboardHome = () => {
     return user.username;
   };
 
-  const handleNavigateToSpaces = () => {
-    navigate('/dashboard/spaces');
-  };
-
   const handleNavigateToPeople = () => {
     navigate('/dashboard/people');
   };
 
   const handleNavigateToAIChat = () => {
     navigate('/dashboard/ai-chat');
+  };
+
+  const handleSpaceClick = (spaceId: string) => {
+    navigate(`/dashboard/spaces/${spaceId}`);
   };
 
   const isSystemAdmin = user?.role === 'SystemAdmin';
@@ -53,22 +55,6 @@ const DashboardHome = () => {
         </h1>
         
         <div className="flex gap-4">
-          <Button 
-            onClick={handleNavigateToSpaces}
-            className="bg-blue-600 hover:bg-blue-700 flex items-center gap-2"
-          >
-            <Box className="h-5 w-5" />
-            Spaces
-          </Button>
-          
-          <Button 
-            onClick={handleNavigateToAIChat}
-            className="bg-purple-600 hover:bg-purple-700 flex items-center gap-2"
-          >
-            <Sparkles className="h-5 w-5" />
-            AI Chat
-          </Button>
-          
           {isSystemAdmin && (
             <Button 
               onClick={handleNavigateToPeople}
@@ -81,23 +67,46 @@ const DashboardHome = () => {
         </div>
       </div>
 
-      {/* Placeholder content cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 h-64">
-          <div className="w-full h-full bg-gray-100 rounded-lg flex items-center justify-center">
-            <div className="w-16 h-16 bg-gray-300 rounded"></div>
+      {/* Spaces Section */}
+      <div className="space-y-4">
+        <h2 className="text-xl font-semibold text-gray-900">Your Spaces</h2>
+        {spacesLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="bg-white rounded-lg shadow-sm border border-gray-200 h-64 animate-pulse">
+                <div className="w-full h-full bg-gray-100 rounded-lg"></div>
+              </div>
+            ))}
           </div>
-        </div>
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 h-64">
-          <div className="w-full h-full bg-gray-100 rounded-lg flex items-center justify-center">
-            <div className="w-16 h-16 bg-gray-300 rounded"></div>
+        ) : spaces.length === 0 ? (
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
+            <p className="text-gray-500">No spaces found. Contact your administrator to get started.</p>
           </div>
-        </div>
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 h-64 md:col-span-2 lg:col-span-1">
-          <div className="w-full h-full bg-gray-100 rounded-lg flex items-center justify-center">
-            <div className="w-16 h-16 bg-gray-300 rounded"></div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {spaces.map((space) => (
+              <div 
+                key={space.SpaceId} 
+                className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow cursor-pointer"
+                onClick={() => handleSpaceClick(space.SpaceId)}
+              >
+                <div className="space-y-4">
+                  <div className="w-full h-32 bg-gray-100 rounded-lg flex items-center justify-center">
+                    <div className="w-8 h-8 bg-gray-300 rounded transform rotate-45"></div>
+                    <div className="w-8 h-8 bg-gray-300 rounded transform -rotate-45 -ml-4"></div>
+                  </div>
+                  
+                  <div className="text-center">
+                    <h3 className="text-xl font-bold text-gray-900 font-lato">{space.SpaceName}</h3>
+                    {space.SpaceDescription && (
+                      <p className="text-sm text-gray-600 mt-1">{space.SpaceDescription}</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
-        </div>
+        )}
       </div>
 
       <div className="space-y-4">
@@ -107,6 +116,20 @@ const DashboardHome = () => {
             <div className="w-32 h-8 bg-gray-300 rounded"></div>
           </div>
         </div>
+      </div>
+
+      {/* Floating AI Chat Button */}
+      <div className="fixed bottom-6 right-6 z-50">
+        <Button
+          onClick={handleNavigateToAIChat}
+          className="h-14 w-14 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 shadow-lg hover:shadow-xl transition-all duration-300 p-0"
+          size="icon"
+        >
+          <div className="relative">
+            <div className="w-8 h-8 bg-white/20 rounded-full animate-pulse absolute inset-0"></div>
+            <Sparkles className="h-6 w-6 text-white relative z-10" />
+          </div>
+        </Button>
       </div>
     </div>
   );
