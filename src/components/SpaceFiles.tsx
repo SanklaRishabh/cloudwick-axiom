@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
@@ -18,10 +18,12 @@ import {
   Trash2,
   Edit,
   Globe,
-  ExternalLink
+  ExternalLink,
+  Eye
 } from 'lucide-react';
 import { useFiles, FileItem } from '@/hooks/useFiles';
 import FileUploadDialog from './FileUploadDialog';
+import FileDetailDialog from './FileDetailDialog';
 
 interface SpaceFilesProps {
   spaceId: string;
@@ -29,6 +31,8 @@ interface SpaceFilesProps {
 
 const SpaceFiles: React.FC<SpaceFilesProps> = ({ spaceId }) => {
   const { files, loading, error, uploadFile, submitWebsite } = useFiles(spaceId);
+  const [selectedFile, setSelectedFile] = useState<FileItem | null>(null);
+  const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
 
   const getFileIcon = (item: FileItem) => {
     const fileType = item.FileType?.toLowerCase();
@@ -58,6 +62,11 @@ const SpaceFiles: React.FC<SpaceFilesProps> = ({ spaceId }) => {
     }
     
     return <File className="h-5 w-5 text-gray-600" />;
+  };
+
+  const handleFileClick = (file: FileItem) => {
+    setSelectedFile(file);
+    setIsDetailDialogOpen(true);
   };
 
   const handleDownload = (item: FileItem) => {
@@ -133,7 +142,11 @@ const SpaceFiles: React.FC<SpaceFilesProps> = ({ spaceId }) => {
             </TableHeader>
             <TableBody>
               {files.map((item) => (
-                <TableRow key={item.FileId} className="hover:bg-gray-50">
+                <TableRow 
+                  key={item.FileId} 
+                  className="hover:bg-gray-50 cursor-pointer"
+                  onClick={() => handleFileClick(item)}
+                >
                   <TableCell className="font-medium">
                     <div className="flex items-center gap-3">
                       {getFileIcon(item)}
@@ -163,12 +176,31 @@ const SpaceFiles: React.FC<SpaceFilesProps> = ({ spaceId }) => {
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="h-8 w-8"
+                          onClick={(e) => e.stopPropagation()}
+                        >
                           <MoreVertical className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => handleDownload(item)}>
+                        <DropdownMenuItem 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleFileClick(item);
+                          }}
+                        >
+                          <Eye className="h-4 w-4 mr-2" />
+                          View Details
+                        </DropdownMenuItem>
+                        <DropdownMenuItem 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDownload(item);
+                          }}
+                        >
                           {item.FileType === 'website' ? (
                             <>
                               <ExternalLink className="h-4 w-4 mr-2" />
@@ -181,15 +213,18 @@ const SpaceFiles: React.FC<SpaceFilesProps> = ({ spaceId }) => {
                             </>
                           )}
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
                           <Share className="h-4 w-4 mr-2" />
                           Share
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
                           <Edit className="h-4 w-4 mr-2" />
                           Edit
                         </DropdownMenuItem>
-                        <DropdownMenuItem className="text-red-600">
+                        <DropdownMenuItem 
+                          className="text-red-600"
+                          onClick={(e) => e.stopPropagation()}
+                        >
                           <Trash2 className="h-4 w-4 mr-2" />
                           Delete
                         </DropdownMenuItem>
@@ -201,6 +236,21 @@ const SpaceFiles: React.FC<SpaceFilesProps> = ({ spaceId }) => {
             </TableBody>
           </Table>
         </div>
+      )}
+
+      {/* File Detail Dialog */}
+      {selectedFile && (
+        <FileDetailDialog
+          isOpen={isDetailDialogOpen}
+          onClose={() => {
+            setIsDetailDialogOpen(false);
+            setSelectedFile(null);
+          }}
+          fileId={selectedFile.FileId}
+          fileName={selectedFile.FileName}
+          fileType={selectedFile.FileType}
+          spaceId={spaceId}
+        />
       )}
     </div>
   );
