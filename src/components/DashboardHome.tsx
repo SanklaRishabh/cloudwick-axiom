@@ -37,19 +37,14 @@ const DashboardHome = () => {
     navigate(`/dashboard/spaces/${spaceId}`);
   };
 
-  const getSpacePlaceholderImage = (spaceId: string) => {
-    const images = [
-      '/lovable-uploads/089a268d-1bde-43a9-b5be-d5b768d82613.png', // Orion
-      '/lovable-uploads/52daa7a5-22c0-4af5-84ff-0f1e8f09d08a.png', // Comet
-      '/lovable-uploads/eb2fc261-5749-4c49-9406-00068de459d2.png', // Globe
-      '/lovable-uploads/033c0c66-74be-43c1-b65c-79e19d2ff243.png'  // Test
-    ];
-    // Use spaceId to ensure consistent image per space
-    const hash = spaceId.split('').reduce((a, b) => {
-      a = ((a << 5) - a) + b.charCodeAt(0);
-      return a & a;
-    }, 0);
-    return images[Math.abs(hash) % images.length];
+  const getSpacePlaceholderImage = (spaceName: string) => {
+    const imageMap: { [key: string]: string } = {
+      'Orion': '/lovable-uploads/089a268d-1bde-43a9-b5be-d5b768d82613.png',
+      'Global': '/lovable-uploads/eb2fc261-5749-4c49-9406-00068de459d2.png',
+      'Test': '/lovable-uploads/033c0c66-74be-43c1-b65c-79e19d2ff243.png'
+    };
+    
+    return imageMap[spaceName] || '/lovable-uploads/089a268d-1bde-43a9-b5be-d5b768d82613.png'; // Default to Orion
   };
 
   const isSystemAdmin = user?.role === 'SystemAdmin';
@@ -108,7 +103,7 @@ const DashboardHome = () => {
                 <div className="space-y-4">
                   <div className="w-full h-32 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
                     <img 
-                      src={getSpacePlaceholderImage(space.SpaceId)} 
+                      src={getSpacePlaceholderImage(space.SpaceName)} 
                       alt={space.SpaceName}
                       className="w-16 h-16 object-contain"
                     />
