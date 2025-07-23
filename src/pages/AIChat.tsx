@@ -36,15 +36,17 @@ const AIChat = () => {
 
   const initializeWebSocket = async () => {
     try {
-      if (!process.env.VITE_WS_BASE_URL) {
-        throw new Error('WebSocket URL not configured');
+      const wsBaseUrl = import.meta.env.VITE_WS_BASE_URL;
+      if (!wsBaseUrl) {
+        throw new Error('WebSocket URL not configured in environment variables');
       }
 
-      wsRef.current = new WebSocketService(process.env.VITE_WS_BASE_URL);
+      console.log('🔌 Initializing WebSocket with URL:', wsBaseUrl);
+      wsRef.current = new WebSocketService(wsBaseUrl);
       
       wsRef.current.onConnection(() => {
         setIsConnected(true);
-        console.log('WebSocket connected');
+        console.log('✅ WebSocket connected successfully');
       });
 
       wsRef.current.onMessage((messageContent) => {
@@ -72,13 +74,13 @@ const AIChat = () => {
             });
           }
         } catch (error) {
-          console.error('Error parsing WebSocket message:', error);
+          console.error('❌ Error parsing WebSocket message:', error);
         }
         setIsLoading(false);
       });
 
       wsRef.current.onError((error) => {
-        console.error('WebSocket error:', error);
+        console.error('❌ WebSocket error:', error);
         setIsConnected(false);
         setIsLoading(false);
         toast({
@@ -90,12 +92,12 @@ const AIChat = () => {
 
       wsRef.current.onClose(() => {
         setIsConnected(false);
-        console.log('WebSocket disconnected');
+        console.log('🔌 WebSocket disconnected');
       });
 
       await wsRef.current.connect();
     } catch (error) {
-      console.error('Failed to initialize WebSocket:', error);
+      console.error('❌ Failed to initialize WebSocket:', error);
       toast({
         title: "Connection Error",
         description: "Failed to initialize AI service",
@@ -137,7 +139,7 @@ const AIChat = () => {
         attachment.type === 'file' ? attachment.fileName : undefined
       );
     } catch (error) {
-      console.error('Error sending message:', error);
+      console.error('❌ Error sending message:', error);
       setIsLoading(false);
       setMessages(prev => prev.filter(msg => msg.id !== loadingMessage.id));
       toast({
