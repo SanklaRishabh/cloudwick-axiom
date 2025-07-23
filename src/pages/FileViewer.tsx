@@ -16,7 +16,7 @@ const FileViewer = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user } = useAuth();
-  const { getFileDetails, updateFile, deleteFile } = useFiles(spaceId || '');
+  const { files, getFileDetails, updateFile, deleteFile } = useFiles(spaceId || '');
   
   const [fileDetails, setFileDetails] = useState<FileDetails | null>(null);
   const [loading, setLoading] = useState(true);
@@ -27,15 +27,22 @@ const FileViewer = () => {
     if (fileId) {
       fetchFileDetails();
     }
-  }, [fileId]);
+  }, [fileId, files]);
 
   const fetchFileDetails = async () => {
     if (!fileId) return;
     
     try {
       setLoading(true);
-      // First, try with an empty file type to get the basic details
-      const details = await getFileDetails(fileId, '');
+      
+      // First, find the file in the files list to get its type
+      const fileItem = files.find(file => file.FileId === fileId);
+      if (!fileItem) {
+        throw new Error('File not found in space');
+      }
+      
+      // Now fetch detailed information with the correct file type
+      const details = await getFileDetails(fileId, fileItem.FileType);
       setFileDetails(details);
     } catch (error) {
       console.error('Error fetching file details:', error);
