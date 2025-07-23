@@ -171,7 +171,7 @@ const DashboardHome = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {articles.slice(0, 3).map((article, index) => (
-              <Card key={article.id} className={`group cursor-pointer hover:shadow-2xl transition-all duration-500 overflow-hidden border-0 shadow-lg ${
+              <Card key={article.id} className={`group cursor-pointer hover:shadow-2xl transition-all duration-500 overflow-hidden border-0 shadow-lg relative ${
                 index === 0 ? 'bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-100' :
                 index === 1 ? 'bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-100' :
                 'bg-gradient-to-br from-rose-50 via-pink-50 to-orange-100'
