@@ -27,12 +27,21 @@ import FileUploadDialog from './FileUploadDialog';
 import FileDetailDialog from './FileDetailDialog';
 import EditFileDialog from './EditFileDialog';
 
+import { useAuth } from '@/hooks/useAuth';
+
 interface SpaceFilesProps {
   spaceId: string;
+  space?: {
+    SpaceId: string;
+    SpaceName: string;
+    SpaceDescription?: string;
+    SpaceAdmin?: string;
+  };
 }
 
-const SpaceFiles: React.FC<SpaceFilesProps> = ({ spaceId }) => {
+const SpaceFiles: React.FC<SpaceFilesProps> = ({ spaceId, space }) => {
   const { files, loading, error, uploadFile, submitWebsite, updateFile, deleteFile } = useFiles(spaceId);
+  const { user } = useAuth();
   const [selectedFile, setSelectedFile] = useState<FileItem | null>(null);
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -78,6 +87,22 @@ const SpaceFiles: React.FC<SpaceFilesProps> = ({ spaceId }) => {
     // For now, we'll show a message that download functionality needs to be implemented
     // The actual download would likely need a separate API endpoint to get signed URLs
     console.log('Download requested for file:', item.FileName);
+  };
+
+  // Check if user can edit/delete files (System Admin, Space Admin, or file creator)
+  const canModifyFile = (file: FileItem) => {
+    if (!user) return false;
+    
+    // System Admin can modify any file
+    if (user.role === 'SystemAdmin') return true;
+    
+    // Space Admin can modify any file in their space
+    if (space?.SpaceAdmin === user.username) return true;
+    
+    // File creator can modify their own files
+    if (file.CreatedBy === user.username) return true;
+    
+    return false;
   };
 
   const handleEdit = (file: FileItem) => {
@@ -240,25 +265,29 @@ const SpaceFiles: React.FC<SpaceFilesProps> = ({ spaceId }) => {
                           <Share className="h-4 w-4 mr-2" />
                           Share
                         </DropdownMenuItem>
-                        <DropdownMenuItem 
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleEdit(item);
-                          }}
-                        >
-                          <Edit className="h-4 w-4 mr-2" />
-                          Edit
-                        </DropdownMenuItem>
-                        <DropdownMenuItem 
-                          className="text-red-600"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDelete(item);
-                          }}
-                        >
-                          <Trash2 className="h-4 w-4 mr-2" />
-                          Delete
-                        </DropdownMenuItem>
+                        {canModifyFile(item) && (
+                          <>
+                            <DropdownMenuItem 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleEdit(item);
+                              }}
+                            >
+                              <Edit className="h-4 w-4 mr-2" />
+                              Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                              className="text-red-600"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDelete(item);
+                              }}
+                            >
+                              <Trash2 className="h-4 w-4 mr-2" />
+                              Delete
+                            </DropdownMenuItem>
+                          </>
+                        )}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>

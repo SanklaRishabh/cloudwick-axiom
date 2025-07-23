@@ -11,6 +11,7 @@ export interface FileItem {
   FileDescription: string;
   Tags: string[];
   FileStatus: string;
+  CreatedBy: string;
 }
 
 export interface CreateFileData {

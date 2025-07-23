@@ -226,7 +226,7 @@ const SpaceDetail = () => {
         </TabsList>
 
         <TabsContent value="files" className="space-y-6">
-          <SpaceFiles spaceId={space.SpaceId} />
+          <SpaceFiles spaceId={space.SpaceId} space={space} />
         </TabsContent>
 
         <TabsContent value="courses" className="space-y-6">
