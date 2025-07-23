@@ -36,7 +36,7 @@ export class AICourseCreatorWebSocketService {
       }
 
       // Connect with authentication
-      const wsUrl = `${this.baseUrl}?Authorization=${tokens.idToken}`;
+      const wsUrl = `${this.baseUrl}?Authorization=${encodeURIComponent(`Bearer ${tokens.idToken}`)}`;
       
       return new Promise<void>((resolve, reject) => {
         this.ws = new WebSocket(wsUrl);
