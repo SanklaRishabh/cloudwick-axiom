@@ -3,7 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Download, Share, Edit, Trash2, Calendar, User, FileText, Eye } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ArrowLeft, Download, Share, Edit, Trash2, Calendar, User, FileText, Eye, List, MessageSquare } from 'lucide-react';
 import { useFiles, FileItem, FileDetails } from '@/hooks/useFiles';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
@@ -22,6 +23,13 @@ const FileViewer = () => {
   const [loading, setLoading] = useState(true);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isSummaryOpen, setIsSummaryOpen] = useState(false);
+  const [isActionItemsOpen, setIsActionItemsOpen] = useState(false);
+  const [isTranscriptOpen, setIsTranscriptOpen] = useState(false);
+  const [contentLoading, setContentLoading] = useState(false);
+  const [summaryContent, setSummaryContent] = useState('');
+  const [actionItemsContent, setActionItemsContent] = useState('');
+  const [transcriptContent, setTranscriptContent] = useState('');
 
   useEffect(() => {
     if (fileId) {
@@ -103,6 +111,105 @@ const FileViewer = () => {
       'bg-yellow-100 text-yellow-800 border-yellow-200'
     ];
     return colors[index % colors.length];
+  };
+
+  const fetchContent = async (url: string): Promise<string> => {
+    try {
+      setContentLoading(true);
+      const response = await fetch(url);
+      if (!response.ok) throw new Error('Failed to fetch content');
+      return await response.text();
+    } catch (error) {
+      console.error('Error fetching content:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load content",
+        variant: "destructive",
+      });
+      return '';
+    } finally {
+      setContentLoading(false);
+    }
+  };
+
+  const handleSummary = async () => {
+    if (!fileDetails) return;
+    
+    setIsSummaryOpen(true);
+    
+    if (!summaryContent && (fileDetails.BdaSummaryS3KeyUrl || fileDetails.DocSummaryUrl)) {
+      const url = fileDetails.BdaSummaryS3KeyUrl || fileDetails.DocSummaryUrl;
+      const content = await fetchContent(url!);
+      setSummaryContent(content);
+    }
+  };
+
+  const handleActionItems = async () => {
+    if (!fileDetails) return;
+    
+    setIsActionItemsOpen(true);
+    
+    if (!actionItemsContent && fileDetails.ActionItemsUrl) {
+      const content = await fetchContent(fileDetails.ActionItemsUrl);
+      setActionItemsContent(content);
+    }
+  };
+
+  const handleTranscript = async () => {
+    if (!fileDetails) return;
+    
+    setIsTranscriptOpen(true);
+    
+    if (!transcriptContent && fileDetails.BdaTranscriptS3KeyUrl) {
+      const content = await fetchContent(fileDetails.BdaTranscriptS3KeyUrl);
+      setTranscriptContent(content);
+    }
+  };
+
+  const isVideoOrAudio = (fileType: string) => {
+    return fileType?.toLowerCase().includes('video') || fileType?.toLowerCase().includes('audio');
+  };
+
+  const isDocumentOrImage = (fileType: string) => {
+    return fileType?.toLowerCase().includes('document') || fileType?.toLowerCase().includes('image');
+  };
+
+  const renderAIContentButtons = () => {
+    if (!fileDetails) return null;
+
+    const fileType = fileDetails.FileType?.toLowerCase();
+
+    if (isVideoOrAudio(fileType)) {
+      return (
+        <div className="flex flex-wrap gap-2 mt-4">
+          <Button variant="outline" size="sm" onClick={handleSummary}>
+            <FileText className="h-4 w-4 mr-2" />
+            Summary
+          </Button>
+          <Button variant="outline" size="sm" onClick={handleActionItems}>
+            <List className="h-4 w-4 mr-2" />
+            Action Items
+          </Button>
+          <Button variant="outline" size="sm" onClick={handleTranscript}>
+            <MessageSquare className="h-4 w-4 mr-2" />
+            Transcript
+          </Button>
+        </div>
+      );
+    }
+
+    if (isDocumentOrImage(fileType)) {
+      return (
+        <div className="flex flex-wrap gap-2 mt-4">
+          <Button variant="outline" size="sm" onClick={handleSummary}>
+            <FileText className="h-4 w-4 mr-2" />
+            Summary
+          </Button>
+        </div>
+      );
+    }
+
+    return null;
   };
 
   const renderFilePreview = () => {
@@ -262,26 +369,6 @@ const FileViewer = () => {
           </div>
           
           <div className="flex items-center gap-2">
-            {/* AI Content Buttons */}
-            {fileDetails.DocSummary && (
-              <Button variant="outline" size="sm">
-                <FileText className="h-4 w-4 mr-2" />
-                Summary
-              </Button>
-            )}
-            {fileDetails.ActionItems && (
-              <Button variant="outline" size="sm">
-                <Eye className="h-4 w-4 mr-2" />
-                Action Items
-              </Button>
-            )}
-            {fileDetails.BdaTranscriptS3KeyUrl && (
-              <Button variant="outline" size="sm">
-                <FileText className="h-4 w-4 mr-2" />
-                Transcript
-              </Button>
-            )}
-            
             <Button variant="outline" onClick={handleDownload}>
               <Download className="h-4 w-4 mr-2" />
               Download
@@ -319,6 +406,7 @@ const FileViewer = () => {
             </CardHeader>
             <CardContent>
               {renderFilePreview()}
+              {renderAIContentButtons()}
             </CardContent>
           </Card>
         </div>
@@ -451,6 +539,60 @@ const FileViewer = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Summary Dialog */}
+      <Dialog open={isSummaryOpen} onOpenChange={setIsSummaryOpen}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-auto">
+          <DialogHeader>
+            <DialogTitle>Summary</DialogTitle>
+          </DialogHeader>
+          {contentLoading ? (
+            <div className="flex items-center justify-center p-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            </div>
+          ) : (
+            <div className="whitespace-pre-wrap p-4 text-sm">
+              {summaryContent || fileDetails?.DocSummary || 'No summary available'}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Action Items Dialog */}
+      <Dialog open={isActionItemsOpen} onOpenChange={setIsActionItemsOpen}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-auto">
+          <DialogHeader>
+            <DialogTitle>Action Items</DialogTitle>
+          </DialogHeader>
+          {contentLoading ? (
+            <div className="flex items-center justify-center p-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            </div>
+          ) : (
+            <div className="whitespace-pre-wrap p-4 text-sm">
+              {actionItemsContent || fileDetails?.ActionItems || 'No action items available'}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Transcript Dialog */}
+      <Dialog open={isTranscriptOpen} onOpenChange={setIsTranscriptOpen}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-auto">
+          <DialogHeader>
+            <DialogTitle>Transcript</DialogTitle>
+          </DialogHeader>
+          {contentLoading ? (
+            <div className="flex items-center justify-center p-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            </div>
+          ) : (
+            <div className="whitespace-pre-wrap p-4 text-sm">
+              {transcriptContent || 'No transcript available'}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
