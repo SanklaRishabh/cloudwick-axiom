@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Users, Sparkles, ExternalLink, RefreshCw, Heart, MessageCircle, Clock } from 'lucide-react';
+import { Users, Sparkles, RefreshCw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useSpaces } from '@/hooks/useSpaces';
 import { useDevArticles } from '@/hooks/useDevArticles';
@@ -146,9 +146,9 @@ const DashboardHome = () => {
         {articlesLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[1, 2, 3].map((i) => (
-              <Card key={i} className="h-96 shadow-lg border-0 bg-gradient-to-br from-slate-50 to-blue-50">
+              <Card key={i} className="h-80 shadow-lg border-0 bg-gradient-to-br from-slate-50 to-blue-50">
                 <CardHeader className="p-0">
-                  <Skeleton className="h-48 w-full rounded-t-lg" />
+                  <Skeleton className="h-40 w-full rounded-t-lg" />
                 </CardHeader>
                 <CardContent className="p-6 space-y-4">
                   <Skeleton className="h-5 w-full" />
@@ -178,7 +178,7 @@ const DashboardHome = () => {
               }`}>
                 <CardHeader className="p-0">
                   {article.cover_image ? (
-                    <div className="h-48 overflow-hidden">
+                    <div className="h-40 overflow-hidden">
                       <img 
                         src={article.cover_image} 
                         alt={article.title}
@@ -186,7 +186,7 @@ const DashboardHome = () => {
                       />
                     </div>
                   ) : (
-                    <div className={`h-48 flex items-center justify-center ${
+                    <div className={`h-40 flex items-center justify-center ${
                       index === 0 ? 'bg-gradient-to-br from-purple-200 to-indigo-300' :
                       index === 1 ? 'bg-gradient-to-br from-emerald-200 to-cyan-300' :
                       'bg-gradient-to-br from-rose-200 to-orange-300'
@@ -215,24 +215,6 @@ const DashboardHome = () => {
                       <span className="font-medium text-gray-700">{article.user.name}</span>
                       <span className="text-xs">{article.readable_publish_date}</span>
                     </div>
-                  </div>
-
-                  <div className="flex items-center justify-between pt-2">
-                    <div className="flex items-center gap-4 text-xs text-gray-500">
-                      <div className="flex items-center gap-1">
-                        <Heart className="h-4 w-4" />
-                        <span className="font-medium">{article.positive_reactions_count}</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <MessageCircle className="h-4 w-4" />
-                        <span className="font-medium">{article.comments_count}</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Clock className="h-4 w-4" />
-                        <span className="font-medium">{article.reading_time_minutes}m</span>
-                      </div>
-                    </div>
-                    <ExternalLink className="h-5 w-5 text-gray-400 group-hover:text-blue-600 transition-colors" />
                   </div>
 
                   {article.tag_list.length > 0 && (
