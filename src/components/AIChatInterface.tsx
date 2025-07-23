@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Send, Bot, User, Loader2 } from 'lucide-react';
-import { WebSocketService } from '@/lib/websocket';
+import { AICourseCreatorWebSocketService } from '@/lib/aiCourseCreatorWebSocket';
 
 interface ChatMessage {
   id: string;
@@ -31,7 +31,7 @@ const AIChatInterface: React.FC<AIChatInterfaceProps> = ({
   const [isConnecting, setIsConnecting] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const wsService = useRef<WebSocketService | null>(null);
+  const wsService = useRef<AICourseCreatorWebSocketService | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messageIdCounter = useRef(0);
 
@@ -69,7 +69,7 @@ const AIChatInterface: React.FC<AIChatInterfaceProps> = ({
         throw new Error('AI Course Creator WebSocket URL not configured');
       }
       
-      wsService.current = new WebSocketService(wsUrl);
+      wsService.current = new AICourseCreatorWebSocketService(wsUrl);
 
       wsService.current.onConnection(() => {
         setIsConnected(true);
@@ -184,7 +184,7 @@ const AIChatInterface: React.FC<AIChatInterfaceProps> = ({
     setIsLoading(true);
 
     try {
-      wsService.current.sendMessage(userMessage, spaceId, fileName);
+      wsService.current.sendMessage(userMessage, spaceId);
     } catch (error) {
       console.error('Failed to send message:', error);
       setIsLoading(false);
