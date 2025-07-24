@@ -197,124 +197,121 @@ const SpaceFiles: React.FC<SpaceFilesProps> = ({ spaceId, space }) => {
           <p className="text-gray-500">No files uploaded yet. Start by uploading your first file or adding a website.</p>
         </div>
       ) : (
-        <div className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 border">
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-gradient-to-r from-gray-50 to-gray-100">
-                <TableHead className="font-semibold text-gray-700">Name</TableHead>
-                <TableHead className="font-semibold text-gray-700">Type</TableHead>
-                <TableHead className="font-semibold text-gray-700">Status</TableHead>
-                <TableHead className="font-semibold text-gray-700">Tags</TableHead>
-                <TableHead className="w-12"></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {files.map((item) => (
-                <TableRow 
-                  key={item.FileId} 
-                  className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 cursor-pointer transition-all duration-200 hover:shadow-sm group"
-                  onClick={() => handleFileClick(item)}
-                >
-                  <TableCell className="font-medium">
-                    <div className="flex items-center gap-3">
-                      {getFileIcon(item)}
-                      <div>
-                        <div className="font-medium">{item.FileName}</div>
-                        {item.FileDescription && (
-                          <div className="text-sm text-gray-500">{item.FileDescription}</div>
-                        )}
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-gray-600">{item.FileType || '—'}</TableCell>
-                  <TableCell>
-                    <Badge className={getStatusColor(item.FileStatus)}>
-                      {item.FileStatus || 'Unknown'}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex flex-wrap gap-1">
-                      {item.Tags?.map((tag, index) => (
-                        <Badge key={index} className={`text-xs border hover-scale transition-all duration-200 ${getTagColor(index)}`}>
-                          {tag}
-                        </Badge>
-                      ))}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-gray-100"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <MoreVertical className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
+        /* Thumbnail Grid Layout */
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+          {files.map((item) => (
+            <div
+              key={item.FileId}
+              className="group relative bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-lg transition-all duration-300 cursor-pointer hover:scale-[1.02]"
+              onClick={() => handleFileClick(item)}
+            >
+              {/* Thumbnail */}
+              <div className="aspect-square bg-gray-50 rounded-t-lg flex items-center justify-center p-4">
+                {getFileIcon(item)}
+              </div>
+              
+              {/* File Info */}
+              <div className="p-3">
+                <div className="text-sm font-medium text-gray-900 truncate" title={item.FileName}>
+                  {item.FileName}
+                </div>
+                <div className="text-xs text-gray-500 mt-1 truncate">
+                  {item.FileType || 'Unknown'}
+                </div>
+                
+                {/* Status Badge */}
+                <div className="mt-2">
+                  <Badge className={`text-xs ${getStatusColor(item.FileStatus)}`}>
+                    {item.FileStatus || 'Unknown'}
+                  </Badge>
+                </div>
+                
+                {/* Tags */}
+                {item.Tags && item.Tags.length > 0 && (
+                  <div className="flex flex-wrap gap-1 mt-2">
+                    {item.Tags.slice(0, 2).map((tag, index) => (
+                      <Badge key={index} className={`text-xs border ${getTagColor(index)}`}>
+                        {tag}
+                      </Badge>
+                    ))}
+                    {item.Tags.length > 2 && (
+                      <Badge className="text-xs bg-gray-100 text-gray-600">
+                        +{item.Tags.length - 2}
+                      </Badge>
+                    )}
+                  </div>
+                )}
+              </div>
+              
+              {/* Dropdown Menu */}
+              <div className="absolute top-2 right-2">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-gray-100 bg-white/80 backdrop-blur-sm"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <MoreVertical className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleFileClick(item);
+                      }}
+                    >
+                      <Eye className="h-4 w-4 mr-2" />
+                      View Details
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDownload(item);
+                      }}
+                    >
+                      {item.FileType === 'website' ? (
+                        <>
+                          <ExternalLink className="h-4 w-4 mr-2" />
+                          Open Link
+                        </>
+                      ) : (
+                        <>
+                          <Download className="h-4 w-4 mr-2" />
+                          Download
+                        </>
+                      )}
+                    </DropdownMenuItem>
+                    {canModifyFile(item) && (
+                      <>
                         <DropdownMenuItem 
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleFileClick(item);
+                            handleEdit(item);
                           }}
                         >
-                          <Eye className="h-4 w-4 mr-2" />
-                          View Details
+                          <Edit className="h-4 w-4 mr-2" />
+                          Edit
                         </DropdownMenuItem>
                         <DropdownMenuItem 
+                          className="text-red-600"
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleDownload(item);
+                            handleDelete(item);
                           }}
                         >
-                          {item.FileType === 'website' ? (
-                            <>
-                              <ExternalLink className="h-4 w-4 mr-2" />
-                              Open Link
-                            </>
-                          ) : (
-                            <>
-                              <Download className="h-4 w-4 mr-2" />
-                              Download
-                            </>
-                          )}
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Delete
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
-                          <Share className="h-4 w-4 mr-2" />
-                          Share
-                        </DropdownMenuItem>
-                        {canModifyFile(item) && (
-                          <>
-                            <DropdownMenuItem 
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleEdit(item);
-                              }}
-                            >
-                              <Edit className="h-4 w-4 mr-2" />
-                              Edit
-                            </DropdownMenuItem>
-                            <DropdownMenuItem 
-                              className="text-red-600"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleDelete(item);
-                              }}
-                            >
-                              <Trash2 className="h-4 w-4 mr-2" />
-                              Delete
-                            </DropdownMenuItem>
-                          </>
-                        )}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+                      </>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </div>
+          ))}
         </div>
       )}
 
