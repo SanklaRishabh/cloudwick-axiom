@@ -49,6 +49,13 @@ const FileViewer = () => {
     }
   }, [fileId, files]);
 
+  // Preload AI content when switching to AI Analysis tab
+  useEffect(() => {
+    if (activeTab === 'ai-analysis' && fileDetails && !summaryContent && !actionItemsContent && !transcriptContent) {
+      loadAIContent();
+    }
+  }, [activeTab, fileDetails]);
+
   const fetchFileDetails = async () => {
     if (!fileId) return;
     
@@ -289,10 +296,10 @@ const FileViewer = () => {
       <div className="h-full flex flex-col">
         <Tabs value={activeAITab} onValueChange={setActiveAITab} className="flex-1 flex flex-col">
           <div className="px-6 pt-6 pb-4">
-            <TabsList className="grid w-full grid-cols-3 bg-gradient-teal/10 p-1">
+            <TabsList className="grid w-full grid-cols-3 bg-muted/50 p-1">
               <TabsTrigger 
                 value="summary" 
-                className="flex items-center gap-2 data-[state=active]:bg-gradient-green data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200"
+                className="flex items-center gap-2 data-[state=active]:bg-gradient-teal-blue data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200"
               >
                 <FileText className="h-4 w-4" />
                 AI Summary
@@ -300,7 +307,7 @@ const FileViewer = () => {
               {isVideoOrAudio(fileType!, fileName) && (
                 <TabsTrigger 
                   value="action-items" 
-                  className="flex items-center gap-2 data-[state=active]:bg-gradient-green data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200"
+                  className="flex items-center gap-2 data-[state=active]:bg-gradient-teal-blue data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200"
                 >
                   <List className="h-4 w-4" />
                   Action Items
@@ -309,7 +316,7 @@ const FileViewer = () => {
               {isVideoOrAudio(fileType!, fileName) && (
                 <TabsTrigger 
                   value="transcript" 
-                  className="flex items-center gap-2 data-[state=active]:bg-gradient-green data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200"
+                  className="flex items-center gap-2 data-[state=active]:bg-gradient-teal-blue data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200"
                 >
                   <MessageSquare className="h-4 w-4" />
                   Transcript
@@ -320,28 +327,28 @@ const FileViewer = () => {
           
           {/* AI Summary Tab */}
           <TabsContent value="summary" className="flex-1 px-6 pb-6 mt-0 flex flex-col">
-            <div className="mb-4 max-w-full">
-              <div className="relative w-full">
+            <div className="mb-4">
+              <div className="relative max-w-md">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Search in summary..."
                   value={summarySearch}
                   onChange={(e) => setSummarySearch(e.target.value)}
-                  className="pl-10 w-full border-emerald/20 focus:border-emerald focus:ring-emerald/20"
+                  className="pl-10 bg-background/80 border-teal/20 focus:border-teal focus:ring-teal/20"
                 />
               </div>
             </div>
-            <Card className="flex-1 card-enhanced border-emerald/20">
+            <Card className="flex-1 border-teal/20 shadow-lg">
               <CardContent className="p-6">
                 {contentLoading ? (
                   <div className="flex items-center justify-center p-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald"></div>
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal"></div>
                   </div>
                 ) : summaryContent || fileDetails?.DocSummary ? (
                   <div className="prose prose-sm max-w-none">
-                    <div dangerouslySetInnerHTML={{ 
-                      __html: filterContent(summaryContent || fileDetails?.DocSummary || '', summarySearch) 
-                    }} />
+                    <ReactMarkdown components={markdownComponents}>
+                      {filterContent(summaryContent || fileDetails?.DocSummary || '', summarySearch)}
+                    </ReactMarkdown>
                   </div>
                 ) : (
                   <p className="text-muted-foreground">No summary available</p>
@@ -353,7 +360,7 @@ const FileViewer = () => {
           {/* Action Items Tab */}
           {isVideoOrAudio(fileType!, fileName) && (
             <TabsContent value="action-items" className="flex-1 px-6 pb-6 mt-0">
-              <Card className="h-full card-enhanced border-teal/20">
+              <Card className="h-full border-teal/20 shadow-lg">
                 <CardContent className="p-6">
                   {contentLoading ? (
                     <div className="flex items-center justify-center p-8">
@@ -376,18 +383,18 @@ const FileViewer = () => {
           {/* Transcript Tab */}
           {isVideoOrAudio(fileType!, fileName) && (
             <TabsContent value="transcript" className="flex-1 px-6 pb-6 mt-0 flex flex-col">
-              <div className="mb-4 max-w-full">
-                <div className="relative w-full">
+              <div className="mb-4">
+                <div className="relative max-w-md">
                   <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
                     placeholder="Search in transcript..."
                     value={transcriptSearch}
                     onChange={(e) => setTranscriptSearch(e.target.value)}
-                    className="pl-10 w-full border-teal/20 focus:border-teal focus:ring-teal/20"
+                    className="pl-10 bg-background/80 border-teal/20 focus:border-teal focus:ring-teal/20"
                   />
                 </div>
               </div>
-              <Card className="flex-1 card-enhanced border-teal/20">
+              <Card className="flex-1 border-teal/20 shadow-lg">
                 <CardContent className="p-6">
                   {contentLoading ? (
                     <div className="flex items-center justify-center p-8">
@@ -398,7 +405,7 @@ const FileViewer = () => {
                       {filteredTranscriptMessages.map((message, index) => (
                         <div key={index} className="flex gap-3">
                           <div className="flex-shrink-0">
-                            <div className="w-8 h-8 rounded-full bg-gradient-teal flex items-center justify-center text-white text-sm font-medium shadow-md">
+                            <div className="w-8 h-8 rounded-full bg-gradient-teal-blue flex items-center justify-center text-white text-sm font-medium shadow-md">
                               {message.speaker.charAt(0).toUpperCase()}
                             </div>
                           </div>
@@ -660,7 +667,7 @@ const FileViewer = () => {
               <TabsList className="grid w-full max-w-md grid-cols-2 bg-white/60 backdrop-blur-sm border border-white/20 shadow-lg">
                 <TabsTrigger 
                   value="preview" 
-                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-pink-500 data-[state=active]:text-white transition-all duration-300"
+                  className="data-[state=active]:bg-gradient-teal-blue data-[state=active]:text-white transition-all duration-300"
                 >
                   <Eye className="h-4 w-4 mr-2" />
                   Preview
@@ -668,7 +675,7 @@ const FileViewer = () => {
                 <TabsTrigger 
                   value="ai-analysis" 
                   disabled={!hasAIContent()}
-                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-pink-500 data-[state=active]:text-white transition-all duration-300"
+                  className="data-[state=active]:bg-gradient-teal-blue data-[state=active]:text-white transition-all duration-300"
                 >
                   <MessageSquare className="h-4 w-4 mr-2" />
                   AI Analysis
