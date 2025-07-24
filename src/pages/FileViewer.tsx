@@ -485,26 +485,8 @@ const FileViewer = () => {
       );
     }
 
-    // Video preview - check for YouTube URLs or video files
+    // Video preview - local video files only (YouTube URLs handled separately)
     if (fileType?.includes('video') || videoExtensions.includes(extension)) {
-      const isYouTubeUrl = fileDetails.PresignedUrl && (
-        fileDetails.PresignedUrl.includes('youtube.com') || 
-        fileDetails.PresignedUrl.includes('youtu.be')
-      );
-      
-      if (isYouTubeUrl) {
-        // Extract video ID from YouTube URL
-        const videoId = fileDetails.PresignedUrl.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/)?.[1];
-        
-        if (videoId) {
-          return (
-            <div className="w-full">
-              <YouTubePlayer videoId={videoId} className="w-full" />
-            </div>
-          );
-        }
-      }
-      
       return (
         <div className="w-full h-96 bg-gray-100 rounded-lg">
           {fileDetails.PresignedUrl ? (
@@ -540,15 +522,33 @@ const FileViewer = () => {
       );
     }
 
-    // Website preview
+    // Website preview - check if it's a YouTube URL
     if (fileType === 'website') {
+      const websiteUrl = fileDetails.OriginalUrl || fileDetails.PresignedUrl;
+      const isYouTubeUrl = websiteUrl && (websiteUrl.includes('youtube.com') || websiteUrl.includes('youtu.be'));
+      
+      if (isYouTubeUrl) {
+        // Extract video ID from YouTube URL
+        const videoId = websiteUrl.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/)?.[1];
+        
+        if (videoId) {
+          return (
+            <div className="w-full">
+              <YouTubePlayer videoId={videoId} className="w-full" />
+            </div>
+          );
+        }
+      }
+      
+      // Regular website iframe for non-YouTube URLs
       return (
         <div className="w-full h-96 bg-gray-100 rounded-lg">
-          {fileDetails.PresignedUrl ? (
+          {websiteUrl ? (
             <iframe
-              src={fileDetails.PresignedUrl}
+              src={websiteUrl}
               className="w-full h-full rounded-lg"
               title={fileDetails.FileName}
+              sandbox="allow-scripts allow-same-origin"
             />
           ) : (
             <div className="flex items-center justify-center h-full text-gray-500">

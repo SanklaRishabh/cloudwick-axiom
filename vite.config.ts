@@ -22,5 +22,8 @@ export default defineConfig(({ mode }) => ({
   optimizeDeps: {
     include: ['pdfjs-dist']
   },
-  assetsInclude: ['**/*.pdf']
+  assetsInclude: ['**/*.pdf'],
+  worker: {
+    format: 'es'
+  }
 }));
