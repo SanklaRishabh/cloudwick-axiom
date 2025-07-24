@@ -39,31 +39,37 @@ export function DashboardHeader() {
   };
 
   return (
-    <header className="h-16 border-b border-gray-200 bg-white flex items-center justify-between px-6">
-      <div className="flex items-center gap-2 cursor-pointer" onClick={handleLogoClick}>
-        <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-          <span className="text-white font-bold text-sm">CW</span>
+    <header className="h-20 border-b border-white/20 bg-gradient-to-r from-white/90 via-white/95 to-white/90 backdrop-blur-xl shadow-lg flex items-center justify-between px-8">
+      <div className="flex items-center gap-3 cursor-pointer group" onClick={handleLogoClick}>
+        <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+          <span className="text-white font-bold text-lg">CW</span>
         </div>
         <div className="flex flex-col">
-          <span className="text-blue-600 font-bold text-sm font-lato">Cloudwick</span>
-          <span className="text-gray-600 font-light text-xs font-lato">Axiom</span>
+          <span className="bg-gradient-to-r from-teal-700 via-slate-700 to-teal-700 bg-clip-text text-transparent font-bold text-lg font-lato">Cloudwick</span>
+          <span className="text-muted-foreground font-light text-sm font-lato">Axiom</span>
         </div>
       </div>
       
       <div className="flex items-center gap-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="relative h-8 w-8 rounded-full bg-gray-200 hover:bg-gray-300">
-              <span className="text-sm font-medium text-gray-700">
+            <Button variant="ghost" className="relative h-12 w-12 rounded-full bg-gradient-to-br from-purple-100 to-pink-100 hover:from-purple-200 hover:to-pink-200 border border-purple-200 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-110">
+              <span className="text-base font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
                 {getUserInitials()}
               </span>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56" align="end" forceMount>
-            <DropdownMenuItem onClick={handleSettingsClick}>
+          <DropdownMenuContent className="w-56 card-glass border-white/20" align="end" forceMount>
+            <DropdownMenuItem 
+              onClick={handleSettingsClick}
+              className="hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 cursor-pointer"
+            >
               Settings
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleSignOut}>
+            <DropdownMenuItem 
+              onClick={handleSignOut}
+              className="hover:bg-gradient-to-r hover:from-red-50 hover:to-red-100 text-red-600 cursor-pointer"
+            >
               Sign Out
             </DropdownMenuItem>
           </DropdownMenuContent>

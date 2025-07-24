@@ -35,17 +35,17 @@ export function AppSidebar() {
   };
 
   return (
-    <Sidebar className="border-r border-gray-200">
+    <Sidebar className="border-r border-white/20 bg-gradient-to-b from-white/95 to-slate-50/95 backdrop-blur-xl shadow-xl">
       <SidebarContent>
-        <div className="p-4">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">CW</span>
+        <div className="p-6">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
+              <span className="text-white font-bold text-lg">CW</span>
             </div>
             {state === "expanded" && (
               <div className="flex flex-col">
-                <span className="text-blue-600 font-bold text-sm font-lato">Cloudwick</span>
-                <span className="text-gray-600 font-light text-xs font-lato">Axiom</span>
+                <span className="bg-gradient-to-r from-teal-700 via-slate-700 to-teal-700 bg-clip-text text-transparent font-bold text-lg font-lato">Cloudwick</span>
+                <span className="text-muted-foreground font-light text-sm font-lato">Axiom</span>
               </div>
             )}
           </div>
@@ -53,18 +53,26 @@ export function AppSidebar() {
 
         <SidebarGroup>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="space-y-2 px-4">
               {menuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild isActive={isActive(item.url)}>
                     <NavLink 
                       to={item.url} 
                       end={item.url === "/dashboard"}
-                      className="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors"
+                      className={({ isActive }) => `
+                        flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 group
+                        ${isActive 
+                          ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg transform scale-105' 
+                          : 'hover:bg-white/60 hover:shadow-md hover:scale-105'
+                        }
+                      `}
                     >
-                      <item.icon className="h-5 w-5" />
+                      <item.icon className={`h-5 w-5 transition-transform duration-300 ${
+                        state === "expanded" ? "" : "group-hover:scale-110"
+                      }`} />
                       {state === "expanded" && (
-                        <span className="text-sm">{item.title}</span>
+                        <span className="text-sm font-medium">{item.title}</span>
                       )}
                     </NavLink>
                   </SidebarMenuButton>
