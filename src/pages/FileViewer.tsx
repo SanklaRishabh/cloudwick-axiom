@@ -167,20 +167,43 @@ const FileViewer = () => {
     }
   };
 
-  const isVideoOrAudio = (fileType: string) => {
-    return fileType?.toLowerCase().includes('video') || fileType?.toLowerCase().includes('audio');
+  // Utility function to get file extension
+  const getFileExtension = (fileName: string): string => {
+    return fileName.toLowerCase().split('.').pop() || '';
   };
 
-  const isDocumentOrImage = (fileType: string) => {
-    return fileType?.toLowerCase().includes('document') || fileType?.toLowerCase().includes('image');
+  // Audio file extensions
+  const audioExtensions = ['mp3', 'wav', 'flac', 'aac', 'm4a', 'ogg', 'wma'];
+  
+  // Video file extensions
+  const videoExtensions = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm', 'mkv'];
+  
+  // Image file extensions
+  const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp', 'bmp'];
+
+  const isVideoOrAudio = (fileType: string, fileName: string) => {
+    const extension = getFileExtension(fileName);
+    return fileType?.toLowerCase().includes('video') || 
+           fileType?.toLowerCase().includes('audio') ||
+           videoExtensions.includes(extension) ||
+           audioExtensions.includes(extension);
+  };
+
+  const isDocumentOrImage = (fileType: string, fileName: string) => {
+    const extension = getFileExtension(fileName);
+    return fileType?.toLowerCase().includes('document') || 
+           fileType?.toLowerCase().includes('image') ||
+           extension === 'pdf' ||
+           imageExtensions.includes(extension);
   };
 
   const renderAIContentButtons = () => {
     if (!fileDetails) return null;
 
     const fileType = fileDetails.FileType?.toLowerCase();
+    const fileName = fileDetails.FileName || '';
 
-    if (isVideoOrAudio(fileType)) {
+    if (isVideoOrAudio(fileType, fileName)) {
       return (
         <div className="flex flex-wrap gap-2 mt-4">
           <Button variant="outline" size="sm" onClick={handleSummary}>
@@ -199,7 +222,7 @@ const FileViewer = () => {
       );
     }
 
-    if (isDocumentOrImage(fileType)) {
+    if (isDocumentOrImage(fileType, fileName)) {
       return (
         <div className="flex flex-wrap gap-2 mt-4">
           <Button variant="outline" size="sm" onClick={handleSummary}>
@@ -217,9 +240,13 @@ const FileViewer = () => {
     if (!fileDetails) return null;
 
     const fileType = fileDetails.FileType?.toLowerCase();
+    const fileName = fileDetails.FileName || '';
+    const extension = getFileExtension(fileName);
+    
+    console.log('File preview debug:', { fileType, fileName, extension });
 
     // Image preview
-    if (fileType?.includes('image') || ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp'].includes(fileType)) {
+    if (fileType?.includes('image') || imageExtensions.includes(extension)) {
       return (
         <div className="w-full h-96 bg-gray-100 rounded-lg flex items-center justify-center">
           {fileDetails.PresignedUrl ? (
@@ -235,8 +262,8 @@ const FileViewer = () => {
       );
     }
 
-    // PDF preview
-    if (fileType === 'pdf') {
+    // PDF preview - check both type and extension
+    if (fileType === 'pdf' || fileType === 'document' || extension === 'pdf') {
       return (
         <div className="w-full h-96">
           {fileDetails.PresignedUrl ? (
@@ -254,7 +281,7 @@ const FileViewer = () => {
     }
 
     // Video preview
-    if (fileType?.includes('video') || ['mp4', 'avi', 'mov', 'wmv', 'flv'].includes(fileType)) {
+    if (fileType?.includes('video') || videoExtensions.includes(extension)) {
       return (
         <div className="w-full h-96 bg-gray-100 rounded-lg">
           {fileDetails.PresignedUrl ? (
@@ -275,7 +302,7 @@ const FileViewer = () => {
     }
 
     // Audio preview
-    if (fileType?.includes('audio') || ['mp3', 'wav', 'flac', 'aac'].includes(fileType)) {
+    if (fileType?.includes('audio') || audioExtensions.includes(extension)) {
       return (
         <div className="w-full h-96 bg-gray-100 rounded-lg flex items-center justify-center">
           {fileDetails.PresignedUrl ? (
