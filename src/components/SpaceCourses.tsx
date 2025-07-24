@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { BookOpen, Users, Clock } from 'lucide-react';
@@ -13,9 +13,28 @@ interface SpaceCoursesProps {
 const SpaceCourses: React.FC<SpaceCoursesProps> = ({ spaceId }) => {
   const navigate = useNavigate();
   const { courses, loading, createCourse } = useCourses(spaceId);
+  const [expandedDescriptions, setExpandedDescriptions] = useState<Set<string>>(new Set());
 
   const handleCourseClick = (courseId: string) => {
     navigate(`/dashboard/spaces/${spaceId}/courses/${courseId}`);
+  };
+
+  const toggleDescription = (courseId: string, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card click
+    setExpandedDescriptions(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(courseId)) {
+        newSet.delete(courseId);
+      } else {
+        newSet.add(courseId);
+      }
+      return newSet;
+    });
+  };
+
+  const truncateDescription = (description: string, maxLength: number = 100) => {
+    if (description.length <= maxLength) return description;
+    return description.substring(0, maxLength) + "...";
   };
 
   if (loading) {
@@ -49,13 +68,24 @@ const SpaceCourses: React.FC<SpaceCoursesProps> = ({ spaceId }) => {
             onClick={() => handleCourseClick(course.CourseId)}
             style={{ animationDelay: `${index * 0.1}s` }}
           >
-            <CardHeader>
+            <CardHeader className="pb-4">
               <div className="flex items-start justify-between">
                 <BookOpen className="h-8 w-8 text-cyan-600" />
               </div>
-              <CardTitle>{course.CourseTitle}</CardTitle>
-              <CardDescription>
-                {course.Description}
+              <CardTitle className="mb-3">{course.CourseTitle}</CardTitle>
+              <CardDescription className="leading-relaxed">
+                {expandedDescriptions.has(course.CourseId) 
+                  ? course.Description 
+                  : truncateDescription(course.Description)
+                }
+                {course.Description.length > 100 && (
+                  <button
+                    onClick={(e) => toggleDescription(course.CourseId, e)}
+                    className="ml-2 text-cyan-600 hover:text-cyan-700 font-medium text-sm transition-colors"
+                  >
+                    {expandedDescriptions.has(course.CourseId) ? 'See Less' : 'See More'}
+                  </button>
+                )}
               </CardDescription>
             </CardHeader>
             <CardContent>
