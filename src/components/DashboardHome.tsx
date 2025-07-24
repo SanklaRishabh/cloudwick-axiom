@@ -8,6 +8,9 @@ import { Users, Sparkles, RefreshCw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useSpaces } from '@/hooks/useSpaces';
 import { useDevArticles } from '@/hooks/useDevArticles';
+import workspaceIcon from '@/assets/workspace-doodle.jpg';
+import collaborationIcon from '@/assets/collaboration-doodle.jpg';
+import techIcon from '@/assets/tech-doodle.jpg';
 
 const DashboardHome = () => {
   const { user } = useAuth();
@@ -44,12 +47,12 @@ const DashboardHome = () => {
 
   const getSpacePlaceholderImage = (spaceName: string) => {
     const imageMap: { [key: string]: string } = {
-      'Orion': '/lovable-uploads/089a268d-1bde-43a9-b5be-d5b768d82613.png',
-      'Global': '/lovable-uploads/eb2fc261-5749-4c49-9406-00068de459d2.png',
-      'Test': '/lovable-uploads/033c0c66-74be-43c1-b65c-79e19d2ff243.png'
+      'Orion': workspaceIcon,
+      'Global': collaborationIcon,
+      'Test': techIcon
     };
     
-    return imageMap[spaceName] || '/lovable-uploads/089a268d-1bde-43a9-b5be-d5b768d82613.png'; // Default to Orion
+    return imageMap[spaceName] || workspaceIcon; // Default to workspace icon
   };
 
   const isSystemAdmin = user?.role === 'SystemAdmin';
@@ -178,11 +181,11 @@ const DashboardHome = () => {
               }`}>
                 <CardHeader className="p-0">
                   {article.cover_image ? (
-                    <div className="h-40 overflow-hidden">
+                    <div className="h-40 overflow-hidden p-4">
                       <img 
                         src={article.cover_image} 
                         alt={article.title}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                        className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500 rounded-lg"
                       />
                     </div>
                   ) : (

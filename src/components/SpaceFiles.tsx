@@ -54,34 +54,34 @@ const SpaceFiles: React.FC<SpaceFilesProps> = ({ spaceId, space }) => {
     const fileType = item.FileType?.toLowerCase();
     
     if (fileType?.includes('image') || ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp'].includes(fileType)) {
-      return <Image className="h-5 w-5 text-green-600" />;
+      return <Image className="h-12 w-12 text-green-600" />;
     }
     
     if (fileType?.includes('video') || ['mp4', 'avi', 'mov', 'wmv', 'flv'].includes(fileType)) {
-      return <Video className="h-5 w-5 text-purple-600" />;
+      return <Video className="h-12 w-12 text-purple-600" />;
     }
     
     if (fileType?.includes('audio') || ['mp3', 'wav', 'flac', 'aac'].includes(fileType)) {
-      return <Music className="h-5 w-5 text-orange-600" />;
+      return <Music className="h-12 w-12 text-orange-600" />;
     }
     
     if (fileType === 'pdf') {
-      return <File className="h-5 w-5 text-red-600" />;
+      return <File className="h-12 w-12 text-red-600" />;
     }
     
     if (['doc', 'docx', 'txt', 'rtf'].includes(fileType)) {
-      return <FileText className="h-5 w-5 text-blue-600" />;
+      return <FileText className="h-12 w-12 text-blue-600" />;
     }
     
     if (['zip', 'rar', '7z', 'tar'].includes(fileType)) {
-      return <Archive className="h-5 w-5 text-yellow-600" />;
+      return <Archive className="h-12 w-12 text-yellow-600" />;
     }
     
     if (fileType === 'website') {
-      return <Globe className="h-5 w-5 text-cyan-600" />;
+      return <Globe className="h-12 w-12 text-cyan-600" />;
     }
     
-    return <File className="h-5 w-5 text-gray-600" />;
+    return <File className="h-12 w-12 text-gray-600" />;
   };
 
   const handleFileClick = (file: FileItem) => {
