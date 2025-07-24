@@ -5,9 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { ArrowLeft, Download, Edit, Trash2, Calendar, User, FileText, Eye, List, MessageSquare, MoreVertical } from 'lucide-react';
+import { ArrowLeft, Download, Edit, Trash2, Calendar, User, FileText, Eye, List, MessageSquare, MoreVertical, Search } from 'lucide-react';
 import { PDFViewer } from '@/components/PDFViewer';
 import { useFiles, FileItem, FileDetails } from '@/hooks/useFiles';
 import { useAuth } from '@/hooks/useAuth';
@@ -29,6 +30,9 @@ const FileViewer = () => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('preview');
+  const [activeAITab, setActiveAITab] = useState('summary');
+  const [summarySearch, setSummarySearch] = useState('');
+  const [transcriptSearch, setTranscriptSearch] = useState('');
   const [contentLoading, setContentLoading] = useState(false);
   const [summaryContent, setSummaryContent] = useState('');
   const [actionItemsContent, setActionItemsContent] = useState('');
@@ -204,6 +208,23 @@ const FileViewer = () => {
     return messages;
   };
 
+  const filterContent = (content: string, searchTerm: string) => {
+    if (!searchTerm) return content;
+    
+    // Highlight search terms in content
+    const regex = new RegExp(`(${searchTerm})`, 'gi');
+    return content.replace(regex, '<mark>$1</mark>');
+  };
+
+  const filterTranscriptMessages = (messages: any[], searchTerm: string) => {
+    if (!searchTerm) return messages;
+    
+    return messages.filter(message => 
+      message.speaker.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      message.text.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  };
+
   // Utility function to get file extension
   const getFileExtension = (fileName: string): string => {
     return fileName.toLowerCase().split('.').pop() || '';
@@ -247,108 +268,143 @@ const FileViewer = () => {
     const fileType = fileDetails?.FileType?.toLowerCase();
     const fileName = fileDetails?.FileName || '';
     const transcriptMessages = parseTranscript(transcriptContent);
+    const filteredTranscriptMessages = filterTranscriptMessages(transcriptMessages, transcriptSearch);
     
     return (
-      <div className="space-y-6 p-6">
-        {/* AI Summary */}
-        {(isDocumentOrImage(fileType!, fileName) || isVideoOrAudio(fileType!, fileName)) && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5" />
+      <div className="h-full flex flex-col">
+        <Tabs value={activeAITab} onValueChange={setActiveAITab} className="flex-1 flex flex-col">
+          <div className="px-6 pt-6 pb-4">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="summary" className="flex items-center gap-2">
+                <FileText className="h-4 w-4" />
                 AI Summary
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {contentLoading ? (
-                <div className="flex items-center justify-center p-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                </div>
-              ) : summaryContent || fileDetails?.DocSummary ? (
-                <div className="prose prose-sm max-w-none">
-                  <ReactMarkdown>
-                    {summaryContent || fileDetails?.DocSummary || ''}
-                  </ReactMarkdown>
-                </div>
-              ) : (
-                <p className="text-gray-500">No summary available</p>
+              </TabsTrigger>
+              {isVideoOrAudio(fileType!, fileName) && (
+                <TabsTrigger value="action-items" className="flex items-center gap-2">
+                  <List className="h-4 w-4" />
+                  Action Items
+                </TabsTrigger>
               )}
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Action Items */}
-        {isVideoOrAudio(fileType!, fileName) && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <List className="h-5 w-5" />
-                Action Items
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {contentLoading ? (
-                <div className="flex items-center justify-center p-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                </div>
-              ) : actionItemsContent || fileDetails?.ActionItems ? (
-                <div className="prose prose-sm max-w-none">
-                  <ReactMarkdown>
-                    {actionItemsContent || fileDetails?.ActionItems || ''}
-                  </ReactMarkdown>
-                </div>
-              ) : (
-                <p className="text-gray-500">No action items available</p>
+              {isVideoOrAudio(fileType!, fileName) && (
+                <TabsTrigger value="transcript" className="flex items-center gap-2">
+                  <MessageSquare className="h-4 w-4" />
+                  Transcript
+                </TabsTrigger>
               )}
-            </CardContent>
-          </Card>
-        )}
+            </TabsList>
+          </div>
+          
+          {/* AI Summary Tab */}
+          <TabsContent value="summary" className="flex-1 px-6 pb-6 mt-0 flex flex-col">
+            <div className="mb-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Input
+                  placeholder="Search in summary..."
+                  value={summarySearch}
+                  onChange={(e) => setSummarySearch(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+            </div>
+            <Card className="flex-1">
+              <CardContent className="p-6">
+                {contentLoading ? (
+                  <div className="flex items-center justify-center p-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                  </div>
+                ) : summaryContent || fileDetails?.DocSummary ? (
+                  <div className="prose prose-sm max-w-none">
+                    <ReactMarkdown>
+                      {filterContent(summaryContent || fileDetails?.DocSummary || '', summarySearch)}
+                    </ReactMarkdown>
+                  </div>
+                ) : (
+                  <p className="text-gray-500">No summary available</p>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-        {/* Transcript */}
-        {isVideoOrAudio(fileType!, fileName) && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <MessageSquare className="h-5 w-5" />
-                Transcript
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {contentLoading ? (
-                <div className="flex items-center justify-center p-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                </div>
-              ) : transcriptContent ? (
-                <div className="space-y-3 max-h-96 overflow-y-auto">
-                  {transcriptMessages.map((message, index) => (
-                    <div key={index} className="flex gap-3">
-                      <div className="flex-shrink-0">
-                        <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm font-medium">
-                          {message.speaker.charAt(0).toUpperCase()}
-                        </div>
-                      </div>
-                      <div className="flex-1">
-                        <div className="bg-gray-100 rounded-lg p-3">
-                          <div className="font-medium text-sm text-gray-900 mb-1">
-                            {message.speaker}
-                            {message.timestamp && (
-                              <span className="text-xs text-gray-500 ml-2">
-                                {message.timestamp}
-                              </span>
-                            )}
-                          </div>
-                          <p className="text-gray-800 text-sm">{message.text}</p>
-                        </div>
-                      </div>
+          {/* Action Items Tab */}
+          {isVideoOrAudio(fileType!, fileName) && (
+            <TabsContent value="action-items" className="flex-1 px-6 pb-6 mt-0">
+              <Card className="h-full">
+                <CardContent className="p-6">
+                  {contentLoading ? (
+                    <div className="flex items-center justify-center p-8">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
                     </div>
-                  ))}
+                  ) : actionItemsContent || fileDetails?.ActionItems ? (
+                    <div className="prose prose-sm max-w-none">
+                      <ReactMarkdown>
+                        {actionItemsContent || fileDetails?.ActionItems || ''}
+                      </ReactMarkdown>
+                    </div>
+                  ) : (
+                    <p className="text-gray-500">No action items available</p>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+          )}
+
+          {/* Transcript Tab */}
+          {isVideoOrAudio(fileType!, fileName) && (
+            <TabsContent value="transcript" className="flex-1 px-6 pb-6 mt-0 flex flex-col">
+              <div className="mb-4">
+                <div className="relative">
+                  <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input
+                    placeholder="Search in transcript..."
+                    value={transcriptSearch}
+                    onChange={(e) => setTranscriptSearch(e.target.value)}
+                    className="pl-10"
+                  />
                 </div>
-              ) : (
-                <p className="text-gray-500">No transcript available</p>
-              )}
-            </CardContent>
-          </Card>
-        )}
+              </div>
+              <Card className="flex-1">
+                <CardContent className="p-6">
+                  {contentLoading ? (
+                    <div className="flex items-center justify-center p-8">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                    </div>
+                  ) : transcriptContent ? (
+                    <div className="space-y-3 max-h-96 overflow-y-auto">
+                      {filteredTranscriptMessages.map((message, index) => (
+                        <div key={index} className="flex gap-3">
+                          <div className="flex-shrink-0">
+                            <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm font-medium">
+                              {message.speaker.charAt(0).toUpperCase()}
+                            </div>
+                          </div>
+                          <div className="flex-1">
+                            <div className="bg-gray-100 rounded-lg p-3">
+                              <div className="font-medium text-sm text-gray-900 mb-1">
+                                {message.speaker}
+                                {message.timestamp && (
+                                  <span className="text-xs text-gray-500 ml-2">
+                                    {message.timestamp}
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-gray-800 text-sm">{message.text}</p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                      {filteredTranscriptMessages.length === 0 && transcriptSearch && (
+                        <p className="text-gray-500 text-center">No results found for "{transcriptSearch}"</p>
+                      )}
+                    </div>
+                  ) : (
+                    <p className="text-gray-500">No transcript available</p>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+          )}
+        </Tabs>
       </div>
     );
   };
@@ -554,7 +610,7 @@ const FileViewer = () => {
                   <TabsList className="grid w-full grid-cols-2">
                     <TabsTrigger value="preview" className="flex items-center gap-2">
                       <Eye className="h-4 w-4" />
-                      Preview
+                      Preview & Info
                     </TabsTrigger>
                     {hasAIContent() && (
                       <TabsTrigger value="ai-analysis" className="flex items-center gap-2" onClick={loadAIContent}>
@@ -565,14 +621,18 @@ const FileViewer = () => {
                   </TabsList>
                 </div>
                 
-                <TabsContent value="preview" className="flex-1 px-6 pb-6 mt-0">
-                  <div className="h-full pt-6">
-                    {renderFilePreview()}
+                <TabsContent value="preview" className="flex-1 mt-0 overflow-auto">
+                  <div className="p-6 space-y-6">
+                    {/* File Preview */}
+                    <div>
+                      <h3 className="text-lg font-semibold mb-4">File Preview</h3>
+                      {renderFilePreview()}
+                    </div>
                   </div>
                 </TabsContent>
                 
                 {hasAIContent() && (
-                  <TabsContent value="ai-analysis" className="flex-1 mt-0 overflow-auto">
+                  <TabsContent value="ai-analysis" className="flex-1 mt-0">
                     {renderAIAnalysisTab()}
                   </TabsContent>
                 )}
