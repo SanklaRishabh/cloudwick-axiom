@@ -44,11 +44,18 @@ All colors MUST be HSL.
     --gradient-card-dark: linear-gradient(145deg, hsl(222 84% 5%) 0%, hsl(217 33% 17%) 100%);
     --gradient-button: linear-gradient(135deg, hsl(270 70% 65%), hsl(325 84% 65%));
     --gradient-button-hover: linear-gradient(135deg, hsl(270 70% 70%), hsl(325 84% 70%));
+    --gradient-green: linear-gradient(135deg, hsl(160 84% 39%), hsl(142 76% 36%));
+    --gradient-green-hover: linear-gradient(135deg, hsl(160 84% 44%), hsl(142 76% 41%));
+    --gradient-teal: linear-gradient(135deg, hsl(174 44% 24%), hsl(160 84% 39%));
     --gradient-subtle: linear-gradient(180deg, hsl(240 5% 98%) 0%, hsl(240 6% 96%) 100%);
     
     /* Enhanced colors */
     --teal: 174 44% 24%;
     --teal-light: 174 44% 94%;
+    --emerald: 160 84% 39%;
+    --emerald-light: 152 81% 96%;
+    --green: 142 76% 36%;
+    --green-light: 138 76% 97%;
     --purple: 270 70% 65%;
     --pink: 325 84% 65%;
     --slate-deep: 220 13% 18%;
@@ -126,12 +133,12 @@ All colors MUST be HSL.
 
   /* Search highlighting */
   mark {
-    background: var(--gradient-button);
+    background: var(--gradient-green);
     color: white;
     padding: 0.125rem 0.375rem;
     border-radius: 0.375rem;
-    font-weight: 600;
-    box-shadow: 0 2px 4px hsla(0 0% 0% / 0.1);
+    font-weight: 500;
+    box-shadow: 0 2px 4px hsla(160 84% 39% / 0.2);
   }
 }
 
@@ -179,5 +186,25 @@ All colors MUST be HSL.
     color: white;
     border-radius: 0.5rem;
     font-weight: 600;
+  }
+
+  /* Green themed buttons */
+  .btn-gradient-green {
+    background: var(--gradient-green);
+    color: white;
+    border: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px hsla(160 84% 39% / 0.3);
+  }
+  
+  .btn-gradient-green:hover {
+    background: var(--gradient-green-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px hsla(160 84% 39% / 0.4);
+  }
+
+  /* Teal themed elements */
+  .bg-gradient-teal {
+    background: var(--gradient-teal);
   }
 }

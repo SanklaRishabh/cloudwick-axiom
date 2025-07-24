@@ -124,14 +124,14 @@ const FileViewer = () => {
 
   const getTagColor = (index: number) => {
     const colors = [
+      'bg-emerald-light text-green border-emerald-light',
       'bg-blue-100 text-blue-800 border-blue-200',
-      'bg-green-100 text-green-800 border-green-200',
+      'bg-teal-light text-teal border-teal-light',
       'bg-purple-100 text-purple-800 border-purple-200',
       'bg-pink-100 text-pink-800 border-pink-200',
+      'bg-green-light text-green border-green-light',
       'bg-indigo-100 text-indigo-800 border-indigo-200',
-      'bg-orange-100 text-orange-800 border-orange-200',
-      'bg-teal-100 text-teal-800 border-teal-200',
-      'bg-yellow-100 text-yellow-800 border-yellow-200'
+      'bg-orange-100 text-orange-800 border-orange-200'
     ];
     return colors[index % colors.length];
   };
@@ -218,6 +218,19 @@ const FileViewer = () => {
     return content.replace(regex, '<mark>$1</mark>');
   };
 
+  // Custom ReactMarkdown components to control styling
+  const markdownComponents = {
+    p: ({ children }: any) => <p className="text-foreground font-normal leading-relaxed mb-4">{children}</p>,
+    ul: ({ children }: any) => <ul className="text-foreground font-normal list-disc list-inside mb-4 space-y-2">{children}</ul>,
+    ol: ({ children }: any) => <ol className="text-foreground font-normal list-decimal list-inside mb-4 space-y-2">{children}</ol>,
+    li: ({ children }: any) => <li className="text-foreground font-normal">{children}</li>,
+    h1: ({ children }: any) => <h1 className="text-2xl font-semibold text-foreground mb-4">{children}</h1>,
+    h2: ({ children }: any) => <h2 className="text-xl font-semibold text-foreground mb-3">{children}</h2>,
+    h3: ({ children }: any) => <h3 className="text-lg font-semibold text-foreground mb-2">{children}</h3>,
+    strong: ({ children }: any) => <span className="font-medium text-foreground">{children}</span>,
+    em: ({ children }: any) => <em className="italic text-foreground">{children}</em>,
+  };
+
   const filterTranscriptMessages = (messages: any[], searchTerm: string) => {
     if (!searchTerm) return messages;
     
@@ -276,19 +289,28 @@ const FileViewer = () => {
       <div className="h-full flex flex-col">
         <Tabs value={activeAITab} onValueChange={setActiveAITab} className="flex-1 flex flex-col">
           <div className="px-6 pt-6 pb-4">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="summary" className="flex items-center gap-2">
+            <TabsList className="grid w-full grid-cols-3 bg-gradient-teal/10 p-1">
+              <TabsTrigger 
+                value="summary" 
+                className="flex items-center gap-2 data-[state=active]:bg-gradient-green data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200"
+              >
                 <FileText className="h-4 w-4" />
                 AI Summary
               </TabsTrigger>
               {isVideoOrAudio(fileType!, fileName) && (
-                <TabsTrigger value="action-items" className="flex items-center gap-2">
+                <TabsTrigger 
+                  value="action-items" 
+                  className="flex items-center gap-2 data-[state=active]:bg-gradient-green data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200"
+                >
                   <List className="h-4 w-4" />
                   Action Items
                 </TabsTrigger>
               )}
               {isVideoOrAudio(fileType!, fileName) && (
-                <TabsTrigger value="transcript" className="flex items-center gap-2">
+                <TabsTrigger 
+                  value="transcript" 
+                  className="flex items-center gap-2 data-[state=active]:bg-gradient-green data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200"
+                >
                   <MessageSquare className="h-4 w-4" />
                   Transcript
                 </TabsTrigger>
@@ -298,31 +320,31 @@ const FileViewer = () => {
           
           {/* AI Summary Tab */}
           <TabsContent value="summary" className="flex-1 px-6 pb-6 mt-0 flex flex-col">
-            <div className="mb-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+            <div className="mb-4 max-w-full">
+              <div className="relative w-full">
+                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Search in summary..."
                   value={summarySearch}
                   onChange={(e) => setSummarySearch(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 w-full border-emerald/20 focus:border-emerald focus:ring-emerald/20"
                 />
               </div>
             </div>
-            <Card className="flex-1">
+            <Card className="flex-1 card-enhanced border-emerald/20">
               <CardContent className="p-6">
                 {contentLoading ? (
                   <div className="flex items-center justify-center p-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald"></div>
                   </div>
                 ) : summaryContent || fileDetails?.DocSummary ? (
                   <div className="prose prose-sm max-w-none">
-                    <ReactMarkdown>
-                      {filterContent(summaryContent || fileDetails?.DocSummary || '', summarySearch)}
-                    </ReactMarkdown>
+                    <div dangerouslySetInnerHTML={{ 
+                      __html: filterContent(summaryContent || fileDetails?.DocSummary || '', summarySearch) 
+                    }} />
                   </div>
                 ) : (
-                  <p className="text-gray-500">No summary available</p>
+                  <p className="text-muted-foreground">No summary available</p>
                 )}
               </CardContent>
             </Card>
@@ -331,20 +353,20 @@ const FileViewer = () => {
           {/* Action Items Tab */}
           {isVideoOrAudio(fileType!, fileName) && (
             <TabsContent value="action-items" className="flex-1 px-6 pb-6 mt-0">
-              <Card className="h-full">
+              <Card className="h-full card-enhanced border-teal/20">
                 <CardContent className="p-6">
                   {contentLoading ? (
                     <div className="flex items-center justify-center p-8">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal"></div>
                     </div>
                   ) : actionItemsContent || fileDetails?.ActionItems ? (
                     <div className="prose prose-sm max-w-none">
-                      <ReactMarkdown>
+                      <ReactMarkdown components={markdownComponents}>
                         {actionItemsContent || fileDetails?.ActionItems || ''}
                       </ReactMarkdown>
                     </div>
                   ) : (
-                    <p className="text-gray-500">No action items available</p>
+                    <p className="text-muted-foreground">No action items available</p>
                   )}
                 </CardContent>
               </Card>
@@ -354,53 +376,53 @@ const FileViewer = () => {
           {/* Transcript Tab */}
           {isVideoOrAudio(fileType!, fileName) && (
             <TabsContent value="transcript" className="flex-1 px-6 pb-6 mt-0 flex flex-col">
-              <div className="mb-4">
-                <div className="relative">
-                  <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+              <div className="mb-4 max-w-full">
+                <div className="relative w-full">
+                  <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
                     placeholder="Search in transcript..."
                     value={transcriptSearch}
                     onChange={(e) => setTranscriptSearch(e.target.value)}
-                    className="pl-10"
+                    className="pl-10 w-full border-teal/20 focus:border-teal focus:ring-teal/20"
                   />
                 </div>
               </div>
-              <Card className="flex-1">
+              <Card className="flex-1 card-enhanced border-teal/20">
                 <CardContent className="p-6">
                   {contentLoading ? (
                     <div className="flex items-center justify-center p-8">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal"></div>
                     </div>
                   ) : transcriptContent ? (
                     <div className="space-y-3 max-h-96 overflow-y-auto">
                       {filteredTranscriptMessages.map((message, index) => (
                         <div key={index} className="flex gap-3">
                           <div className="flex-shrink-0">
-                            <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm font-medium">
+                            <div className="w-8 h-8 rounded-full bg-gradient-teal flex items-center justify-center text-white text-sm font-medium shadow-md">
                               {message.speaker.charAt(0).toUpperCase()}
                             </div>
                           </div>
                           <div className="flex-1">
-                            <div className="bg-gray-100 rounded-lg p-3">
-                              <div className="font-medium text-sm text-gray-900 mb-1">
+                            <div className="bg-muted/50 rounded-lg p-3 border border-teal/10">
+                              <div className="font-semibold text-sm text-foreground mb-1">
                                 {message.speaker}
                                 {message.timestamp && (
-                                  <span className="text-xs text-gray-500 ml-2">
+                                  <span className="text-xs text-muted-foreground ml-2 font-normal">
                                     {message.timestamp}
                                   </span>
                                 )}
                               </div>
-                              <p className="text-gray-800 text-sm">{message.text}</p>
+                              <p className="text-foreground text-sm font-normal">{message.text}</p>
                             </div>
                           </div>
                         </div>
                       ))}
                       {filteredTranscriptMessages.length === 0 && transcriptSearch && (
-                        <p className="text-gray-500 text-center">No results found for "{transcriptSearch}"</p>
+                        <p className="text-muted-foreground text-center">No results found for "{transcriptSearch}"</p>
                       )}
                     </div>
                   ) : (
-                    <p className="text-gray-500">No transcript available</p>
+                    <p className="text-muted-foreground">No transcript available</p>
                   )}
                 </CardContent>
               </Card>
