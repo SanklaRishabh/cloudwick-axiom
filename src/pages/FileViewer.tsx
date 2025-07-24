@@ -22,6 +22,7 @@ const FileViewer = () => {
   
   const [fileDetails, setFileDetails] = useState<FileDetails | null>(null);
   const [loading, setLoading] = useState(true);
+  const [hasAttemptedFetch, setHasAttemptedFetch] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isSummaryOpen, setIsSummaryOpen] = useState(false);
@@ -33,8 +34,11 @@ const FileViewer = () => {
   const [transcriptContent, setTranscriptContent] = useState('');
 
   useEffect(() => {
-    if (fileId) {
+    if (fileId && files.length > 0) {
       fetchFileDetails();
+    } else if (fileId && files.length === 0) {
+      // Files are still loading, wait for them
+      setLoading(true);
     }
   }, [fileId, files]);
 
@@ -43,16 +47,27 @@ const FileViewer = () => {
     
     try {
       setLoading(true);
+      setHasAttemptedFetch(true);
       
       // First, find the file in the files list to get its type
       const fileItem = files.find(file => file.FileId === fileId);
       if (!fileItem) {
+        console.error('File not found in files list. Available files:', files.map(f => f.FileId));
         throw new Error('File not found in space');
       }
       
+      console.log('Found file in list:', fileItem);
+      
       // Now fetch detailed information with the correct file type
       const details = await getFileDetails(fileId, fileItem.FileType);
-      setFileDetails(details);
+      console.log('Fetched file details:', details);
+      
+      // Ensure state updates happen in correct order
+      await new Promise(resolve => {
+        setFileDetails(details);
+        resolve(void 0);
+      });
+      
     } catch (error) {
       console.error('Error fetching file details:', error);
       toast({
@@ -359,7 +374,7 @@ const FileViewer = () => {
     );
   }
 
-  if (!fileDetails) {
+  if (!fileDetails && hasAttemptedFetch && !loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
