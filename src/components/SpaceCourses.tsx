@@ -72,21 +72,23 @@ const SpaceCourses: React.FC<SpaceCoursesProps> = ({ spaceId }) => {
               <div className="flex items-start justify-between">
                 <BookOpen className="h-8 w-8 text-cyan-600" />
               </div>
-              <CardTitle className="mb-3">{course.CourseTitle}</CardTitle>
-              <CardDescription className="leading-relaxed">
-                {expandedDescriptions.has(course.CourseId) 
-                  ? course.Description 
-                  : truncateDescription(course.Description)
-                }
+              <CardTitle className="mb-6">{course.CourseTitle}</CardTitle>
+              <div className="flex items-start justify-between gap-4">
+                <CardDescription className="leading-relaxed flex-1">
+                  {expandedDescriptions.has(course.CourseId) 
+                    ? course.Description 
+                    : truncateDescription(course.Description)
+                  }
+                </CardDescription>
                 {course.Description.length > 100 && (
                   <button
                     onClick={(e) => toggleDescription(course.CourseId, e)}
-                    className="ml-2 text-cyan-600 hover:text-cyan-700 font-medium text-sm transition-colors"
+                    className="text-primary hover:text-primary/80 font-medium text-sm transition-colors bg-secondary/20 hover:bg-secondary/30 px-3 py-1 rounded-md whitespace-nowrap"
                   >
                     {expandedDescriptions.has(course.CourseId) ? 'See Less' : 'See More'}
                   </button>
                 )}
-              </CardDescription>
+              </div>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
