@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { ArrowLeft, Download, Share, Edit, Trash2, Calendar, User, FileText, Eye, List, MessageSquare } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { ArrowLeft, Download, Edit, Trash2, Calendar, User, FileText, Eye, List, MessageSquare, MoreVertical, Image, File, Video, Music } from 'lucide-react';
 import { PDFViewer } from '@/components/PDFViewer';
 import { useFiles, FileItem, FileDetails } from '@/hooks/useFiles';
 import { useAuth } from '@/hooks/useAuth';
@@ -212,6 +213,54 @@ const FileViewer = () => {
            imageExtensions.includes(extension);
   };
 
+  // Get file type icon for thumbnails
+  const getFileTypeIcon = (fileType: string, fileName: string) => {
+    const extension = getFileExtension(fileName);
+    
+    if (fileType?.includes('image') || imageExtensions.includes(extension)) {
+      return <Image className="h-8 w-8 text-blue-500" />;
+    }
+    if (fileType === 'pdf' || fileType === 'document' || extension === 'pdf') {
+      return <FileText className="h-8 w-8 text-red-500" />;
+    }
+    if (fileType?.includes('video') || videoExtensions.includes(extension)) {
+      return <Video className="h-8 w-8 text-purple-500" />;
+    }
+    if (fileType?.includes('audio') || audioExtensions.includes(extension)) {
+      return <Music className="h-8 w-8 text-green-500" />;
+    }
+    return <File className="h-8 w-8 text-gray-500" />;
+  };
+
+  // Generate thumbnail for file
+  const renderThumbnail = () => {
+    if (!fileDetails) return null;
+
+    const fileType = fileDetails.FileType?.toLowerCase();
+    const fileName = fileDetails.FileName || '';
+    const extension = getFileExtension(fileName);
+
+    // For images, show actual image thumbnail
+    if ((fileType?.includes('image') || imageExtensions.includes(extension)) && fileDetails.PresignedUrl) {
+      return (
+        <div className="w-full h-48 bg-gray-100 rounded-lg overflow-hidden">
+          <img 
+            src={fileDetails.PresignedUrl} 
+            alt={fileDetails.FileName}
+            className="w-full h-full object-cover"
+          />
+        </div>
+      );
+    }
+
+    // For other files, show icon-based thumbnail
+    return (
+      <div className="w-full h-48 bg-gray-100 rounded-lg flex items-center justify-center">
+        {getFileTypeIcon(fileType, fileName)}
+      </div>
+    );
+  };
+
   const renderAIContentButtons = () => {
     if (!fileDetails) return null;
 
@@ -396,14 +445,14 @@ const FileViewer = () => {
       <div className="bg-white border-b border-gray-200 px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-        <Button 
-          variant="ghost" 
-          onClick={() => navigate(`/dashboard/spaces/${spaceId}`)}
-          className="flex items-center gap-2 hover-scale transition-all duration-200"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back to Space
-        </Button>
+            <Button 
+              variant="ghost" 
+              onClick={() => navigate(`/dashboard/spaces/${spaceId}`)}
+              className="flex items-center gap-2 hover-scale transition-all duration-200"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back to Space
+            </Button>
             <div>
               <h1 className="text-2xl font-bold text-gray-900">{fileDetails.FileName}</h1>
               <p className="text-gray-600">{fileDetails.FileType}</p>
@@ -415,31 +464,51 @@ const FileViewer = () => {
               <Download className="h-4 w-4 mr-2" />
               Download
             </Button>
-            <Button variant="outline">
-              <Share className="h-4 w-4 mr-2" />
-              Share
-            </Button>
             {canModifyFile() && (
-              <>
-                <Button variant="outline" onClick={handleEdit}>
-                  <Edit className="h-4 w-4 mr-2" />
-                  Edit
-                </Button>
-                <Button variant="outline" onClick={() => setIsDeleteDialogOpen(true)}>
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  Delete
-                </Button>
-              </>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    <MoreVertical className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={handleEdit}>
+                    <Edit className="h-4 w-4 mr-2" />
+                    Edit
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => setIsDeleteDialogOpen(true)}
+                    className="text-red-600"
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Delete
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             )}
           </div>
         </div>
       </div>
 
-      {/* Main Content */}
+      {/* Main Content - Updated Layout with Thumbnail */}
       <div className="flex-1 flex">
         {/* File Preview - Left Pane */}
-        <div className="w-[60%] p-6">
-          <Card className="h-full shadow-lg hover:shadow-xl transition-shadow duration-300">
+        <div className="w-[60%] p-6 space-y-6">
+          {/* Thumbnail Card */}
+          <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Eye className="h-5 w-5" />
+                File Thumbnail
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {renderThumbnail()}
+            </CardContent>
+          </Card>
+
+          {/* Preview Card */}
+          <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Eye className="h-5 w-5" />
