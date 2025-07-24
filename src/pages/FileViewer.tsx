@@ -299,7 +299,7 @@ const FileViewer = () => {
             <TabsList className="grid w-full grid-cols-3 bg-muted/50 p-1">
               <TabsTrigger 
                 value="summary" 
-                className="flex items-center gap-2 data-[state=active]:bg-gradient-teal-blue data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200"
+                className="flex items-center gap-2 data-[state=active]:bg-gradient-primary data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200"
               >
                 <FileText className="h-4 w-4" />
                 AI Summary
@@ -307,7 +307,7 @@ const FileViewer = () => {
               {isVideoOrAudio(fileType!, fileName) && (
                 <TabsTrigger 
                   value="action-items" 
-                  className="flex items-center gap-2 data-[state=active]:bg-gradient-teal-blue data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200"
+                  className="flex items-center gap-2 data-[state=active]:bg-gradient-primary data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200"
                 >
                   <List className="h-4 w-4" />
                   Action Items
@@ -316,7 +316,7 @@ const FileViewer = () => {
               {isVideoOrAudio(fileType!, fileName) && (
                 <TabsTrigger 
                   value="transcript" 
-                  className="flex items-center gap-2 data-[state=active]:bg-gradient-teal-blue data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200"
+                  className="flex items-center gap-2 data-[state=active]:bg-gradient-primary data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200"
                 >
                   <MessageSquare className="h-4 w-4" />
                   Transcript
@@ -405,7 +405,7 @@ const FileViewer = () => {
                       {filteredTranscriptMessages.map((message, index) => (
                         <div key={index} className="flex gap-3">
                           <div className="flex-shrink-0">
-                            <div className="w-8 h-8 rounded-full bg-gradient-teal-blue flex items-center justify-center text-white text-sm font-medium shadow-md">
+                            <div className="w-8 h-8 rounded-full bg-gradient-primary flex items-center justify-center text-white text-sm font-medium shadow-md">
                               {message.speaker.charAt(0).toUpperCase()}
                             </div>
                           </div>
@@ -667,7 +667,7 @@ const FileViewer = () => {
               <TabsList className="grid w-full max-w-md grid-cols-2 bg-white/60 backdrop-blur-sm border border-white/20 shadow-lg">
                 <TabsTrigger 
                   value="preview" 
-                  className="data-[state=active]:bg-gradient-teal-blue data-[state=active]:text-white transition-all duration-300"
+                  className="data-[state=active]:bg-gradient-primary data-[state=active]:text-white transition-all duration-300"
                 >
                   <Eye className="h-4 w-4 mr-2" />
                   Preview
@@ -675,7 +675,7 @@ const FileViewer = () => {
                 <TabsTrigger 
                   value="ai-analysis" 
                   disabled={!hasAIContent()}
-                  className="data-[state=active]:bg-gradient-teal-blue data-[state=active]:text-white transition-all duration-300"
+                  className="data-[state=active]:bg-gradient-primary data-[state=active]:text-white transition-all duration-300"
                 >
                   <MessageSquare className="h-4 w-4 mr-2" />
                   AI Analysis
