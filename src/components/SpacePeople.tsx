@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import DoodleAvatar from "@/components/DoodleAvatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
@@ -328,11 +328,11 @@ const SpacePeople: React.FC<SpacePeopleProps> = ({ spaceId }) => {
             <CardContent className="p-6">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <Avatar className="h-12 w-12">
-                    <AvatarFallback className="bg-gradient-primary text-white font-semibold">
-                      {getInitials(member.FirstName, member.LastName)}
-                    </AvatarFallback>
-                  </Avatar>
+                  <DoodleAvatar 
+                    seed={member.Email} 
+                    size={48} 
+                    fallback={getInitials(member.FirstName, member.LastName)}
+                  />
                   <div>
                     <h3 className="font-semibold text-gray-900 font-lexend">
                       {member.FirstName} {member.LastName}

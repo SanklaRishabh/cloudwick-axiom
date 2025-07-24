@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { BookOpen, Users, Clock } from 'lucide-react';
 import { useCourses } from '@/hooks/useCourses';
 import CreateCourseDialog from './CreateCourseDialog';
+import DoodleAvatar from '@/components/DoodleAvatar';
 
 interface SpaceCoursesProps {
   spaceId: string;
@@ -91,9 +92,14 @@ const SpaceCourses: React.FC<SpaceCoursesProps> = ({ spaceId }) => {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="space-y-2">
-                <div className="text-sm text-gray-700">
-                  Created by: {course.CreatedBy}
+              <div className="flex items-center gap-3">
+                <DoodleAvatar 
+                  seed={course.CreatedBy} 
+                  size={32} 
+                  fallback={course.CreatedBy.substring(0, 2).toUpperCase()}
+                />
+                <div className="text-sm text-muted-foreground">
+                  Created by {course.CreatedBy}
                 </div>
               </div>
             </CardContent>

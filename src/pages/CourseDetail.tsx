@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, BookOpen, Clock, Users, Play, Settings, Frame } from 'lucide-react';
 import { useCourseDetail } from '@/hooks/useCourses';
 import EditCourseDialog from '@/components/EditCourseDialog';
+import DoodleAvatar from '@/components/DoodleAvatar';
 
 interface CourseSection {
   id: string;
@@ -110,8 +111,13 @@ const CourseDetail: React.FC = () => {
           </div>
           
           <div className="flex items-center gap-6 text-sm text-gray-600">
-            <div className="text-gray-700 font-lexend">
-              Created by: {course.CreatedBy}
+            <div className="flex items-center gap-2">
+              <DoodleAvatar 
+                seed={course.CreatedBy} 
+                size={28} 
+                fallback={course.CreatedBy.substring(0, 2).toUpperCase()}
+              />
+              <span className="text-gray-700 font-lexend">Created by {course.CreatedBy}</span>
             </div>
             <div className="text-gray-600 font-lexend">
               Created: {new Date(course.CreatedAt).toLocaleDateString()}
