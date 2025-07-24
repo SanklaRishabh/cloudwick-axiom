@@ -102,4 +102,13 @@ All colors MUST be HSL.
   body {
     @apply bg-background text-foreground font-helvetica;
   }
+
+  /* Search highlighting */
+  mark {
+    background-color: hsl(var(--primary) / 0.2);
+    color: hsl(var(--primary-foreground));
+    padding: 0.125rem 0.25rem;
+    border-radius: 0.25rem;
+    font-weight: 500;
+  }
 }
