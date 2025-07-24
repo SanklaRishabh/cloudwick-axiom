@@ -42,8 +42,8 @@ All colors MUST be HSL.
     --gradient-primary: linear-gradient(135deg, hsl(174 44% 24%), hsl(220 13% 18%) 50%, hsl(174 44% 24%));
     --gradient-card: linear-gradient(145deg, hsl(0 0% 100%) 0%, hsl(240 5% 96%) 100%);
     --gradient-card-dark: linear-gradient(145deg, hsl(222 84% 5%) 0%, hsl(217 33% 17%) 100%);
-    --gradient-button: linear-gradient(135deg, hsl(270 70% 65%), hsl(325 84% 65%));
-    --gradient-button-hover: linear-gradient(135deg, hsl(270 70% 70%), hsl(325 84% 70%));
+    --gradient-button: linear-gradient(135deg, hsl(195 100% 50%), hsl(220 70% 60%));
+    --gradient-button-hover: linear-gradient(135deg, hsl(195 100% 55%), hsl(220 70% 65%));
     --gradient-blue-green: linear-gradient(135deg, hsl(220 70% 60%), hsl(174 44% 44%));
     --gradient-blue-green-hover: linear-gradient(135deg, hsl(220 70% 65%), hsl(174 44% 49%));
     --gradient-teal-blue: linear-gradient(135deg, hsl(174 44% 24%), hsl(220 70% 60%));
@@ -56,8 +56,8 @@ All colors MUST be HSL.
     --emerald-light: 152 81% 96%;
     --green: 142 76% 36%;
     --green-light: 138 76% 97%;
-    --purple: 270 70% 65%;
-    --pink: 325 84% 65%;
+    --cyan: 195 100% 50%;
+    --blue: 220 70% 60%;
     --slate-deep: 220 13% 18%;
     
     /* Glass effect variables */
@@ -149,13 +149,13 @@ All colors MUST be HSL.
     color: white;
     border: none;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 12px hsla(270 70% 65% / 0.3);
+    box-shadow: 0 4px 12px hsla(195 100% 50% / 0.3);
   }
   
   .btn-gradient:hover {
     background: var(--gradient-button-hover);
     transform: translateY(-1px);
-    box-shadow: 0 8px 20px hsla(270 70% 65% / 0.4);
+    box-shadow: 0 8px 20px hsla(195 100% 50% / 0.4);
   }
 
   /* Glass effect card */
@@ -182,7 +182,7 @@ All colors MUST be HSL.
 
   /* Modern tab styling */
   .tabs-modern [data-state="active"] {
-    background: var(--gradient-button);
+    background: var(--gradient-teal-blue);
     color: white;
     border-radius: 0.5rem;
     font-weight: 600;
