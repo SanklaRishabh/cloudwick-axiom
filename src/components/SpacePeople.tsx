@@ -323,13 +323,13 @@ const SpacePeople: React.FC<SpacePeopleProps> = ({ spaceId }) => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {members.map((member) => (
-          <Card key={member.UserId} className="hover:shadow-md transition-shadow">
+        {members.map((member, index) => (
+          <Card key={member.UserId} className="hover:shadow-md transition-all duration-300 animate-fade-in-up hover:scale-105" style={{ animationDelay: `${index * 0.1}s` }}>
             <CardContent className="p-6">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
                   <Avatar className="h-12 w-12">
-                    <AvatarFallback className="bg-blue-100 text-blue-600 font-semibold">
+                    <AvatarFallback className="bg-gradient-primary text-white font-semibold">
                       {getInitials(member.FirstName, member.LastName)}
                     </AvatarFallback>
                   </Avatar>
@@ -396,7 +396,7 @@ const SpacePeople: React.FC<SpacePeopleProps> = ({ spaceId }) => {
                   User ID: {member.UserId}
                 </div>
                 {space?.SpaceAdmin === member.UserId && (
-                  <div className="flex items-center gap-1 bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-xs font-medium">
+                  <div className="flex items-center gap-1 bg-gradient-primary text-white px-2 py-1 rounded-full text-xs font-medium">
                     <Crown className="h-3 w-3" />
                     Space Admin
                   </div>

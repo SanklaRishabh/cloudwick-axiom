@@ -16,7 +16,7 @@ const AuthLayout = ({ children, title, subtitle = "Knowledge awaits you", showWi
   const { isDark, toggleTheme } = useAuthTheme();
 
   return (
-    <div className="min-h-screen flex bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/50">
+    <div className={`min-h-screen flex transition-all duration-500 ${isDark ? 'bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800' : 'bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/50'}`}>
       {/* Theme Toggle - Top Right */}
       <div className="absolute top-6 right-6 z-20 flex items-center gap-3 p-3 bg-white/20 backdrop-blur-lg rounded-full border border-white/30 shadow-lg">
         <Sun className={`w-4 h-4 transition-colors duration-300 ${isDark ? 'text-gray-400' : 'text-amber-500'}`} />
@@ -30,8 +30,12 @@ const AuthLayout = ({ children, title, subtitle = "Knowledge awaits you", showWi
 
       {/* Left Panel - Form */}
       <div className="flex-1 flex items-center justify-center p-8 lg:p-16">
-        <div className="w-full max-w-md">
-          <div className="mb-8 p-8 bg-white/60 backdrop-blur-xl rounded-2xl border border-white/20 shadow-2xl card-glass">
+        <div className="w-full max-w-md animate-fade-in">
+          <div className={`p-8 backdrop-blur-xl rounded-2xl border shadow-2xl card-glass transition-all duration-500 ${
+            isDark 
+              ? 'bg-gray-900/80 border-gray-700/50 text-white' 
+              : 'bg-white/60 border-white/20 text-gray-900'
+          }`}>
             <div className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center shadow-lg">
                 <span className="text-white font-bold text-lg">CW</span>
@@ -43,9 +47,11 @@ const AuthLayout = ({ children, title, subtitle = "Knowledge awaits you", showWi
             </div>
             <h1 className={`text-3xl font-bold mb-3 bg-gradient-primary bg-clip-text text-transparent`}>{title}</h1>
             <p className={`text-base ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>{subtitle}</p>
-          </div>
-          <div className="bg-white/40 backdrop-blur-xl rounded-2xl border border-white/20 shadow-xl p-8">
-            {children}
+            
+            {/* Form Section */}
+            <div className="mt-8">
+              {children}
+            </div>
           </div>
         </div>
       </div>

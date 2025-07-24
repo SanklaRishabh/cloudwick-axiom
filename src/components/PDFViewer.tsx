@@ -147,6 +147,7 @@ export const PDFViewer: React.FC<PDFViewerProps> = ({ url, className }) => {
             variant="outline"
             size="sm"
             onClick={handleDownload}
+            className="bg-gradient-primary hover:bg-gradient-primary/90 text-white border-transparent"
           >
             <Download className="h-4 w-4" />
           </Button>

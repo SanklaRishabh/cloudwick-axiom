@@ -68,7 +68,7 @@ const SignUpForm = ({ onSwitchToSignIn }: SignUpFormProps) => {
     <div>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="username" className="text-white text-sm">Username</Label>
+          <Label htmlFor="username" className="text-foreground text-sm">Username</Label>
           <Input
             id="username"
             type="text"
@@ -81,7 +81,7 @@ const SignUpForm = ({ onSwitchToSignIn }: SignUpFormProps) => {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="email" className="text-white text-sm">Email address</Label>
+          <Label htmlFor="email" className="text-foreground text-sm">Email address</Label>
           <Input
             id="email"
             type="email"
@@ -95,7 +95,7 @@ const SignUpForm = ({ onSwitchToSignIn }: SignUpFormProps) => {
 
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="firstName" className="text-white text-sm">First Name</Label>
+            <Label htmlFor="firstName" className="text-foreground text-sm">First Name</Label>
             <Input
               id="firstName"
               type="text"
@@ -108,7 +108,7 @@ const SignUpForm = ({ onSwitchToSignIn }: SignUpFormProps) => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="lastName" className="text-white text-sm">Last Name</Label>
+            <Label htmlFor="lastName" className="text-foreground text-sm">Last Name</Label>
             <Input
               id="lastName"
               type="text"
@@ -122,7 +122,7 @@ const SignUpForm = ({ onSwitchToSignIn }: SignUpFormProps) => {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="password" className="text-white text-sm">Password</Label>
+          <Label htmlFor="password" className="text-foreground text-sm">Password</Label>
           <Input
             id="password"
             type="password"
@@ -139,11 +139,11 @@ const SignUpForm = ({ onSwitchToSignIn }: SignUpFormProps) => {
             id="terms"
             checked={formData.agreeToTerms}
             onCheckedChange={(checked) => handleInputChange('agreeToTerms', checked as boolean)}
-            className="border-gray-400 data-[state=checked]:bg-cloudwick-blue data-[state=checked]:border-cloudwick-blue"
+            className="border-gray-400 data-[state=checked]:bg-gradient-primary data-[state=checked]:border-transparent"
           />
           <Label htmlFor="terms" className="text-gray-400 text-sm">
             I agree to the{' '}
-            <a href="#" className="text-cloudwick-blue hover:text-blue-400 transition-colors">
+            <a href="#" className="bg-gradient-primary bg-clip-text text-transparent transition-colors hover:opacity-80">
               Terms & Privacy
             </a>
           </Label>
@@ -152,7 +152,7 @@ const SignUpForm = ({ onSwitchToSignIn }: SignUpFormProps) => {
         <Button
           type="submit"
           disabled={isLoading || !formData.agreeToTerms}
-          className="w-full bg-cloudwick-blue hover:bg-blue-600 text-white font-medium py-2.5 transition-colors disabled:opacity-50"
+          className="w-full bg-gradient-primary hover:bg-gradient-primary/90 text-white font-medium py-2.5 transition-colors disabled:opacity-50"
         >
           {isLoading ? 'Creating Account...' : 'Sign Up'}
         </Button>
@@ -163,7 +163,7 @@ const SignUpForm = ({ onSwitchToSignIn }: SignUpFormProps) => {
             <button
               type="button"
               onClick={onSwitchToSignIn}
-              className="text-cloudwick-blue hover:text-blue-400 font-medium transition-colors"
+              className="bg-gradient-primary bg-clip-text text-transparent font-medium transition-colors hover:opacity-80"
             >
               Sign In
             </button>

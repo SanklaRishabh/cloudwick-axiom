@@ -199,11 +199,12 @@ const SpaceFiles: React.FC<SpaceFilesProps> = ({ spaceId, space }) => {
       ) : (
         /* Thumbnail Grid Layout */
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-          {files.map((item) => (
+          {files.map((item, index) => (
             <div
               key={item.FileId}
-              className="group relative bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-lg transition-all duration-300 cursor-pointer hover:scale-[1.02]"
+              className="group relative bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-lg transition-all duration-300 cursor-pointer hover:scale-[1.02] animate-fade-in-up"
               onClick={() => handleFileClick(item)}
+              style={{ animationDelay: `${index * 0.05}s` }}
             >
               {/* Thumbnail */}
               <div className="aspect-square bg-gray-50 rounded-t-lg flex items-center justify-center p-4">

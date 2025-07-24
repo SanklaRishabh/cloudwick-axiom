@@ -42,15 +42,16 @@ const SpaceCourses: React.FC<SpaceCoursesProps> = ({ spaceId }) => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {courses.map((course) => (
+        {courses.map((course, index) => (
           <Card 
             key={course.CourseId} 
-            className="hover:shadow-md transition-shadow cursor-pointer"
+            className="hover:shadow-md transition-all duration-300 cursor-pointer animate-fade-in-up hover:scale-105"
             onClick={() => handleCourseClick(course.CourseId)}
+            style={{ animationDelay: `${index * 0.1}s` }}
           >
             <CardHeader>
               <div className="flex items-start justify-between">
-                <BookOpen className="h-8 w-8 text-blue-600" />
+                <BookOpen className="h-8 w-8 text-cyan-600" />
               </div>
               <CardTitle>{course.CourseTitle}</CardTitle>
               <CardDescription>

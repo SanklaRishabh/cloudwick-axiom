@@ -198,7 +198,7 @@ const SpaceDetail = () => {
                   <Button 
                     onClick={handleUpdateSpace}
                     disabled={isUpdating}
-                    className="bg-blue-600 hover:bg-blue-700"
+                    className="bg-gradient-primary hover:bg-gradient-primary/90"
                   >
                     {isUpdating ? 'Updating...' : 'Update Space'}
                   </Button>
@@ -210,30 +210,30 @@ const SpaceDetail = () => {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="files" className="flex items-center gap-2 font-lexend">
+        <TabsList className="grid w-full grid-cols-3 tabs-modern">
+          <TabsTrigger value="files" className="flex items-center gap-2 font-lexend data-[state=active]:bg-gradient-primary data-[state=active]:text-white">
             <FileText className="h-4 w-4" />
             Files
           </TabsTrigger>
-          <TabsTrigger value="courses" className="flex items-center gap-2 font-lexend">
+          <TabsTrigger value="courses" className="flex items-center gap-2 font-lexend data-[state=active]:bg-gradient-primary data-[state=active]:text-white">
             <BookOpen className="h-4 w-4" />
             Courses
           </TabsTrigger>
-          <TabsTrigger value="people" className="flex items-center gap-2 font-lexend">
+          <TabsTrigger value="people" className="flex items-center gap-2 font-lexend data-[state=active]:bg-gradient-primary data-[state=active]:text-white">
             <Users className="h-4 w-4" />
             People
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="files" className="space-y-6">
+        <TabsContent value="files" className="space-y-6 animate-fade-in">
           <SpaceFiles spaceId={space.SpaceId} space={space} />
         </TabsContent>
 
-        <TabsContent value="courses" className="space-y-6">
+        <TabsContent value="courses" className="space-y-6 animate-fade-in">
           <SpaceCourses spaceId={space.SpaceId} />
         </TabsContent>
 
-        <TabsContent value="people" className="space-y-6">
+        <TabsContent value="people" className="space-y-6 animate-fade-in">
           <SpacePeople spaceId={space.SpaceId} />
         </TabsContent>
       </Tabs>

@@ -66,7 +66,7 @@ const SignInForm = ({ onSwitchToSignUp }: SignInFormProps) => {
       <Button
         type="submit"
         disabled={isLoading}
-        className="w-full bg-cloudwick-blue hover:bg-blue-600 text-white font-medium py-2.5 transition-colors"
+        className="w-full bg-gradient-primary hover:bg-gradient-primary/90 text-white font-medium py-2.5 transition-colors"
       >
         {isLoading ? 'Signing In...' : 'Sign In'}
       </Button>
@@ -77,7 +77,7 @@ const SignInForm = ({ onSwitchToSignUp }: SignInFormProps) => {
           <button
             type="button"
             onClick={onSwitchToSignUp}
-            className="text-cloudwick-blue hover:text-blue-400 font-medium transition-colors"
+            className="bg-gradient-primary bg-clip-text text-transparent font-medium transition-colors hover:opacity-80"
           >
             Sign Up
           </button>
