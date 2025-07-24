@@ -551,85 +551,104 @@ const FileViewer = () => {
   }
 
   return (
-    <div className="flex-1 overflow-hidden">
+    <div className="flex-1 overflow-hidden bg-gradient-to-br from-slate-50/50 via-blue-50/30 to-purple-50/50">
       <div className="h-full flex flex-col">
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b">
-          <div className="flex items-center gap-2">
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={() => navigate(`/dashboard/spaces/${spaceId}`)}
-              className="gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Back to Space
-            </Button>
-            <Separator orientation="vertical" className="h-6" />
-            <h1 className="text-xl font-semibold truncate">{fileDetails.FileName}</h1>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={handleDownload}
-              className="gap-2"
-            >
-              <Download className="h-4 w-4" />
-              Download
-            </Button>
-            {canModifyFile() && (
-              <>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={handleEdit}
-                  className="gap-2"
-                >
-                  <Edit className="h-4 w-4" />
-                  Edit
-                </Button>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="gap-2 text-destructive hover:text-destructive"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                      Delete
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Delete File</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Are you sure you want to delete this file? This action cannot be undone.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction 
-                        onClick={handleDelete}
-                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+        {/* Modern Header with Glass Effect */}
+        <div className="relative z-10">
+          <div className="absolute inset-0 bg-gradient-to-r from-white/80 via-white/90 to-white/80 backdrop-blur-lg border-b border-white/20"></div>
+          <div className="relative flex items-center justify-between p-6">
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => navigate(`/dashboard/spaces/${spaceId}`)}
+                className="gap-2 hover:bg-white/50 transition-all duration-300 hover:scale-105"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Back to Space
+              </Button>
+              <Separator orientation="vertical" className="h-6 bg-gradient-to-b from-purple-400 to-pink-400" />
+              <div>
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-teal-700 via-slate-700 to-teal-700 bg-clip-text text-transparent">
+                  {fileDetails.FileName}
+                </h1>
+                <p className="text-sm text-muted-foreground font-medium">{fileDetails.FileType}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <Button 
+                size="sm" 
+                onClick={handleDownload}
+                className="btn-gradient gap-2 px-4 py-2"
+              >
+                <Download className="h-4 w-4" />
+                Download
+              </Button>
+              {canModifyFile() && (
+                <>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={handleEdit}
+                    className="gap-2 border-purple-200 bg-white/50 hover:bg-purple-50 hover:border-purple-300 transition-all duration-300"
+                  >
+                    <Edit className="h-4 w-4" />
+                    Edit
+                  </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="gap-2 border-red-200 bg-white/50 hover:bg-red-50 hover:border-red-300 text-red-600 hover:text-red-700 transition-all duration-300"
                       >
+                        <Trash2 className="h-4 w-4" />
                         Delete
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </>
-            )}
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent className="card-glass">
+                      <AlertDialogHeader>
+                        <AlertDialogTitle className="text-xl font-bold">Delete File</AlertDialogTitle>
+                        <AlertDialogDescription className="text-base">
+                          Are you sure you want to delete this file? This action cannot be undone.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel className="hover:bg-gray-50">Cancel</AlertDialogCancel>
+                        <AlertDialogAction 
+                          onClick={handleDelete}
+                          className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white"
+                        >
+                          Delete
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </>
+              )}
+            </div>
           </div>
+
         </div>
 
-        {/* Main Content */}
-        <div className="flex-1 overflow-hidden">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
-            <div className="px-4 pt-2">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="preview">Preview</TabsTrigger>
-                <TabsTrigger value="ai-analysis" disabled={!hasAIContent()}>
+        {/* Main Content with Modern Design */}
+        <div className="flex-1 overflow-hidden p-6">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col tabs-modern">
+            <div className="mb-6">
+              <TabsList className="grid w-full max-w-md grid-cols-2 bg-white/60 backdrop-blur-sm border border-white/20 shadow-lg">
+                <TabsTrigger 
+                  value="preview" 
+                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-pink-500 data-[state=active]:text-white transition-all duration-300"
+                >
+                  <Eye className="h-4 w-4 mr-2" />
+                  Preview
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="ai-analysis" 
+                  disabled={!hasAIContent()}
+                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-pink-500 data-[state=active]:text-white transition-all duration-300"
+                >
+                  <MessageSquare className="h-4 w-4 mr-2" />
                   AI Analysis
                 </TabsTrigger>
               </TabsList>
@@ -637,56 +656,90 @@ const FileViewer = () => {
             
             <div className="flex-1 overflow-hidden">
               <TabsContent value="preview" className="h-full m-0">
-                <div className="h-full overflow-auto p-4 space-y-6">
-                  {/* File Preview */}
-                  <div className="w-full">
-                    {renderFilePreview()}
-                  </div>
+                <div className="h-full overflow-auto space-y-8">
+                  {/* File Preview with Enhanced Card */}
+                  <Card className="card-enhanced overflow-hidden">
+                    <CardContent className="p-8">
+                      <div className="mb-6">
+                        <h3 className="text-xl font-bold mb-2 bg-gradient-to-r from-teal-600 to-purple-600 bg-clip-text text-transparent">
+                          File Preview
+                        </h3>
+                        <div className="h-1 w-20 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full"></div>
+                      </div>
+                      {renderFilePreview()}
+                    </CardContent>
+                  </Card>
                   
-                  {/* File Information */}
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-lg">File Information</CardTitle>
+                  {/* File Information with Glass Effect */}
+                  <Card className="card-glass">
+                    <CardHeader className="pb-4">
+                      <CardTitle className="text-xl font-bold flex items-center gap-3">
+                        <div className="p-2 bg-gradient-to-r from-purple-100 to-pink-100 rounded-lg">
+                          <FileText className="h-5 w-5 text-purple-600" />
+                        </div>
+                        File Information
+                      </CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-4">
-                      <div>
-                        <Label className="text-sm font-medium text-muted-foreground">File Name</Label>
-                        <p className="text-sm mt-1">{fileDetails.FileName}</p>
-                      </div>
-                      <div>
-                        <Label className="text-sm font-medium text-muted-foreground">Description</Label>
-                        <p className="text-sm mt-1">{fileDetails.FileDescription || fileDetails.Description || "No description provided"}</p>
-                      </div>
-                      <div>
-                        <Label className="text-sm font-medium text-muted-foreground">File Type</Label>
-                        <p className="text-sm mt-1">{fileDetails.FileType}</p>
-                      </div>
-                      <div>
-                        <Label className="text-sm font-medium text-muted-foreground">Status</Label>
-                        <div className="mt-1">
-                          <Badge className={
-                            fileDetails.FileStatus?.toLowerCase() === 'active' ? 'bg-green-100 text-green-800' :
-                            fileDetails.FileStatus?.toLowerCase() === 'processing' ? 'bg-yellow-100 text-yellow-800' :
-                            'bg-gray-100 text-gray-800'
-                          }>
-                            {fileDetails.FileStatus}
-                          </Badge>
+                    <CardContent className="space-y-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <Label className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">File Name</Label>
+                          <p className="text-base font-medium">{fileDetails.FileName}</p>
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">File Type</Label>
+                          <p className="text-base font-medium">{fileDetails.FileType}</p>
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Status</Label>
+                          <div>
+                            <Badge className={`
+                              px-3 py-1 font-medium rounded-full
+                              ${fileDetails.FileStatus?.toLowerCase() === 'active' 
+                                ? 'bg-gradient-to-r from-green-400 to-emerald-500 text-white shadow-lg' :
+                                fileDetails.FileStatus?.toLowerCase() === 'processing' 
+                                ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white shadow-lg' :
+                                'bg-gradient-to-r from-gray-400 to-gray-500 text-white shadow-lg'
+                              }
+                            `}>
+                              {fileDetails.FileStatus}
+                            </Badge>
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Created Date</Label>
+                          <div className="flex items-center gap-2">
+                            <Calendar className="h-4 w-4 text-purple-500" />
+                            <p className="text-base font-medium">{new Date(fileDetails.CreatedAt).toLocaleDateString()}</p>
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Created By</Label>
+                          <div className="flex items-center gap-2">
+                            <User className="h-4 w-4 text-pink-500" />
+                            <p className="text-base font-medium">{fileDetails.CreatedBy}</p>
+                          </div>
                         </div>
                       </div>
-                      <div>
-                        <Label className="text-sm font-medium text-muted-foreground">Created Date</Label>
-                        <p className="text-sm mt-1">{new Date(fileDetails.CreatedAt).toLocaleDateString()}</p>
-                      </div>
-                      <div>
-                        <Label className="text-sm font-medium text-muted-foreground">Created By</Label>
-                        <p className="text-sm mt-1">{fileDetails.CreatedBy}</p>
-                      </div>
+                      
+                      {(fileDetails.FileDescription || fileDetails.Description) && (
+                        <div className="space-y-2 border-t pt-4">
+                          <Label className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Description</Label>
+                          <p className="text-base leading-relaxed bg-gradient-to-r from-slate-50 to-blue-50 p-4 rounded-lg border border-slate-200">
+                            {fileDetails.FileDescription || fileDetails.Description}
+                          </p>
+                        </div>
+                      )}
+                      
                       {fileDetails.Tags && fileDetails.Tags.length > 0 && (
-                        <div>
-                          <Label className="text-sm font-medium text-muted-foreground">Tags</Label>
-                          <div className="flex flex-wrap gap-2 mt-1">
+                        <div className="space-y-3 border-t pt-4">
+                          <Label className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Tags</Label>
+                          <div className="flex flex-wrap gap-2">
                             {fileDetails.Tags.map((tag, index) => (
-                              <Badge key={index} variant="secondary" className="text-xs">
+                              <Badge 
+                                key={index} 
+                                className="px-3 py-1 bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 border border-purple-200 rounded-full font-medium hover:scale-105 transition-transform duration-200"
+                              >
                                 {tag}
                               </Badge>
                             ))}
@@ -700,7 +753,11 @@ const FileViewer = () => {
               
               {hasAIContent() && (
                 <TabsContent value="ai-analysis" className="flex-1 mt-0" onClick={loadAIContent}>
-                  {renderAIAnalysisTab()}
+                  <Card className="h-full card-enhanced">
+                    <CardContent className="p-0 h-full">
+                      {renderAIAnalysisTab()}
+                    </CardContent>
+                  </Card>
                 </TabsContent>
               )}
             </div>
@@ -708,7 +765,7 @@ const FileViewer = () => {
         </div>
       </div>
 
-      {/* Edit Dialog */}
+      {/* Edit Dialog with Enhanced Styling */}
       {fileDetails && (
         <EditFileDialog
           isOpen={isEditDialogOpen}
@@ -721,8 +778,6 @@ const FileViewer = () => {
           onUpdate={updateFile}
         />
       )}
-
-
     </div>
   );
 };
