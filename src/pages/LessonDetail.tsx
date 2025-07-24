@@ -134,9 +134,9 @@ const LessonDetail: React.FC = () => {
             {/* Author and Meta Info */}
             <div className="flex items-center gap-4 py-6 border-t border-b border-gray-200">
               <DoodleAvatar 
-                seed={lesson.CreatedBy}
+                seed={lesson.CreatedBy || 'default'}
                 size={48}
-                fallback={lesson.CreatedBy[0]?.toUpperCase() || 'U'}
+                fallback={lesson.CreatedBy?.[0]?.toUpperCase() || 'U'}
               />
               <div className="flex-1">
                 <div className="flex items-center gap-2 text-gray-900 font-medium">
