@@ -6,7 +6,6 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
-import { highlightSearchTerm } from "@/lib/searchHighlight";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -222,8 +221,9 @@ const FileViewer = () => {
   const filterContent = (content: string, searchTerm: string) => {
     if (!searchTerm) return content;
     
-    // Use proper search highlighting
-    return highlightSearchTerm(content, searchTerm);
+    // Highlight search terms in content
+    const regex = new RegExp(`(${searchTerm})`, 'gi');
+    return content.replace(regex, '<mark>$1</mark>');
   };
 
   // Custom ReactMarkdown components to control styling
@@ -345,13 +345,12 @@ const FileViewer = () => {
                   <div className="flex items-center justify-center p-8">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal"></div>
                   </div>
-                 ) : summaryContent || fileDetails?.DocSummary ? (
-                   <div 
-                     className="prose prose-sm max-w-none" 
-                     dangerouslySetInnerHTML={{ 
-                       __html: filterContent(summaryContent || fileDetails?.DocSummary || '', summarySearch) 
-                     }}
-                   />
+                ) : summaryContent || fileDetails?.DocSummary ? (
+                  <div className="prose prose-sm max-w-none">
+                    <ReactMarkdown components={markdownComponents}>
+                      {filterContent(summaryContent || fileDetails?.DocSummary || '', summarySearch)}
+                    </ReactMarkdown>
+                  </div>
                 ) : (
                   <p className="text-muted-foreground">No summary available</p>
                 )}
@@ -413,24 +412,15 @@ const FileViewer = () => {
                           </div>
                           <div className="flex-1">
                             <div className="bg-muted/50 rounded-lg p-3 border border-teal/10">
-                               <div className="font-semibold text-sm text-foreground mb-1">
-                                 <span 
-                                   dangerouslySetInnerHTML={{ 
-                                     __html: transcriptSearch ? highlightSearchTerm(message.speaker, transcriptSearch) : message.speaker 
-                                   }}
-                                 />
+                              <div className="font-semibold text-sm text-foreground mb-1">
+                                {message.speaker}
                                 {message.timestamp && (
                                   <span className="text-xs text-muted-foreground ml-2 font-normal">
                                     {message.timestamp}
                                   </span>
                                 )}
                               </div>
-                               <p 
-                                 className="text-foreground text-sm font-normal"
-                                 dangerouslySetInnerHTML={{ 
-                                   __html: transcriptSearch ? highlightSearchTerm(message.text, transcriptSearch) : message.text 
-                                 }}
-                               />
+                              <p className="text-foreground text-sm font-normal">{message.text}</p>
                             </div>
                           </div>
                         </div>

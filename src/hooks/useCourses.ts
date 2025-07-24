@@ -37,52 +37,25 @@ export interface UpdateCourseData {
   Tags: string[];
 }
 
-export const useCourses = (spaceId: string, searchQuery?: string, page: number = 1, limit: number = 9) => {
+export const useCourses = (spaceId: string) => {
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [totalPages, setTotalPages] = useState(1);
-  const [currentPage, setCurrentPage] = useState(page);
   const { toast } = useToast();
 
-  const fetchCourses = async (searchTerm?: string, pageNum: number = 1) => {
+  const fetchCourses = async () => {
     try {
       setLoading(true);
       setError(null);
-      
-      console.log(`Fetching courses for space: ${spaceId}`);
-      
-      // Build query parameters
-      const params = new URLSearchParams({
-        page: pageNum.toString(),
-        limit: limit.toString()
-      });
-      
-      if (searchTerm?.trim()) {
-        params.append('search', searchTerm.trim());
-      }
-      
-      const response = await apiClient.get(`/spaces/${spaceId}/courses?${params.toString()}`, { requireAuth: true });
-      
-      if (response.Courses) {
-        setCourses(response.Courses);
-        setTotalPages(response.TotalPages || 1);
-        setCurrentPage(pageNum);
-        console.log(`Fetched ${response.Courses.length} courses`);
-      } else {
-        setCourses([]);
-        setTotalPages(1);
-        setCurrentPage(1);
-      }
+      const response = await apiClient.get(`/spaces/${spaceId}/courses`);
+      const data = await response.json();
+      setCourses(data.Courses || []);
     } catch (err) {
-      console.error('Error fetching courses:', err);
-      setError('Failed to fetch courses');
-      setCourses([]);
-      setTotalPages(1);
-      setCurrentPage(1);
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch courses';
+      setError(errorMessage);
       toast({
         title: "Error",
-        description: "Failed to fetch courses. Please try again.",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
@@ -92,14 +65,14 @@ export const useCourses = (spaceId: string, searchQuery?: string, page: number =
 
   const createCourse = async (courseData: CreateCourseData) => {
     try {
-      const response = await apiClient.post(`/spaces/${spaceId}/courses`, courseData, { requireAuth: true });
-      
+      const response = await apiClient.post(`/spaces/${spaceId}/courses`, courseData);
+      const data = await response.json();
       toast({
         title: "Success",
-        description: response.Message || "Course created successfully",
+        description: data.Message || "Course created successfully",
       });
-      await fetchCourses(searchQuery, currentPage); // Refresh the list
-      return response.CourseId;
+      await fetchCourses(); // Refresh the list
+      return data.CourseId;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to create course';
       toast({
@@ -111,17 +84,9 @@ export const useCourses = (spaceId: string, searchQuery?: string, page: number =
     }
   };
 
-  const searchCourses = (searchTerm: string) => {
-    fetchCourses(searchTerm, 1);
-  };
-
-  const goToPage = (pageNum: number) => {
-    fetchCourses(searchQuery, pageNum);
-  };
-
   useEffect(() => {
     if (spaceId) {
-      fetchCourses(searchQuery, page);
+      fetchCourses();
     }
   }, [spaceId]);
 
@@ -129,12 +94,8 @@ export const useCourses = (spaceId: string, searchQuery?: string, page: number =
     courses,
     loading,
     error,
-    totalPages,
-    currentPage,
+    fetchCourses,
     createCourse,
-    searchCourses,
-    goToPage,
-    refetch: () => fetchCourses(searchQuery, currentPage),
   };
 };
 
@@ -148,8 +109,9 @@ export const useCourseDetail = (spaceId: string, courseId: string) => {
     try {
       setLoading(true);
       setError(null);
-      const response = await apiClient.get(`/spaces/${spaceId}/courses/${courseId}`, { requireAuth: true });
-      setCourse(response);
+      const response = await apiClient.get(`/spaces/${spaceId}/courses/${courseId}`);
+      const data = await response.json();
+      setCourse(data);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch course details';
       setError(errorMessage);
@@ -165,10 +127,11 @@ export const useCourseDetail = (spaceId: string, courseId: string) => {
 
   const updateCourse = async (courseData: UpdateCourseData) => {
     try {
-      const response = await apiClient.put(`/spaces/${spaceId}/courses/${courseId}`, courseData, { requireAuth: true });
+      const response = await apiClient.put(`/spaces/${spaceId}/courses/${courseId}`, courseData);
+      const data = await response.json();
       toast({
         title: "Success",
-        description: response.Message || "Course updated successfully",
+        description: data.Message || "Course updated successfully",
       });
       await fetchCourseDetail(); // Refresh the course data
     } catch (err) {
@@ -184,10 +147,11 @@ export const useCourseDetail = (spaceId: string, courseId: string) => {
 
   const deleteCourse = async () => {
     try {
-      const response = await apiClient.delete(`/spaces/${spaceId}/courses/${courseId}`, { requireAuth: true });
+      const response = await apiClient.delete(`/spaces/${spaceId}/courses/${courseId}`);
+      const data = await response.json();
       toast({
         title: "Success",
-        description: response.Message || "Course deleted successfully",
+        description: data.Message || "Course deleted successfully",
       });
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to delete course';
