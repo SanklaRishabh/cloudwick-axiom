@@ -39,7 +39,7 @@ export function AppSidebar() {
       <SidebarContent>
         <div className="p-6">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
+            <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center shadow-lg">
               <span className="text-white font-bold text-lg">CW</span>
             </div>
             {state === "expanded" && (
@@ -63,7 +63,7 @@ export function AppSidebar() {
                       className={({ isActive }) => `
                         flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 group
                         ${isActive 
-                          ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg transform scale-105' 
+                          ? 'bg-gradient-primary text-white shadow-lg transform scale-105' 
                           : 'hover:bg-white/60 hover:shadow-md hover:scale-105'
                         }
                       `}

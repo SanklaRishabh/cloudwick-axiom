@@ -23,7 +23,7 @@ const AuthLayout = ({ children, title, subtitle = "Knowledge awaits you", showWi
         <Switch
           checked={isDark}
           onCheckedChange={toggleTheme}
-          className="data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-purple-500 data-[state=checked]:to-pink-500 data-[state=unchecked]:bg-gradient-to-r data-[state=unchecked]:from-amber-400 data-[state=unchecked]:to-orange-500"
+          className="data-[state=checked]:bg-gradient-primary data-[state=unchecked]:bg-gradient-to-r data-[state=unchecked]:from-amber-400 data-[state=unchecked]:to-orange-500"
         />
         <Moon className={`w-4 h-4 transition-colors duration-300 ${isDark ? 'text-purple-400' : 'text-gray-400'}`} />
       </div>
@@ -33,7 +33,7 @@ const AuthLayout = ({ children, title, subtitle = "Knowledge awaits you", showWi
         <div className="w-full max-w-md">
           <div className="mb-8 p-8 bg-white/60 backdrop-blur-xl rounded-2xl border border-white/20 shadow-2xl card-glass">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
+              <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center shadow-lg">
                 <span className="text-white font-bold text-lg">CW</span>
               </div>
               <div>
@@ -41,7 +41,7 @@ const AuthLayout = ({ children, title, subtitle = "Knowledge awaits you", showWi
                 <span className={`font-lato text-xl font-light ml-1 ${isDark ? 'text-white' : 'text-gray-800'}`}>Axiom</span>
               </div>
             </div>
-            <h1 className={`text-3xl font-bold mb-3 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent`}>{title}</h1>
+            <h1 className={`text-3xl font-bold mb-3 bg-gradient-primary bg-clip-text text-transparent`}>{title}</h1>
             <p className={`text-base ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>{subtitle}</p>
           </div>
           <div className="bg-white/40 backdrop-blur-xl rounded-2xl border border-white/20 shadow-xl p-8">
@@ -53,7 +53,7 @@ const AuthLayout = ({ children, title, subtitle = "Knowledge awaits you", showWi
       {/* Right Panel - Enhanced Wave Animation */}
       {showWireframe && (
         <div className="flex-1 relative overflow-hidden bg-gradient-to-br from-teal-900/10 via-slate-800/20 to-purple-900/10">
-          <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-pink-500/5"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-transparent to-blue-500/5"></div>
           <WavyAnimation isDark={isDark} />
           <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white/20 to-transparent"></div>
         </div>

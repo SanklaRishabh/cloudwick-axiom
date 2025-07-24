@@ -134,8 +134,8 @@ const FileViewer = () => {
       'bg-emerald-light text-green border-emerald-light',
       'bg-blue-100 text-blue-800 border-blue-200',
       'bg-teal-light text-teal border-teal-light',
-      'bg-purple-100 text-purple-800 border-purple-200',
-      'bg-pink-100 text-pink-800 border-pink-200',
+      'bg-cyan-100 text-cyan-800 border-cyan-200',
+      'bg-sky-100 text-sky-800 border-sky-200',
       'bg-green-light text-green border-green-light',
       'bg-indigo-100 text-indigo-800 border-indigo-200',
       'bg-orange-100 text-orange-800 border-orange-200'
@@ -596,7 +596,7 @@ const FileViewer = () => {
                 <ArrowLeft className="h-4 w-4" />
                 Back to Space
               </Button>
-              <Separator orientation="vertical" className="h-6 bg-gradient-to-b from-purple-400 to-pink-400" />
+              <Separator orientation="vertical" className="h-6 bg-gradient-primary" />
               <div>
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-teal-700 via-slate-700 to-teal-700 bg-clip-text text-transparent">
                   {fileDetails.FileName}
@@ -619,7 +619,7 @@ const FileViewer = () => {
                     variant="outline" 
                     size="sm" 
                     onClick={handleEdit}
-                    className="gap-2 border-purple-200 bg-white/50 hover:bg-purple-50 hover:border-purple-300 transition-all duration-300"
+                    className="gap-2 border-cyan-200 bg-white/50 hover:bg-cyan-50 hover:border-cyan-300 transition-all duration-300"
                   >
                     <Edit className="h-4 w-4" />
                     Edit
@@ -690,10 +690,10 @@ const FileViewer = () => {
                   <Card className="card-enhanced overflow-hidden">
                     <CardContent className="p-8">
                       <div className="mb-6">
-                        <h3 className="text-xl font-bold mb-2 bg-gradient-to-r from-teal-600 to-purple-600 bg-clip-text text-transparent">
+                        <h3 className="text-xl font-bold mb-2 bg-gradient-primary bg-clip-text text-transparent">
                           File Preview
                         </h3>
-                        <div className="h-1 w-20 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full"></div>
+                        <div className="h-1 w-20 bg-gradient-primary rounded-full"></div>
                       </div>
                       {renderFilePreview()}
                     </CardContent>
@@ -703,7 +703,7 @@ const FileViewer = () => {
                   <Card className="card-glass">
                     <CardHeader className="pb-4">
                       <CardTitle className="text-xl font-bold flex items-center gap-3">
-                        <div className="p-2 bg-gradient-to-r from-purple-100 to-pink-100 rounded-lg">
+                        <div className="p-2 bg-gradient-to-r from-cyan-100 to-blue-100 rounded-lg">
                           <FileText className="h-5 w-5 text-purple-600" />
                         </div>
                         File Information

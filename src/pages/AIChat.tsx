@@ -194,7 +194,7 @@ const AIChat = () => {
           {/* Connecting Animation */}
           <div className="flex justify-center">
             <div className="relative">
-              <div className="w-32 h-32 rounded-full bg-gradient-to-br from-purple-400 via-pink-400 to-purple-600 shadow-2xl animate-spin" 
+              <div className="w-32 h-32 rounded-full bg-gradient-primary shadow-2xl animate-spin" 
                    style={{
                      background: 'radial-gradient(circle at 30% 30%, #E879F9, #C084FC, #A855F7, #9333EA)',
                      boxShadow: '0 20px 40px rgba(168, 85, 247, 0.3), 0 0 60px rgba(168, 85, 247, 0.2)',
@@ -227,7 +227,7 @@ const AIChat = () => {
           {/* Gradient Orb */}
           <div className="flex justify-center">
             <div className="relative">
-              <div className="w-32 h-32 rounded-full bg-gradient-to-br from-purple-400 via-pink-400 to-purple-600 shadow-2xl animate-pulse" 
+              <div className="w-32 h-32 rounded-full bg-gradient-primary shadow-2xl animate-pulse" 
                    style={{
                      background: 'radial-gradient(circle at 30% 30%, #E879F9, #C084FC, #A855F7, #9333EA)',
                      boxShadow: '0 20px 40px rgba(168, 85, 247, 0.3), 0 0 60px rgba(168, 85, 247, 0.2)'
@@ -244,7 +244,7 @@ const AIChat = () => {
             </h1>
             <h2 className="text-4xl font-normal">
               <span className="text-gray-800">What's on </span>
-              <span className="bg-gradient-to-r from-purple-500 via-pink-500 to-purple-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-primary bg-clip-text text-transparent">
                 your mind?
               </span>
             </h2>
@@ -294,7 +294,7 @@ const AIChat = () => {
       <div className="bg-white border-b border-gray-200 px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-purple-600"></div>
+            <div className="w-8 h-8 rounded-full bg-gradient-primary"></div>
             <div>
               <h1 className="font-semibold text-gray-900">AI Assistant</h1>
               <p className="text-sm text-gray-600">
@@ -313,7 +313,7 @@ const AIChat = () => {
         {messages.map((msg) => (
           <div key={msg.id} className={`flex gap-3 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
             {msg.sender === 'ai' && (
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 flex-shrink-0"></div>
+              <div className="w-8 h-8 rounded-full bg-gradient-primary flex-shrink-0"></div>
             )}
             <div className={`max-w-2xl ${msg.sender === 'user' ? 'bg-gray-800 text-white' : 'bg-white'} rounded-2xl px-4 py-3 shadow-sm border border-gray-200`}>
               {msg.isLoading ? (

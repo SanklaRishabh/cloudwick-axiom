@@ -282,9 +282,9 @@ const DashboardHome = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {articles.slice(0, 3).map((article, index) => (
               <Card key={article.id} className={`group cursor-pointer hover:shadow-2xl transition-all duration-500 overflow-hidden border-0 shadow-lg relative ${
-                index === 0 ? 'bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-100' :
+                index === 0 ? 'bg-gradient-to-br from-cyan-50 via-blue-50 to-indigo-100' :
                 index === 1 ? 'bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-100' :
-                'bg-gradient-to-br from-rose-50 via-pink-50 to-orange-100'
+                'bg-gradient-to-br from-rose-50 via-orange-50 to-yellow-100'
               }`}>
                 <CardHeader className="p-0">
                   {article.cover_image ? (
@@ -297,7 +297,7 @@ const DashboardHome = () => {
                     </div>
                   ) : (
                     <div className={`h-40 flex items-center justify-center ${
-                      index === 0 ? 'bg-gradient-to-br from-purple-200 to-indigo-300' :
+                      index === 0 ? 'bg-gradient-to-br from-cyan-200 to-indigo-300' :
                       index === 1 ? 'bg-gradient-to-br from-emerald-200 to-cyan-300' :
                       'bg-gradient-to-br from-rose-200 to-orange-300'
                     }`}>
@@ -352,7 +352,7 @@ const DashboardHome = () => {
       <div className="fixed bottom-6 right-6 z-50">
         <Button
           onClick={handleNavigateToAIChat}
-          className="h-14 w-14 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 shadow-lg hover:shadow-xl transition-all duration-300 p-0"
+          className="h-14 w-14 rounded-full bg-gradient-primary hover:bg-gradient-primary-hover shadow-lg hover:shadow-xl transition-all duration-300 p-0"
           size="icon"
         >
           <div className="relative">

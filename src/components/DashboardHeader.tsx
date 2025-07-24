@@ -41,7 +41,7 @@ export function DashboardHeader() {
   return (
     <header className="h-20 border-b border-white/20 bg-gradient-to-r from-white/90 via-white/95 to-white/90 backdrop-blur-xl shadow-lg flex items-center justify-between px-8">
       <div className="flex items-center gap-3 cursor-pointer group" onClick={handleLogoClick}>
-        <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+        <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
           <span className="text-white font-bold text-lg">CW</span>
         </div>
         <div className="flex flex-col">
@@ -53,8 +53,8 @@ export function DashboardHeader() {
       <div className="flex items-center gap-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="relative h-12 w-12 rounded-full bg-gradient-to-br from-purple-100 to-pink-100 hover:from-purple-200 hover:to-pink-200 border border-purple-200 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-110">
-              <span className="text-base font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+            <Button variant="ghost" className="relative h-12 w-12 rounded-full bg-gradient-to-br from-cyan-100 to-blue-100 hover:from-cyan-200 hover:to-blue-200 border border-cyan-200 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-110">
+              <span className="text-base font-bold bg-gradient-primary bg-clip-text text-transparent">
                 {getUserInitials()}
               </span>
             </Button>
@@ -62,7 +62,7 @@ export function DashboardHeader() {
           <DropdownMenuContent className="w-56 card-glass border-white/20" align="end" forceMount>
             <DropdownMenuItem 
               onClick={handleSettingsClick}
-              className="hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 cursor-pointer"
+              className="hover:bg-gradient-to-r hover:from-cyan-50 hover:to-blue-50 cursor-pointer"
             >
               Settings
             </DropdownMenuItem>
