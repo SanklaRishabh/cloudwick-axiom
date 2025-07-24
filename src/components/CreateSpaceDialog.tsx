@@ -86,10 +86,11 @@ const CreateSpaceDialog = ({ onSpaceCreated }: CreateSpaceDialogProps) => {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button
-          className="fixed bottom-6 right-6 h-14 w-14 rounded-full bg-blue-600 hover:bg-blue-700 shadow-lg"
-          size="icon"
+          className="bg-blue-600 hover:bg-blue-700 flex items-center gap-2"
+          size="default"
         >
-          <Plus className="h-6 w-6" />
+          <Plus className="h-4 w-4" />
+          Create Space
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">

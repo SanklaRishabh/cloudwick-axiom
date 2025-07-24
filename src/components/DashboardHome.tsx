@@ -11,11 +11,12 @@ import { useDevArticles } from '@/hooks/useDevArticles';
 import workspaceIcon from '@/assets/workspace-doodle.jpg';
 import collaborationIcon from '@/assets/collaboration-doodle.jpg';
 import techIcon from '@/assets/tech-doodle.jpg';
+import CreateSpaceDialog from '@/components/CreateSpaceDialog';
 
 const DashboardHome = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { spaces, loading: spacesLoading } = useSpaces();
+  const { spaces, loading: spacesLoading, fetchSpaces } = useSpaces();
   const { articles, loading: articlesLoading, error: articlesError, refetch } = useDevArticles(3);
 
   const getTimeOfDayGreeting = () => {
@@ -198,7 +199,12 @@ const DashboardHome = () => {
 
       {/* Spaces Section */}
       <div className="space-y-4">
-        <h2 className="text-2xl font-semibold text-gray-900">Your Spaces</h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-semibold text-gray-900">Your Spaces</h2>
+          {isSystemAdmin && (
+            <CreateSpaceDialog onSpaceCreated={fetchSpaces} />
+          )}
+        </div>
         {spacesLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3].map((i) => (
