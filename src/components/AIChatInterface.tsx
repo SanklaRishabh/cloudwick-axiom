@@ -15,14 +15,12 @@ interface ChatMessage {
 
 interface AIChatInterfaceProps {
   spaceId: string;
-  fileName?: string;
   onCourseCreated: () => void;
   onError: (error: string) => void;
 }
 
 const AIChatInterface: React.FC<AIChatInterfaceProps> = ({ 
-  spaceId, 
-  fileName,
+  spaceId,
   onCourseCreated, 
   onError 
 }) => {
@@ -74,7 +72,7 @@ const AIChatInterface: React.FC<AIChatInterfaceProps> = ({
       wsService.current.onConnection(() => {
         setIsConnected(true);
         setIsConnecting(false);
-        const attachmentInfo = fileName ? `file "${fileName}"` : 'space';
+        const attachmentInfo = 'space';
         addMessage(`Welcome! I'm connected to your ${attachmentInfo}. Please describe what kind of course you'd like me to create.`, 'ai');
       });
 

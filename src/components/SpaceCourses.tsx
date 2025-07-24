@@ -2,7 +2,17 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { BookOpen, Users, Clock } from 'lucide-react';
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { 
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import { BookOpen, Search } from 'lucide-react';
 import { useCourses } from '@/hooks/useCourses';
 import CreateCourseDialog from './CreateCourseDialog';
 import DoodleAvatar from '@/components/DoodleAvatar';
@@ -13,8 +23,9 @@ interface SpaceCoursesProps {
 
 const SpaceCourses: React.FC<SpaceCoursesProps> = ({ spaceId }) => {
   const navigate = useNavigate();
-  const { courses, loading, createCourse } = useCourses(spaceId);
+  const { courses, loading, createCourse, totalPages, currentPage, searchCourses, goToPage } = useCourses(spaceId);
   const [expandedDescriptions, setExpandedDescriptions] = useState<Set<string>>(new Set());
+  const [searchInput, setSearchInput] = useState('');
 
   const handleCourseClick = (courseId: string) => {
     navigate(`/dashboard/spaces/${spaceId}/courses/${courseId}`);
@@ -38,6 +49,76 @@ const SpaceCourses: React.FC<SpaceCoursesProps> = ({ spaceId }) => {
     return description.substring(0, maxLength) + "...";
   };
 
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    searchCourses(searchInput);
+  };
+
+  const handleSearchKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      searchCourses(searchInput);
+    }
+  };
+
+  const renderPagination = () => {
+    if (totalPages <= 1) return null;
+
+    const pages = [];
+    const maxVisiblePages = 5;
+    const startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+    const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+
+    return (
+      <Pagination className="mt-8">
+        <PaginationContent>
+          {currentPage > 1 && (
+            <PaginationItem>
+              <PaginationPrevious 
+                href="#" 
+                onClick={(e) => {
+                  e.preventDefault();
+                  goToPage(currentPage - 1);
+                }}
+              />
+            </PaginationItem>
+          )}
+          
+          {pages.map((page) => (
+            <PaginationItem key={page}>
+              <PaginationLink
+                href="#"
+                isActive={currentPage === page}
+                onClick={(e) => {
+                  e.preventDefault();
+                  goToPage(page);
+                }}
+              >
+                {page}
+              </PaginationLink>
+            </PaginationItem>
+          ))}
+          
+          {currentPage < totalPages && (
+            <PaginationItem>
+              <PaginationNext 
+                href="#" 
+                onClick={(e) => {
+                  e.preventDefault();
+                  goToPage(currentPage + 1);
+                }}
+              />
+            </PaginationItem>
+          )}
+        </PaginationContent>
+      </Pagination>
+    );
+  };
+
   if (loading) {
     return (
       <div className="space-y-4">
@@ -55,10 +136,25 @@ const SpaceCourses: React.FC<SpaceCoursesProps> = ({ spaceId }) => {
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
+    <div className="space-y-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center">
         <h2 className="text-xl font-semibold text-gray-900">Courses</h2>
-        <CreateCourseDialog onCreateCourse={createCourse} spaceId={spaceId} />
+        <div className="flex gap-2">
+          <form onSubmit={handleSearch} className="flex gap-2">
+            <Input
+              type="text"
+              placeholder="Search courses..."
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              onKeyPress={handleSearchKeyPress}
+              className="w-64"
+            />
+            <Button type="submit" variant="outline" size="icon">
+              <Search className="h-4 w-4" />
+            </Button>
+          </form>
+          <CreateCourseDialog onCreateCourse={createCourse} spaceId={spaceId} />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -106,6 +202,8 @@ const SpaceCourses: React.FC<SpaceCoursesProps> = ({ spaceId }) => {
           </Card>
         ))}
       </div>
+
+      {renderPagination()}
     </div>
   );
 };
