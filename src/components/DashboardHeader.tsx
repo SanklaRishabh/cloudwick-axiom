@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import DoodleAvatar from '@/components/DoodleAvatar';
 
 export function DashboardHeader() {
   const { user, signOut } = useAuth();
@@ -53,10 +54,13 @@ export function DashboardHeader() {
       <div className="flex items-center gap-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="relative h-12 w-12 rounded-full bg-gradient-to-br from-cyan-100 to-blue-100 hover:from-cyan-200 hover:to-blue-200 border border-cyan-200 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-110">
-              <span className="text-base font-bold bg-gradient-primary bg-clip-text text-transparent">
-                {getUserInitials()}
-              </span>
+            <Button variant="ghost" className="relative p-0 rounded-full hover:scale-110 transition-all duration-300">
+              <DoodleAvatar 
+                seed={user?.username || user?.email || 'default'}
+                size={48}
+                fallback={getUserInitials()}
+                className="shadow-md hover:shadow-lg"
+              />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56 card-glass border-white/20" align="end" forceMount>

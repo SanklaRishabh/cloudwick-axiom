@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,9 +11,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { ArrowLeft, BookOpen, Edit, Trash2 } from 'lucide-react';
+import { ArrowLeft, Edit, Trash2, Clock, User } from 'lucide-react';
 import { useLessonDetail, useDeleteLesson } from '@/hooks/useLessons';
 import EditLessonDialog from '@/components/EditLessonDialog';
+import DoodleAvatar from '@/components/DoodleAvatar';
 
 const LessonDetail: React.FC = () => {
   const { spaceId, courseId, sectionId, lessonId } = useParams<{
@@ -86,72 +86,84 @@ const LessonDetail: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <Button
-          variant="ghost"
-          onClick={() => navigate(`/dashboard/spaces/${spaceId}/courses/${courseId}/sections/${sectionId}`)}
-          className="font-lexend"
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Section
-        </Button>
+    <div className="min-h-screen bg-white">
+      {/* Fixed Navigation Bar */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200">
+        <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
+          <Button
+            variant="ghost"
+            onClick={() => navigate(`/dashboard/spaces/${spaceId}/courses/${courseId}/sections/${sectionId}`)}
+            className="text-gray-600 hover:text-gray-900"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Section
+          </Button>
 
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setEditDialogOpen(true)}
-            className="font-lexend"
-          >
-            <Edit className="h-4 w-4 mr-2" />
-            Edit
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setDeleteDialogOpen(true)}
-            className="font-lexend text-destructive hover:text-destructive"
-          >
-            <Trash2 className="h-4 w-4 mr-2" />
-            Delete
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setEditDialogOpen(true)}
+              className="text-gray-600 hover:text-gray-900"
+            >
+              <Edit className="h-4 w-4 mr-2" />
+              Edit
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setDeleteDialogOpen(true)}
+              className="text-red-600 hover:text-red-700"
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              Delete
+            </Button>
+          </div>
         </div>
       </div>
 
-      <div className="space-y-6">
-        {/* Lesson Header */}
-        <div className="space-y-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-full bg-blue-100 text-blue-600">
-              <BookOpen className="h-6 w-6" />
+      {/* Article Content */}
+      <article className="pt-20 pb-16">
+        <div className="max-w-4xl mx-auto px-6">
+          {/* Article Header */}
+          <header className="mb-12">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight mb-8 font-serif">
+              {lesson.LessonTitle}
+            </h1>
+            
+            {/* Author and Meta Info */}
+            <div className="flex items-center gap-4 py-6 border-t border-b border-gray-200">
+              <DoodleAvatar 
+                seed={lesson.CreatedBy}
+                size={48}
+                fallback={lesson.CreatedBy[0]?.toUpperCase() || 'U'}
+              />
+              <div className="flex-1">
+                <div className="flex items-center gap-2 text-gray-900 font-medium">
+                  <User className="h-4 w-4" />
+                  {lesson.CreatedBy}
+                </div>
+                <div className="flex items-center gap-2 text-gray-600 text-sm mt-1">
+                  <Clock className="h-4 w-4" />
+                  {new Date(lesson.CreatedAt).toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                  })}
+                </div>
+              </div>
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 font-lexend">{lesson.LessonTitle}</h1>
-          </div>
-          
-          <div className="flex items-center gap-6 text-sm text-gray-600">
-            <div className="text-gray-700 font-lexend">
-              Created by: {lesson.CreatedBy}
-            </div>
-            <div className="text-gray-700 font-lexend">
-              Created: {new Date(lesson.CreatedAt).toLocaleDateString()}
-            </div>
-          </div>
-        </div>
+          </header>
 
-        {/* Lesson Content */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="font-lexend">Lesson Content</CardTitle>
-          </CardHeader>
-          <CardContent>
+          {/* Article Body */}
+          <div className="lesson-content">
             <div 
-              className="prose max-w-none font-lexend"
+              className="prose prose-lg prose-gray max-w-none"
               dangerouslySetInnerHTML={{ __html: lesson.Content }}
             />
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+        </div>
+      </article>
 
       {/* Edit Dialog */}
       {lesson && (

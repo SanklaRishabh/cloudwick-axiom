@@ -1,0 +1,89 @@
+/* Medium-inspired lesson content styles */
+.lesson-content {
+  @apply text-gray-800 leading-relaxed;
+}
+
+.lesson-content h1,
+.lesson-content h2,
+.lesson-content h3,
+.lesson-content h4,
+.lesson-content h5,
+.lesson-content h6 {
+  @apply font-serif font-bold text-gray-900 mb-6 mt-8;
+}
+
+.lesson-content h1 {
+  @apply text-3xl;
+}
+
+.lesson-content h2 {
+  @apply text-2xl;
+}
+
+.lesson-content h3 {
+  @apply text-xl;
+}
+
+.lesson-content p {
+  @apply text-lg leading-8 mb-6 text-gray-800;
+}
+
+.lesson-content a {
+  @apply text-blue-600 hover:text-blue-800 underline decoration-blue-300 hover:decoration-blue-500 transition-colors;
+}
+
+.lesson-content blockquote {
+  @apply border-l-4 border-gray-300 pl-6 my-8 italic text-gray-700 bg-gray-50 py-4 rounded-r;
+}
+
+.lesson-content ul,
+.lesson-content ol {
+  @apply my-6 pl-6;
+}
+
+.lesson-content li {
+  @apply mb-2 text-lg leading-8;
+}
+
+.lesson-content code {
+  @apply bg-gray-100 px-2 py-1 rounded text-sm font-mono text-gray-800;
+}
+
+.lesson-content pre {
+  @apply bg-gray-900 text-gray-100 p-6 rounded-lg my-8 overflow-x-auto;
+}
+
+.lesson-content pre code {
+  @apply bg-transparent p-0 text-gray-100;
+}
+
+.lesson-content img {
+  @apply w-full h-auto rounded-lg my-8 shadow-sm;
+}
+
+.lesson-content table {
+  @apply w-full border-collapse my-8;
+}
+
+.lesson-content th,
+.lesson-content td {
+  @apply border border-gray-300 px-4 py-2 text-left;
+}
+
+.lesson-content th {
+  @apply bg-gray-50 font-semibold;
+}
+
+.lesson-content strong,
+.lesson-content b {
+  @apply font-semibold text-gray-900;
+}
+
+.lesson-content em,
+.lesson-content i {
+  @apply italic;
+}
+
+.lesson-content hr {
+  @apply border-gray-300 my-12;
+}
