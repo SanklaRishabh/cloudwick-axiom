@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { ArrowLeft, Download, Edit, Trash2, Calendar, User, FileText, Eye, List, MessageSquare, MoreVertical } from 'lucide-react';
@@ -26,9 +28,7 @@ const FileViewer = () => {
   const [hasAttemptedFetch, setHasAttemptedFetch] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [isSummaryOpen, setIsSummaryOpen] = useState(false);
-  const [isActionItemsOpen, setIsActionItemsOpen] = useState(false);
-  const [isTranscriptOpen, setIsTranscriptOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('preview');
   const [contentLoading, setContentLoading] = useState(false);
   const [summaryContent, setSummaryContent] = useState('');
   const [actionItemsContent, setActionItemsContent] = useState('');
@@ -149,38 +149,59 @@ const FileViewer = () => {
     }
   };
 
-  const handleSummary = async () => {
+  const loadAIContent = async () => {
     if (!fileDetails) return;
     
-    setIsSummaryOpen(true);
-    
+    // Load summary content
     if (!summaryContent && (fileDetails.BdaSummaryS3KeyUrl || fileDetails.DocSummaryUrl)) {
       const url = fileDetails.BdaSummaryS3KeyUrl || fileDetails.DocSummaryUrl;
       const content = await fetchContent(url!);
       setSummaryContent(content);
     }
-  };
 
-  const handleActionItems = async () => {
-    if (!fileDetails) return;
-    
-    setIsActionItemsOpen(true);
-    
+    // Load action items content
     if (!actionItemsContent && fileDetails.ActionItemsUrl) {
       const content = await fetchContent(fileDetails.ActionItemsUrl);
       setActionItemsContent(content);
     }
-  };
 
-  const handleTranscript = async () => {
-    if (!fileDetails) return;
-    
-    setIsTranscriptOpen(true);
-    
+    // Load transcript content
     if (!transcriptContent && fileDetails.BdaTranscriptS3KeyUrl) {
       const content = await fetchContent(fileDetails.BdaTranscriptS3KeyUrl);
       setTranscriptContent(content);
     }
+  };
+
+  const parseTranscript = (transcript: string) => {
+    if (!transcript) return [];
+    
+    // Split by lines and parse speaker format
+    const lines = transcript.split('\n').filter(line => line.trim());
+    const messages: { speaker: string; text: string; timestamp?: string }[] = [];
+    
+    for (const line of lines) {
+      // Look for patterns like "Speaker: text" or "Name (timestamp): text"
+      const speakerMatch = line.match(/^([^:]+?)(?:\s*\(([^)]+)\))?\s*:\s*(.+)$/);
+      if (speakerMatch) {
+        messages.push({
+          speaker: speakerMatch[1].trim(),
+          timestamp: speakerMatch[2],
+          text: speakerMatch[3].trim()
+        });
+      } else if (line.trim()) {
+        // If no speaker pattern found, add as continuation of previous message or unknown speaker
+        if (messages.length > 0) {
+          messages[messages.length - 1].text += ' ' + line.trim();
+        } else {
+          messages.push({
+            speaker: 'Unknown',
+            text: line.trim()
+          });
+        }
+      }
+    }
+    
+    return messages;
   };
 
   // Utility function to get file extension
@@ -213,43 +234,123 @@ const FileViewer = () => {
            imageExtensions.includes(extension);
   };
 
-  const renderAIContentButtons = () => {
-    if (!fileDetails) return null;
-
+  const hasAIContent = () => {
+    if (!fileDetails) return false;
+    
     const fileType = fileDetails.FileType?.toLowerCase();
     const fileName = fileDetails.FileName || '';
+    
+    return isVideoOrAudio(fileType, fileName) || isDocumentOrImage(fileType, fileName);
+  };
 
-    if (isVideoOrAudio(fileType, fileName)) {
-      return (
-        <div className="flex flex-wrap gap-2 mt-4">
-          <Button variant="outline" size="sm" onClick={handleSummary}>
-            <FileText className="h-4 w-4 mr-2" />
-            Summary
-          </Button>
-          <Button variant="outline" size="sm" onClick={handleActionItems}>
-            <List className="h-4 w-4 mr-2" />
-            Action Items
-          </Button>
-          <Button variant="outline" size="sm" onClick={handleTranscript}>
-            <MessageSquare className="h-4 w-4 mr-2" />
-            Transcript
-          </Button>
-        </div>
-      );
-    }
+  const renderAIAnalysisTab = () => {
+    const fileType = fileDetails?.FileType?.toLowerCase();
+    const fileName = fileDetails?.FileName || '';
+    const transcriptMessages = parseTranscript(transcriptContent);
+    
+    return (
+      <div className="space-y-6 p-6">
+        {/* AI Summary */}
+        {(isDocumentOrImage(fileType!, fileName) || isVideoOrAudio(fileType!, fileName)) && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="h-5 w-5" />
+                AI Summary
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {contentLoading ? (
+                <div className="flex items-center justify-center p-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                </div>
+              ) : summaryContent || fileDetails?.DocSummary ? (
+                <div className="prose prose-sm max-w-none">
+                  <ReactMarkdown>
+                    {summaryContent || fileDetails?.DocSummary || ''}
+                  </ReactMarkdown>
+                </div>
+              ) : (
+                <p className="text-gray-500">No summary available</p>
+              )}
+            </CardContent>
+          </Card>
+        )}
 
-    if (isDocumentOrImage(fileType, fileName)) {
-      return (
-        <div className="flex flex-wrap gap-2 mt-4">
-          <Button variant="outline" size="sm" onClick={handleSummary}>
-            <FileText className="h-4 w-4 mr-2" />
-            Summary
-          </Button>
-        </div>
-      );
-    }
+        {/* Action Items */}
+        {isVideoOrAudio(fileType!, fileName) && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <List className="h-5 w-5" />
+                Action Items
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {contentLoading ? (
+                <div className="flex items-center justify-center p-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                </div>
+              ) : actionItemsContent || fileDetails?.ActionItems ? (
+                <div className="prose prose-sm max-w-none">
+                  <ReactMarkdown>
+                    {actionItemsContent || fileDetails?.ActionItems || ''}
+                  </ReactMarkdown>
+                </div>
+              ) : (
+                <p className="text-gray-500">No action items available</p>
+              )}
+            </CardContent>
+          </Card>
+        )}
 
-    return null;
+        {/* Transcript */}
+        {isVideoOrAudio(fileType!, fileName) && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <MessageSquare className="h-5 w-5" />
+                Transcript
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {contentLoading ? (
+                <div className="flex items-center justify-center p-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                </div>
+              ) : transcriptContent ? (
+                <div className="space-y-3 max-h-96 overflow-y-auto">
+                  {transcriptMessages.map((message, index) => (
+                    <div key={index} className="flex gap-3">
+                      <div className="flex-shrink-0">
+                        <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm font-medium">
+                          {message.speaker.charAt(0).toUpperCase()}
+                        </div>
+                      </div>
+                      <div className="flex-1">
+                        <div className="bg-gray-100 rounded-lg p-3">
+                          <div className="font-medium text-sm text-gray-900 mb-1">
+                            {message.speaker}
+                            {message.timestamp && (
+                              <span className="text-xs text-gray-500 ml-2">
+                                {message.timestamp}
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-gray-800 text-sm">{message.text}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-gray-500">No transcript available</p>
+              )}
+            </CardContent>
+          </Card>
+        )}
+      </div>
+    );
   };
 
   const renderFilePreview = () => {
@@ -444,18 +545,38 @@ const FileViewer = () => {
 
       {/* Main Content */}
       <div className="flex-1 flex">
-        {/* File Preview - Left Pane */}
+        {/* File Content - Left Pane */}
         <div className="w-[60%] p-6">
           <Card className="h-full shadow-lg hover:shadow-xl transition-shadow duration-300">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Eye className="h-5 w-5" />
-                File Preview
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {renderFilePreview()}
-              {renderAIContentButtons()}
+            <CardContent className="p-0 h-full">
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
+                <div className="px-6 pt-6 pb-0">
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="preview" className="flex items-center gap-2">
+                      <Eye className="h-4 w-4" />
+                      Preview
+                    </TabsTrigger>
+                    {hasAIContent() && (
+                      <TabsTrigger value="ai-analysis" className="flex items-center gap-2" onClick={loadAIContent}>
+                        <MessageSquare className="h-4 w-4" />
+                        AI Analysis
+                      </TabsTrigger>
+                    )}
+                  </TabsList>
+                </div>
+                
+                <TabsContent value="preview" className="flex-1 px-6 pb-6 mt-0">
+                  <div className="h-full pt-6">
+                    {renderFilePreview()}
+                  </div>
+                </TabsContent>
+                
+                {hasAIContent() && (
+                  <TabsContent value="ai-analysis" className="flex-1 mt-0 overflow-auto">
+                    {renderAIAnalysisTab()}
+                  </TabsContent>
+                )}
+              </Tabs>
             </CardContent>
           </Card>
         </div>
@@ -589,59 +710,6 @@ const FileViewer = () => {
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Summary Dialog */}
-      <Dialog open={isSummaryOpen} onOpenChange={setIsSummaryOpen}>
-        <DialogContent className="max-w-4xl max-h-[80vh] overflow-auto">
-          <DialogHeader>
-            <DialogTitle>Summary</DialogTitle>
-          </DialogHeader>
-          {contentLoading ? (
-            <div className="flex items-center justify-center p-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            </div>
-          ) : (
-            <div className="whitespace-pre-wrap p-4 text-sm">
-              {summaryContent || fileDetails?.DocSummary || 'No summary available'}
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-
-      {/* Action Items Dialog */}
-      <Dialog open={isActionItemsOpen} onOpenChange={setIsActionItemsOpen}>
-        <DialogContent className="max-w-4xl max-h-[80vh] overflow-auto">
-          <DialogHeader>
-            <DialogTitle>Action Items</DialogTitle>
-          </DialogHeader>
-          {contentLoading ? (
-            <div className="flex items-center justify-center p-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            </div>
-          ) : (
-            <div className="whitespace-pre-wrap p-4 text-sm">
-              {actionItemsContent || fileDetails?.ActionItems || 'No action items available'}
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-
-      {/* Transcript Dialog */}
-      <Dialog open={isTranscriptOpen} onOpenChange={setIsTranscriptOpen}>
-        <DialogContent className="max-w-4xl max-h-[80vh] overflow-auto">
-          <DialogHeader>
-            <DialogTitle>Transcript</DialogTitle>
-          </DialogHeader>
-          {contentLoading ? (
-            <div className="flex items-center justify-center p-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            </div>
-          ) : (
-            <div className="whitespace-pre-wrap p-4 text-sm">
-              {transcriptContent || 'No transcript available'}
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
