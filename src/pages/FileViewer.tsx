@@ -13,6 +13,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { ArrowLeft, Download, Edit, Trash2, Calendar, User, FileText, Eye, List, MessageSquare, MoreVertical, Search } from 'lucide-react';
 import { PDFViewer } from '@/components/PDFViewer';
+import { YouTubePlayer } from '@/components/YouTubePlayer';
 import { useFiles, FileItem, FileDetails } from '@/hooks/useFiles';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
@@ -484,8 +485,26 @@ const FileViewer = () => {
       );
     }
 
-    // Video preview
+    // Video preview - check for YouTube URLs or video files
     if (fileType?.includes('video') || videoExtensions.includes(extension)) {
+      const isYouTubeUrl = fileDetails.PresignedUrl && (
+        fileDetails.PresignedUrl.includes('youtube.com') || 
+        fileDetails.PresignedUrl.includes('youtu.be')
+      );
+      
+      if (isYouTubeUrl) {
+        // Extract video ID from YouTube URL
+        const videoId = fileDetails.PresignedUrl.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/)?.[1];
+        
+        if (videoId) {
+          return (
+            <div className="w-full">
+              <YouTubePlayer videoId={videoId} className="w-full" />
+            </div>
+          );
+        }
+      }
+      
       return (
         <div className="w-full h-96 bg-gray-100 rounded-lg">
           {fileDetails.PresignedUrl ? (

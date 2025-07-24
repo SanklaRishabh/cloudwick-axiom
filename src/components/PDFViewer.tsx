@@ -13,11 +13,8 @@ import {
 } from 'lucide-react';
 import { cn } from "@/lib/utils";
 
-// Set up PDF.js worker - using local worker to avoid CORS issues
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  'pdfjs-dist/build/pdf.worker.min.js',
-  import.meta.url,
-).toString();
+// Set up PDF.js worker - using CDN to avoid local module issues
+pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
 
 interface PDFViewerProps {
   url: string;
