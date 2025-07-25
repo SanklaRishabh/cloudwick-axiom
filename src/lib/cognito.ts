@@ -157,7 +157,7 @@ export const authService = {
         lastName: attributes.family_name || '',
       };
     } catch (error) {
-      console.error('❌ Get current user error:', error);
+      console.info('❌ Get current user error:', error);
       return null;
     }
   },
@@ -190,7 +190,7 @@ export const authService = {
       });
 
       if (!session.tokens) {
-        console.error('❌ No tokens in session');
+        console.info('❌ No tokens in session');
         return null;
       }
 
@@ -208,7 +208,7 @@ export const authService = {
 
       return tokens;
     } catch (error) {
-      console.error('❌ Get tokens error:', error);
+      console.info('❌ Get tokens error:', error);
       return null;
     }
   },
@@ -221,7 +221,7 @@ export const authService = {
       console.log('🔒 Authentication status:', isAuth);
       return isAuth;
     } catch (error) {
-      console.error('❌ Authentication check failed:', error);
+      console.info('❌ Authentication check failed:', error);
       return false;
     }
   }
