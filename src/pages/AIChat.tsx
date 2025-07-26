@@ -46,11 +46,8 @@ const AIChat = () => {
   const initializeWebSocket = async () => {
     try {
       const wsBaseUrl = import.meta.env.VITE_WS_BASE_URL;
-      if (!wsBaseUrl) {
-        throw new Error('WebSocket URL not configured in environment variables');
-      }
-
-      console.log('🔌 Initializing WebSocket with URL:', wsBaseUrl);
+      console.log('🔧 Initializing AI Assistant with URL from env:', wsBaseUrl ? 'URL provided' : 'Using default URL');
+      
       wsRef.current = new WebSocketService(wsBaseUrl);
       
       wsRef.current.onConnection(() => {

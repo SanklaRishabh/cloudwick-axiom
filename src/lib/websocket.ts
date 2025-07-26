@@ -21,17 +21,28 @@ export class WebSocketService {
   private closeHandlers: (() => void)[] = [];
   private connectionTimeout: NodeJS.Timeout | null = null;
 
-  constructor(baseUrl: string = 'wss://ct3ranhp35.execute-api.us-east-1.amazonaws.com/production') {
-    this.baseUrl = baseUrl;
+  constructor(baseUrl?: string) {
+    // Provide fallback URL if not specified
+    this.baseUrl = baseUrl || 'wss://ct3ranhp35.execute-api.us-east-1.amazonaws.com/production';
+    console.log('🔧 AI Assistant WebSocket initialized with URL:', this.baseUrl);
   }
 
   async connect(): Promise<void> {
     return new Promise(async (resolve, reject) => {
       try {
-        // Get auth token
-        const tokens = await authService.getTokens();
+        // Get auth token with retry logic
+        let tokens = null;
+        let tokenRetries = 0;
+        while (!tokens && tokenRetries < 3) {
+          tokens = await authService.getTokens();
+          if (!tokens) {
+            tokenRetries++;
+            await new Promise(resolve => setTimeout(resolve, 1000));
+          }
+        }
+        
         if (!tokens?.idToken) {
-          reject(new Error('No authentication token available'));
+          reject(new Error('No authentication token available after retries'));
           return;
         }
 
