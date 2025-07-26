@@ -43,20 +43,48 @@ const DoodleAvatar: React.FC<DoodleAvatarProps> = ({
     avatar = createAvatar(shapes, {
       seed,
       size,
-      backgroundColor: ["b6e3f4","c0aede","d1d4f9","ffd803"],
+      // Beautiful geometric combinations with rich colors
+      backgroundColor: [
+        "3b82f6", // Rich blue
+        "10b981", // Emerald green  
+        "f59e0b", // Amber yellow
+        "ef4444", // Red
+        "8b5cf6", // Purple
+        "06b6d4", // Cyan
+        "f97316", // Orange
+        "ec4899"  // Pink
+      ],
       backgroundType: ["gradientLinear", "solid"],
     });
   } else if (avatarStyle === funEmoji) {
     avatar = createAvatar(funEmoji, {
       seed,
       size,
-      backgroundColor: ["ffdfbf","c0aede","d1d4f9","b6e3f4"],
+      backgroundColor: [
+        "fef3c7", // Light amber
+        "ddd6fe", // Light purple
+        "bfdbfe", // Light blue
+        "bbf7d0", // Light green
+        "fecaca", // Light red
+        "fed7d7", // Light pink
+        "e0e7ff", // Light indigo
+        "fef9c3"  // Light yellow
+      ],
     });
   } else {
     avatar = createAvatar(bottts, {
       seed,
       size,
-      backgroundColor: ["b6e3f4","c0aede","d1d4f9"],
+      backgroundColor: [
+        "1e293b", // Dark slate
+        "0f172a", // Very dark slate
+        "1f2937", // Dark gray
+        "374151", // Medium gray
+        "111827", // Dark blue gray
+        "1e1b4b", // Dark indigo
+        "581c87", // Dark purple
+        "7c2d12"  // Dark orange
+      ],
     });
   }
 

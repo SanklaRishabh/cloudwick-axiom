@@ -221,9 +221,9 @@ const FileViewer = () => {
   const filterContent = (content: string, searchTerm: string) => {
     if (!searchTerm) return content;
     
-    // Highlight search terms in content
+    // Highlight search terms in content using CSS class instead of <mark>
     const regex = new RegExp(`(${searchTerm})`, 'gi');
-    return content.replace(regex, '<mark>$1</mark>');
+    return content.replace(regex, '<span class="search-highlight">$1</span>');
   };
 
   // Custom ReactMarkdown components to control styling
@@ -328,25 +328,25 @@ const FileViewer = () => {
           
           {/* AI Summary Tab */}
           <TabsContent value="summary" className="flex-1 px-6 pb-6 mt-0 flex flex-col">
-            <div className="mb-4">
-              <div className="relative max-w-md">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search in summary..."
-                  value={summarySearch}
-                  onChange={(e) => setSummarySearch(e.target.value)}
-                  className="pl-10 bg-background/80 border-teal/20 focus:border-teal focus:ring-teal/20"
-                />
-              </div>
-            </div>
-            <Card className="flex-1 border-teal/20 shadow-lg">
+            <Card className="flex-1 border-teal/20 shadow-lg bg-primary/30">
               <CardContent className="p-6">
+                <div className="mb-4">
+                  <div className="relative max-w-md">
+                    <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Search in summary..."
+                      value={summarySearch}
+                      onChange={(e) => setSummarySearch(e.target.value)}
+                      className="pl-10 bg-background/80 border-teal/20 focus:border-teal focus:ring-teal/20 text-foreground placeholder:text-muted-foreground"
+                    />
+                  </div>
+                </div>
                 {contentLoading ? (
                   <div className="flex items-center justify-center p-8">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal"></div>
                   </div>
                 ) : summaryContent || fileDetails?.DocSummary ? (
-                  <div className="prose prose-sm max-w-none">
+                  <div className="prose prose-sm max-w-none text-foreground">
                     <ReactMarkdown components={markdownComponents}>
                       {filterContent(summaryContent || fileDetails?.DocSummary || '', summarySearch)}
                     </ReactMarkdown>
@@ -453,7 +453,7 @@ const FileViewer = () => {
     // Image preview
     if (fileType?.includes('image') || imageExtensions.includes(extension)) {
       return (
-        <div className="w-full h-96 bg-gray-100 rounded-lg flex items-center justify-center">
+        <div className="w-full h-[600px] bg-gray-100 rounded-lg flex items-center justify-center">
           {fileDetails.PresignedUrl ? (
             <img 
               src={fileDetails.PresignedUrl} 
@@ -470,7 +470,7 @@ const FileViewer = () => {
     // PDF preview - check both type and extension
     if (fileType === 'pdf' || fileType === 'document' || extension === 'pdf') {
       return (
-        <div className="w-full h-96">
+        <div className="w-full h-[1000px]">
           {fileDetails.PresignedUrl ? (
             <PDFViewer 
               url={fileDetails.PresignedUrl} 
@@ -561,7 +561,7 @@ const FileViewer = () => {
 
     // Default file preview
     return (
-      <div className="w-full h-96 bg-gray-100 rounded-lg flex items-center justify-center">
+      <div className="w-full h-[600px] bg-gray-100 rounded-lg flex items-center justify-center">
         <div className="text-center text-gray-500">
           <FileText className="h-16 w-16 mx-auto mb-4" />
           <p>Preview not available for this file type</p>

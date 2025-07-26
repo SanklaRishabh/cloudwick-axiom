@@ -106,6 +106,15 @@ const SpaceCourses: React.FC<SpaceCoursesProps> = ({ spaceId }) => {
           </Card>
         ))}
       </div>
+
+      {/* Pagination */}
+      {courses.length > 0 && (
+        <div className="mt-8 flex justify-center">
+          <div className="text-sm text-muted-foreground">
+            Showing {courses.length} courses
+          </div>
+        </div>
+      )}
     </div>
   );
 };

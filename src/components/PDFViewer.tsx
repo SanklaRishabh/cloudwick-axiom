@@ -41,11 +41,11 @@ export const PDFViewer: React.FC<PDFViewerProps> = ({ url, className }) => {
       </div>
 
       {/* PDF Content */}
-      <div className="flex-1 min-h-[800px]">
+      <div className="flex-1 min-h-[1000px]">
         <iframe
           src={url}
           title="PDF preview"
-          className="w-full h-[800px] border-0 rounded-b-lg"
+          className="w-full h-[1000px] border-0 rounded-b-lg"
           onError={() => {
             console.error('Failed to load PDF in iframe');
           }}

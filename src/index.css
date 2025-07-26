@@ -215,4 +215,14 @@ All colors MUST be HSL.
   .bg-gradient-cyan-blue {
     background: var(--gradient-primary);
   }
+
+  /* Search highlighting - enhanced styling */
+  .search-highlight {
+    background-color: hsl(var(--primary) / 0.3);
+    color: hsl(var(--primary));
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-weight: 600;
+    box-shadow: 0 1px 3px hsla(var(--primary) / 0.2);
+  }
 }

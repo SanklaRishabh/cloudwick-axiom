@@ -316,6 +316,15 @@ const SpaceFiles: React.FC<SpaceFilesProps> = ({ spaceId, space }) => {
         </div>
       )}
 
+      {/* Pagination */}
+      {files.length > 0 && (
+        <div className="mt-8 flex justify-center">
+          <div className="text-sm text-muted-foreground">
+            Showing {files.length} files
+          </div>
+        </div>
+      )}
+
       {/* File Detail Dialog */}
       {selectedFile && (
         <FileDetailDialog
