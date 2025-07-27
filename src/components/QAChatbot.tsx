@@ -153,6 +153,10 @@ const QAChatbot: React.FC = () => {
     const space = spaces.find(s => s.SpaceId === spaceId);
     addMessage('user', `Selected space: ${space?.SpaceName || spaceId}`);
     
+    // Change state immediately to hide space selection
+    setState('connecting');
+    addMessage('system', 'Initializing platform questionnaire...');
+    
     // Initialize platform questionnaire with selected space
     sendMessage({
       action: 'questionnaire',
