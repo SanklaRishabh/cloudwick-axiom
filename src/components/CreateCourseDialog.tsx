@@ -105,8 +105,8 @@ const CreateCourseDialog: React.FC<CreateCourseDialogProps> = ({
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button className="bg-blue-600 hover:bg-blue-700 flex items-center gap-2">
-          <Plus className="h-4 w-4" />
+        <Button className="bg-gradient-primary hover:bg-gradient-primary/90 text-white">
+          <Plus className="h-4 w-4 mr-2" />
           Create Course
         </Button>
       </DialogTrigger>
@@ -219,6 +219,7 @@ const CreateCourseDialog: React.FC<CreateCourseDialogProps> = ({
                 <Button
                   type="submit"
                   disabled={isLoading || !title.trim() || !description.trim()}
+                  className="bg-gradient-primary hover:bg-gradient-primary/90 text-white"
                 >
                   {isLoading ? 'Creating...' : 'Create Course'}
                 </Button>

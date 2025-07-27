@@ -235,7 +235,7 @@ const SpaceDetail = () => {
         </TabsContent>
 
         <TabsContent value="courses" className="space-y-6 animate-fade-in">
-          <SpaceCourses spaceId={space.SpaceId} />
+          <SpaceCourses spaceId={space.SpaceId} space={space} />
         </TabsContent>
 
         <TabsContent value="tests" className="space-y-6 animate-fade-in">

@@ -249,8 +249,8 @@ const FileUploadDialog = ({ onFileUpload, onWebsiteSubmit }: FileUploadDialogPro
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-blue-600 hover:bg-blue-700 flex items-center gap-2">
-          <Plus className="h-4 w-4" />
+        <Button className="bg-gradient-primary hover:bg-gradient-primary/90 text-white">
+          <Plus className="h-4 w-4 mr-2" />
           Upload File
         </Button>
       </DialogTrigger>
@@ -409,7 +409,7 @@ const FileUploadDialog = ({ onFileUpload, onWebsiteSubmit }: FileUploadDialogPro
                 <Button 
                   type="submit" 
                   disabled={isLoading || !selectedFile} 
-                  className="bg-blue-600 hover:bg-blue-700"
+                  className="bg-gradient-primary hover:bg-gradient-primary/90 text-white"
                 >
                   {isLoading ? 'Uploading...' : 'Upload File'}
                 </Button>
@@ -435,7 +435,11 @@ const FileUploadDialog = ({ onFileUpload, onWebsiteSubmit }: FileUploadDialogPro
                 <Button type="button" variant="outline" onClick={() => setOpen(false)}>
                   Cancel
                 </Button>
-                <Button type="submit" disabled={isLoading} className="bg-blue-600 hover:bg-blue-700">
+                <Button 
+                  type="submit" 
+                  disabled={isLoading} 
+                  className="bg-gradient-primary hover:bg-gradient-primary/90 text-white"
+                >
                   {isLoading ? 'Adding...' : 'Add Website'}
                 </Button>
               </div>

@@ -6,14 +6,22 @@ import { BookOpen, Users, Clock } from 'lucide-react';
 import { useCourses } from '@/hooks/useCourses';
 import CreateCourseDialog from './CreateCourseDialog';
 import DoodleAvatar from '@/components/DoodleAvatar';
+import { useAuth } from '@/hooks/useAuth';
 
 interface SpaceCoursesProps {
   spaceId: string;
+  space?: {
+    SpaceId: string;
+    SpaceName: string;
+    SpaceDescription?: string;
+    SpaceAdmin?: string;
+  };
 }
 
-const SpaceCourses: React.FC<SpaceCoursesProps> = ({ spaceId }) => {
+const SpaceCourses: React.FC<SpaceCoursesProps> = ({ spaceId, space }) => {
   const navigate = useNavigate();
   const { courses, loading, createCourse } = useCourses(spaceId);
+  const { user } = useAuth();
   const [expandedDescriptions, setExpandedDescriptions] = useState<Set<string>>(new Set());
 
   const handleCourseClick = (courseId: string) => {
@@ -54,11 +62,21 @@ const SpaceCourses: React.FC<SpaceCoursesProps> = ({ spaceId }) => {
     );
   }
 
+  // Check if user can create courses (Space Admin or System Admin)
+  const canCreateCourse = () => {
+    if (!user) return false;
+    if (user.role === 'SystemAdmin') return true;
+    if (space?.SpaceAdmin === user.username) return true;
+    return false;
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold text-gray-900">Courses</h2>
-        <CreateCourseDialog onCreateCourse={createCourse} spaceId={spaceId} />
+        {canCreateCourse() && (
+          <CreateCourseDialog onCreateCourse={createCourse} spaceId={spaceId} />
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
