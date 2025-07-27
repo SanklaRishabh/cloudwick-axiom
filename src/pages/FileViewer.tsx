@@ -328,7 +328,7 @@ const FileViewer = () => {
           
           {/* AI Summary Tab */}
           <TabsContent value="summary" className="flex-1 px-6 pb-6 mt-0 flex flex-col">
-            <Card className="flex-1 border-teal/20 shadow-lg bg-primary/30" style={{ backgroundColor: 'rgba(var(--primary), 0.3)' }}>
+            <Card className="flex-1 border-teal/20 shadow-lg" style={{ backgroundColor: 'hsl(var(--primary) / 0.3)' }}>
               <CardContent className="p-6">
                 <div className="mb-4">
                   <div className="relative max-w-md">
@@ -352,7 +352,7 @@ const FileViewer = () => {
                     </ReactMarkdown>
                   </div>
                 ) : (
-                  <p className="text-muted-foreground">No summary available</p>
+                  <p className="text-muted-foreground opacity-100">No summary available</p>
                 )}
               </CardContent>
             </Card>
