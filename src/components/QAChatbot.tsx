@@ -227,8 +227,8 @@ const QAChatbot: React.FC = () => {
           <MessageCircleQuestion className="h-5 w-5" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-2xl h-[700px] flex flex-col">
-        <DialogHeader>
+      <DialogContent className="max-w-2xl max-h-[80vh] flex flex-col">
+        <DialogHeader className="flex-shrink-0">
           <DialogTitle className="flex items-center gap-2">
             <Brain className="h-5 w-5 text-primary" />
             Knowledge Testing Chatbot
@@ -258,7 +258,7 @@ const QAChatbot: React.FC = () => {
           )}
 
           {state !== 'idle' && (
-            <ScrollArea className="flex-1 pr-4">
+            <ScrollArea className="flex-1 min-h-0 pr-4 overflow-auto">
               <div className="space-y-4">
                 {/* Messages */}
                 {messages.map((message) => (
