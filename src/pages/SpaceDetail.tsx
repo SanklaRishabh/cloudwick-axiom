@@ -6,13 +6,14 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, FileText, BookOpen, Users, Settings } from 'lucide-react';
+import { ArrowLeft, FileText, BookOpen, Users, Settings, ClipboardList } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { apiClient } from '@/lib/api';
 import { useAuth } from '@/hooks/useAuth';
 import SpaceFiles from '@/components/SpaceFiles';
 import SpaceCourses from '@/components/SpaceCourses';
 import SpacePeople from '@/components/SpacePeople';
+import SpaceTests from '@/components/SpaceTests';
 
 interface Space {
   SpaceId: string;
@@ -210,7 +211,7 @@ const SpaceDetail = () => {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 tabs-modern">
+        <TabsList className="grid w-full grid-cols-4 tabs-modern">
           <TabsTrigger value="files" className="flex items-center gap-2 font-lexend data-[state=active]:bg-gradient-primary data-[state=active]:text-white">
             <FileText className="h-4 w-4" />
             Files
@@ -218,6 +219,10 @@ const SpaceDetail = () => {
           <TabsTrigger value="courses" className="flex items-center gap-2 font-lexend data-[state=active]:bg-gradient-primary data-[state=active]:text-white">
             <BookOpen className="h-4 w-4" />
             Courses
+          </TabsTrigger>
+          <TabsTrigger value="tests" className="flex items-center gap-2 font-lexend data-[state=active]:bg-gradient-primary data-[state=active]:text-white">
+            <ClipboardList className="h-4 w-4" />
+            Tests
           </TabsTrigger>
           <TabsTrigger value="people" className="flex items-center gap-2 font-lexend data-[state=active]:bg-gradient-primary data-[state=active]:text-white">
             <Users className="h-4 w-4" />
@@ -231,6 +236,10 @@ const SpaceDetail = () => {
 
         <TabsContent value="courses" className="space-y-6 animate-fade-in">
           <SpaceCourses spaceId={space.SpaceId} />
+        </TabsContent>
+
+        <TabsContent value="tests" className="space-y-6 animate-fade-in">
+          <SpaceTests spaceId={space.SpaceId} />
         </TabsContent>
 
         <TabsContent value="people" className="space-y-6 animate-fade-in">
