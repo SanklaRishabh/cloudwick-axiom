@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Users, Sparkles, RefreshCw } from 'lucide-react';
+import { Users, Sparkles, RefreshCw, MessageSquare, Brain } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useSpaces } from '@/hooks/useSpaces';
 import { useDevArticles } from '@/hooks/useDevArticles';
@@ -18,6 +18,7 @@ const DashboardHome = () => {
   const navigate = useNavigate();
   const { spaces, loading: spacesLoading, fetchSpaces } = useSpaces();
   const { articles, loading: articlesLoading, error: articlesError, refetch } = useDevArticles(3);
+  const [isAIMenuExpanded, setIsAIMenuExpanded] = useState(false);
 
   const getTimeOfDayGreeting = () => {
     const hour = new Date().getHours();
@@ -40,6 +41,12 @@ const DashboardHome = () => {
 
   const handleNavigateToAIChat = () => {
     navigate('/dashboard/ai-chat');
+    setIsAIMenuExpanded(false);
+  };
+
+  const handleNavigateToQAChat = () => {
+    navigate('/dashboard/qa-chat');
+    setIsAIMenuExpanded(false);
   };
 
   const handleSpaceClick = (spaceId: string) => {
@@ -356,16 +363,39 @@ const DashboardHome = () => {
 
       {/* Floating AI Chat Button */}
       <div className="fixed bottom-6 right-6 z-50">
-        <Button
-          onClick={handleNavigateToAIChat}
-          className="h-14 w-14 rounded-full bg-gradient-primary hover:bg-gradient-primary-hover shadow-lg hover:shadow-xl transition-all duration-300 p-0"
-          size="icon"
-        >
-          <div className="relative">
-            <div className="w-8 h-8 bg-white/20 rounded-full animate-pulse absolute inset-0"></div>
-            <Sparkles className="h-6 w-6 text-white relative z-10" />
-          </div>
-        </Button>
+        <div className="relative">
+          {/* Expanded Menu */}
+          {isAIMenuExpanded && (
+            <div className="absolute bottom-16 right-0 space-y-3 animate-in slide-in-from-bottom-2 duration-200">
+              <Button
+                onClick={handleNavigateToAIChat}
+                className="h-12 px-4 rounded-full bg-gradient-primary hover:bg-gradient-primary-hover shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2"
+              >
+                <MessageSquare className="h-5 w-5 text-white" />
+                <span className="text-white font-medium">AI Chat</span>
+              </Button>
+              <Button
+                onClick={handleNavigateToQAChat}
+                className="h-12 px-4 rounded-full bg-gradient-primary hover:bg-gradient-primary-hover shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2"
+              >
+                <Brain className="h-5 w-5 text-white" />
+                <span className="text-white font-medium">AI Test</span>
+              </Button>
+            </div>
+          )}
+          
+          {/* Main Button */}
+          <Button
+            onClick={() => setIsAIMenuExpanded(!isAIMenuExpanded)}
+            className="h-14 w-14 rounded-full bg-gradient-primary hover:bg-gradient-primary-hover shadow-lg hover:shadow-xl transition-all duration-300 p-0"
+            size="icon"
+          >
+            <div className="relative">
+              <div className="w-8 h-8 bg-white/20 rounded-full animate-pulse absolute inset-0"></div>
+              <Sparkles className="h-6 w-6 text-white relative z-10" />
+            </div>
+          </Button>
+        </div>
       </div>
     </div>
   );

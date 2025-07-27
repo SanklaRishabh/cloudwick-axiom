@@ -10,7 +10,6 @@ import {
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import DoodleAvatar from '@/components/DoodleAvatar';
-import QAChatbot from '@/components/QAChatbot';
 
 export function DashboardHeader() {
   const { user, signOut } = useAuth();
@@ -53,7 +52,6 @@ export function DashboardHeader() {
       </div>
       
       <div className="flex items-center gap-4">
-        <QAChatbot />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="relative p-0 rounded-full hover:scale-110 transition-all duration-300">
