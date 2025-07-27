@@ -11,9 +11,11 @@ import { Separator } from "@/components/ui/separator";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { ArrowLeft, Download, Edit, Trash2, Calendar, User, FileText, Eye, List, MessageSquare, MoreVertical, Search } from 'lucide-react';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { ArrowLeft, Download, Edit, Trash2, Calendar, User, FileText, Eye, List, MessageSquare, MoreVertical, Search, Bot } from 'lucide-react';
 import { PDFViewer } from '@/components/PDFViewer';
 import { YouTubePlayer } from '@/components/YouTubePlayer';
+import AIChatInterface from '@/components/AIChatInterface';
 import { useFiles, FileItem, FileDetails } from '@/hooks/useFiles';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
@@ -40,6 +42,7 @@ const FileViewer = () => {
   const [summaryContent, setSummaryContent] = useState('');
   const [actionItemsContent, setActionItemsContent] = useState('');
   const [transcriptContent, setTranscriptContent] = useState('');
+  const [isAIChatOpen, setIsAIChatOpen] = useState(false);
 
   useEffect(() => {
     if (fileId && files.length > 0) {
@@ -218,12 +221,11 @@ const FileViewer = () => {
     return messages;
   };
 
-  const filterContent = (content: string, searchTerm: string) => {
+  const highlightSearchTerms = (content: string, searchTerm: string) => {
     if (!searchTerm) return content;
     
-    // Highlight search terms in content using CSS class instead of <mark>
     const regex = new RegExp(`(${searchTerm})`, 'gi');
-    return content.replace(regex, '<span class="search-highlight">$1</span>');
+    return content.replace(regex, '<mark style="background-color: yellow; color: black;">$1</mark>');
   };
 
   // Custom ReactMarkdown components to control styling
@@ -350,7 +352,7 @@ const FileViewer = () => {
                     ) : summaryContent || fileDetails?.DocSummary ? (
                       <div className="prose prose-sm max-w-none text-foreground">
                         <ReactMarkdown components={markdownComponents}>
-                          {filterContent(summaryContent || fileDetails?.DocSummary || '', summarySearch)}
+                          {highlightSearchTerms(summaryContent || fileDetails?.DocSummary || '', summarySearch)}
                         </ReactMarkdown>
                       </div>
                     ) : (
@@ -424,7 +426,11 @@ const FileViewer = () => {
                                   </span>
                                 )}
                               </div>
-                              <p className="text-foreground text-sm font-normal">{message.text}</p>
+                               <p className="text-foreground text-sm font-normal" 
+                                  dangerouslySetInnerHTML={{ 
+                                    __html: highlightSearchTerms(message.text, transcriptSearch) 
+                                  }} 
+                                />
                             </div>
                           </div>
                         </div>
@@ -712,11 +718,53 @@ const FileViewer = () => {
                   {/* File Preview with Enhanced Card */}
                   <Card className="card-enhanced overflow-hidden">
                     <CardContent className="p-8">
-                      <div className="mb-6">
-                        <h3 className="text-xl font-bold mb-2 bg-gradient-primary bg-clip-text text-transparent">
-                          File Preview
-                        </h3>
-                        <div className="h-1 w-20 bg-gradient-primary rounded-full"></div>
+                      <div className="mb-6 flex items-center justify-between">
+                        <div>
+                          <h3 className="text-xl font-bold mb-2 bg-gradient-primary bg-clip-text text-transparent">
+                            File Preview
+                          </h3>
+                          <div className="h-1 w-20 bg-gradient-primary rounded-full"></div>
+                        </div>
+                        <Sheet open={isAIChatOpen} onOpenChange={setIsAIChatOpen}>
+                          <SheetTrigger asChild>
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className="gap-2 border-blue-200 bg-white/50 hover:bg-blue-50 hover:border-blue-300 transition-all duration-300"
+                            >
+                              <Bot className="h-4 w-4" />
+                              AI Chat
+                            </Button>
+                          </SheetTrigger>
+                          <SheetContent side="right" className="w-[600px] sm:w-[800px]">
+                            <SheetHeader>
+                              <SheetTitle className="flex items-center gap-2">
+                                <Bot className="h-5 w-5 text-blue-600" />
+                                AI Chat - {fileDetails?.FileName}
+                              </SheetTitle>
+                            </SheetHeader>
+                            <div className="mt-6">
+                              <AIChatInterface 
+                                spaceId={spaceId || ''} 
+                                fileName={fileDetails?.FileName}
+                                onCourseCreated={() => {
+                                  toast({
+                                    title: "Success",
+                                    description: "Course created successfully!",
+                                  });
+                                  setIsAIChatOpen(false);
+                                }}
+                                onError={(error) => {
+                                  toast({
+                                    title: "Error",
+                                    description: error,
+                                    variant: "destructive",
+                                  });
+                                }}
+                              />
+                            </div>
+                          </SheetContent>
+                        </Sheet>
                       </div>
                       {renderFilePreview()}
                     </CardContent>
