@@ -343,27 +343,42 @@ const QAChatbot: React.FC = () => {
               {state === 'question' && currentQuestion && (
                 <div className="space-y-3">
                   <Separator />
-                  <div className="space-y-2">
-                    <Badge variant="secondary" className="mb-2">
-                      File: {currentQuestion.file}
-                    </Badge>
-                    <div className="space-y-2">
-                      {Object.entries(currentQuestion.options).map(([key, value]) => (
-                        <Button
-                          key={key}
-                          onClick={() => setSelectedAnswer(key)}
-                          variant={selectedAnswer === key ? "default" : "outline"}
-                          className="w-full text-left justify-start"
-                        >
-                          <span className="font-mono mr-2">{key.toUpperCase()})</span>
-                          {value}
-                        </Button>
-                      ))}
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <Badge variant="secondary">
+                        File: {currentQuestion.file}
+                      </Badge>
+                      <Badge variant="outline">
+                        MCQ Question
+                      </Badge>
                     </div>
+                    
+                    <div className="bg-muted/50 p-4 rounded-lg">
+                      <p className="font-medium mb-3">{currentQuestion.question}</p>
+                      <div className="space-y-2">
+                        {Object.entries(currentQuestion.options).map(([key, value]) => (
+                          <Button
+                            key={key}
+                            onClick={() => setSelectedAnswer(key)}
+                            variant={selectedAnswer === key ? "default" : "outline"}
+                            className="w-full text-left justify-start p-3 h-auto"
+                          >
+                            <div className="flex items-start gap-3">
+                              <span className="font-mono text-sm bg-background/50 px-2 py-1 rounded">
+                                {key.toUpperCase()}
+                              </span>
+                              <span className="flex-1">{value}</span>
+                            </div>
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
+                    
                     <Button 
                       onClick={handleAnswerSubmit}
                       disabled={!selectedAnswer}
-                      className="w-full mt-3"
+                      className="w-full"
+                      size="lg"
                     >
                       Submit Answer
                     </Button>
