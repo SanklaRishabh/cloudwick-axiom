@@ -3,7 +3,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Sparkles, Send, MoreHorizontal, Bot, User } from 'lucide-react';
+import { Sparkles, Send, MoreHorizontal, Bot, User, Mic } from 'lucide-react';
 import { AttachMenu } from '@/components/AttachMenu';
 import { useToast } from '@/hooks/use-toast';
 import { WebSocketService } from '@/lib/websocket';
@@ -295,6 +295,14 @@ const AIAssistantInterface: React.FC<AIAssistantInterfaceProps> = ({
               />
             </div>
             <Button
+              onClick={() => window.open('http://localhost:8000', '_blank')}
+              variant="outline"
+              size="sm"
+              className="shrink-0"
+            >
+              <Mic className="h-3 w-3" />
+            </Button>
+            <Button
               onClick={sendMessage}
               disabled={!message.trim() || isLoading || !isConnected}
               size="sm"
@@ -397,13 +405,22 @@ const AIAssistantInterface: React.FC<AIAssistantInterfaceProps> = ({
                   )}
                 </div>
                 
-                <Button 
-                  className="bg-gray-800 hover:bg-gray-900 disabled:bg-gray-400 disabled:opacity-100 rounded-lg w-10 h-10 p-0 flex items-center justify-center"
-                  disabled={!message.trim() || !attachment}
-                  onClick={startNewChat}
-                >
-                  <Send className="h-4 w-4 text-white" />
-                </Button>
+                <div className="flex gap-2">
+                  <Button 
+                    onClick={() => window.open('http://localhost:8000', '_blank')}
+                    variant="outline"
+                    className="rounded-lg w-10 h-10 p-0 flex items-center justify-center"
+                  >
+                    <Mic className="h-4 w-4" />
+                  </Button>
+                  <Button 
+                    className="bg-gray-800 hover:bg-gray-900 disabled:bg-gray-400 disabled:opacity-100 rounded-lg w-10 h-10 p-0 flex items-center justify-center"
+                    disabled={!message.trim() || !attachment}
+                    onClick={startNewChat}
+                  >
+                    <Send className="h-4 w-4 text-white" />
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
@@ -476,6 +493,13 @@ const AIAssistantInterface: React.FC<AIAssistantInterfaceProps> = ({
               rows={1}
             />
           </div>
+          <Button
+            onClick={() => window.open('http://localhost:8000', '_blank')}
+            variant="outline"
+            className="rounded-xl w-10 h-10 p-0"
+          >
+            <Mic className="h-4 w-4" />
+          </Button>
           <Button
             onClick={sendMessage}
             disabled={!message.trim() || isLoading}
