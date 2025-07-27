@@ -17,7 +17,7 @@ interface QAMessage {
 }
 
 interface QuestionData {
-  file: string;
+  file?: string;
   question: string;
   options: {
     a: string;
@@ -25,10 +25,20 @@ interface QuestionData {
     c: string;
     d: string;
   };
-  totalFiles: number;
+  totalFiles?: number;
+  correct?: string;
+  explanation?: string;
 }
 
-type ChatbotState = 'idle' | 'selecting-type' | 'selecting-space' | 'ready' | 'question' | 'connecting';
+interface EvaluationData {
+  score: number;
+  isCorrect: boolean;
+  feedback: string;
+  explanation: string;
+  suggestion?: string;
+}
+
+type ChatbotState = 'idle' | 'selecting-type' | 'selecting-space' | 'selecting-mode' | 'ready' | 'question' | 'connecting' | 'evaluation';
 
 const QAChat: React.FC = () => {
   const [state, setState] = useState<ChatbotState>('idle');
@@ -36,8 +46,10 @@ const QAChat: React.FC = () => {
   const [websocket, setWebsocket] = useState<WebSocket | null>(null);
   const [selectedType, setSelectedType] = useState<'platform' | 'aws' | null>(null);
   const [selectedSpace, setSelectedSpace] = useState<string | null>(null);
+  const [selectedMode, setSelectedMode] = useState<'mcq' | 'solution' | null>(null);
   const [currentQuestion, setCurrentQuestion] = useState<QuestionData | null>(null);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+  const [lastEvaluation, setLastEvaluation] = useState<EvaluationData | null>(null);
   const { spaces } = useSpaces();
   const { toast } = useToast();
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -106,9 +118,12 @@ const QAChat: React.FC = () => {
   const handleWebSocketMessage = (data: any) => {
     switch (data.action) {
       case 'questionnaire':
-        if (data.status === 'ready') {
+        if (selectedType === 'aws') {
+          setState('selecting-mode');
+          addMessage('bot', 'AWS questionnaire initialized! Please select the mode:');
+        } else if (data.status === 'ready') {
           setState('ready');
-          addMessage('bot', data.message || 'Questionnaire initialized! You can now start answering questions.');
+          addMessage('bot', data.message || 'Platform questionnaire initialized! You can now start answering questions.');
         } else if (data.type === 'mcq') {
           setState('question');
           setCurrentQuestion(data.data);
@@ -116,8 +131,32 @@ const QAChat: React.FC = () => {
           addMessage('bot', `Question from ${data.data.file}:\n\n${data.data.question}`);
         }
         break;
+      case 'setMode':
+        if (data.status && data.mode) {
+          setState('ready');
+          addMessage('bot', `Mode set to ${data.mode.toUpperCase()}. You can now start answering questions.`);
+        }
+        break;
+      case 'platform':
+        if (data.data) {
+          setState('evaluation');
+          setLastEvaluation(data.data);
+          const result = data.data.isCorrect ? '✅ Correct!' : '❌ Incorrect';
+          addMessage('bot', `${result}\n\nScore: ${data.data.score}\nFeedback: ${data.data.feedback}\nExplanation: ${data.data.explanation}${data.data.suggestion ? '\nSuggestion: ' + data.data.suggestion : ''}`);
+        }
+        break;
       default:
-        if (data.message) {
+        if (data.type === 'question' && data.mode === 'mcq') {
+          setState('question');
+          setCurrentQuestion(data.data);
+          setSelectedAnswer(null);
+          addMessage('bot', `AWS MCQ Question:\n\n${data.data.question}`);
+        } else if (data.type === 'evaluation') {
+          setState('evaluation');
+          setLastEvaluation(data.data);
+          const result = data.data.isCorrect ? '✅ Correct!' : '❌ Incorrect';
+          addMessage('bot', `${result}\n\nScore: ${data.data.score}\nFeedback: ${data.data.feedback}\nExplanation: ${data.data.explanation}`);
+        } else if (data.message) {
           addMessage('bot', data.message);
         }
     }
@@ -187,7 +226,17 @@ const QAChat: React.FC = () => {
     
     setSelectedAnswer(null);
     setCurrentQuestion(null);
-    setState('ready');
+    // State will be updated to 'evaluation' when response arrives
+  };
+
+  const handleModeSelection = (mode: 'mcq' | 'solution') => {
+    setSelectedMode(mode);
+    addMessage('user', `Selected mode: ${mode.toUpperCase()}`);
+    
+    sendMessage({
+      action: 'setMode',
+      mode: mode
+    });
   };
 
   const resetChat = () => {
@@ -198,8 +247,10 @@ const QAChat: React.FC = () => {
     setState('idle');
     setSelectedType(null);
     setSelectedSpace(null);
+    setSelectedMode(null);
     setCurrentQuestion(null);
     setSelectedAnswer(null);
+    setLastEvaluation(null);
   };
 
   return (
@@ -323,7 +374,39 @@ const QAChat: React.FC = () => {
                         </div>
                       )}
 
+                      {state === 'selecting-mode' && (
+                        <div className="space-y-3">
+                          <Separator />
+                          <div className="flex gap-3">
+                            <Button
+                              onClick={() => handleModeSelection('mcq')}
+                              className="flex-1"
+                              variant="outline"
+                            >
+                              MCQ Mode
+                            </Button>
+                            <Button
+                              onClick={() => handleModeSelection('solution')}
+                              className="flex-1"
+                              variant="outline"
+                            >
+                              Solution Mode
+                            </Button>
+                          </div>
+                        </div>
+                      )}
+
                       {state === 'ready' && (
+                        <div className="space-y-3">
+                          <Separator />
+                          <Button onClick={handleStartQuestion} className="w-full">
+                            <Send className="h-4 w-4 mr-2" />
+                            Get Next Question
+                          </Button>
+                        </div>
+                      )}
+
+                      {state === 'evaluation' && (
                         <div className="space-y-3">
                           <Separator />
                           <Button onClick={handleStartQuestion} className="w-full">
@@ -338,11 +421,13 @@ const QAChat: React.FC = () => {
                           <Separator />
                           <div className="space-y-3">
                             <div className="flex items-center justify-between">
-                              <Badge variant="secondary">
-                                File: {currentQuestion.file}
-                              </Badge>
+                              {currentQuestion.file && (
+                                <Badge variant="secondary">
+                                  File: {currentQuestion.file}
+                                </Badge>
+                              )}
                               <Badge variant="outline">
-                                MCQ Question
+                                {selectedType === 'aws' ? 'AWS MCQ' : 'Platform MCQ'}
                               </Badge>
                             </div>
                             
