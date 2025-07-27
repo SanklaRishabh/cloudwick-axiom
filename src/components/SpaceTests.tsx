@@ -16,10 +16,7 @@ const SpaceTests: React.FC<SpaceTestsProps> = ({ spaceId }) => {
   const [selectedQuestionSet, setSelectedQuestionSet] = useState<string | null>(null);
 
   const handleCreateQuestionSet = async () => {
-    const requestId = await createQuestionSet();
-    if (requestId) {
-      setSelectedQuestionSet(requestId);
-    }
+    await createQuestionSet();
   };
 
   const handleDeleteQuestionSet = async (requestId: string) => {
@@ -90,12 +87,12 @@ const SpaceTests: React.FC<SpaceTestsProps> = ({ spaceId }) => {
         </Card>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {questionSets.map((questionSet) => (
+          {questionSets.map((questionSet, index) => (
             <Card key={questionSet.RequestId} className="hover:shadow-lg transition-shadow duration-200">
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-lg font-lexend">
-                    Test Set
+                    Test Set {index + 1}
                   </CardTitle>
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
