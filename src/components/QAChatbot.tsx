@@ -254,138 +254,139 @@ const QAChatbot: React.FC = () => {
           )}
 
           {state !== 'idle' && (
-            <>
-              <ScrollArea className="flex-1 pr-4">
-                <div className="space-y-4">
-                  {messages.map((message) => (
+            <ScrollArea className="flex-1 pr-4">
+              <div className="space-y-4">
+                {/* Messages */}
+                {messages.map((message) => (
+                  <div
+                    key={message.id}
+                    className={`flex ${
+                      message.type === 'user' ? 'justify-end' : 'justify-start'
+                    }`}
+                  >
                     <div
-                      key={message.id}
-                      className={`flex ${
-                        message.type === 'user' ? 'justify-end' : 'justify-start'
+                      className={`max-w-[80%] p-3 rounded-lg whitespace-pre-wrap ${
+                        message.type === 'user'
+                          ? 'bg-primary text-primary-foreground'
+                          : message.type === 'system'
+                          ? 'bg-muted text-muted-foreground text-sm'
+                          : 'bg-muted'
                       }`}
                     >
-                      <div
-                        className={`max-w-[80%] p-3 rounded-lg whitespace-pre-wrap ${
-                          message.type === 'user'
-                            ? 'bg-primary text-primary-foreground'
-                            : message.type === 'system'
-                            ? 'bg-muted text-muted-foreground text-sm'
-                            : 'bg-muted'
-                        }`}
-                      >
-                        {message.content}
-                      </div>
+                      {message.content}
                     </div>
-                  ))}
-                  <div ref={messagesEndRef} />
-                </div>
-              </ScrollArea>
-
-              {state === 'selecting-type' && (
-                <div className="space-y-3">
-                  <Separator />
-                  <div className="flex gap-3">
-                    <Button
-                      onClick={() => handleTypeSelection('platform')}
-                      className="flex-1 flex items-center gap-2"
-                      variant="outline"
-                    >
-                      <Users className="h-4 w-4" />
-                      Platform
-                    </Button>
-                    <Button
-                      onClick={() => handleTypeSelection('aws')}
-                      className="flex-1 flex items-center gap-2"
-                      variant="outline"
-                    >
-                      <Cloud className="h-4 w-4" />
-                      AWS
-                    </Button>
                   </div>
-                </div>
-              )}
+                ))}
 
-              {state === 'selecting-space' && spaces.length > 0 && (
-                <div className="space-y-3">
-                  <Separator />
-                  <div className="max-h-32 overflow-y-auto space-y-2">
-                    {spaces.map((space) => (
+                {/* Interactive Elements */}
+                {state === 'selecting-type' && (
+                  <div className="space-y-3">
+                    <Separator />
+                    <div className="flex gap-3">
                       <Button
-                        key={space.SpaceId}
-                        onClick={() => handleSpaceSelection(space.SpaceId)}
-                        className="w-full justify-start"
+                        onClick={() => handleTypeSelection('platform')}
+                        className="flex-1 flex items-center gap-2"
                         variant="outline"
                       >
-                        <div className="text-left">
-                          <div className="font-medium">{space.SpaceName}</div>
-                          {space.SpaceDescription && (
-                            <div className="text-xs text-muted-foreground">
-                              {space.SpaceDescription}
-                            </div>
-                          )}
-                        </div>
+                        <Users className="h-4 w-4" />
+                        Platform
                       </Button>
-                    ))}
+                      <Button
+                        onClick={() => handleTypeSelection('aws')}
+                        className="flex-1 flex items-center gap-2"
+                        variant="outline"
+                      >
+                        <Cloud className="h-4 w-4" />
+                        AWS
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
 
-              {state === 'ready' && (
-                <div className="space-y-3">
-                  <Separator />
-                  <Button onClick={handleStartQuestion} className="w-full">
-                    <Send className="h-4 w-4 mr-2" />
-                    Get Next Question
-                  </Button>
-                </div>
-              )}
-
-              {state === 'question' && currentQuestion && (
-                <div className="space-y-3">
-                  <Separator />
+                {state === 'selecting-space' && spaces.length > 0 && (
                   <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <Badge variant="secondary">
-                        File: {currentQuestion.file}
-                      </Badge>
-                      <Badge variant="outline">
-                        MCQ Question
-                      </Badge>
+                    <Separator />
+                    <div className="space-y-2">
+                      {spaces.map((space) => (
+                        <Button
+                          key={space.SpaceId}
+                          onClick={() => handleSpaceSelection(space.SpaceId)}
+                          className="w-full justify-start"
+                          variant="outline"
+                        >
+                          <div className="text-left">
+                            <div className="font-medium">{space.SpaceName}</div>
+                            {space.SpaceDescription && (
+                              <div className="text-xs text-muted-foreground">
+                                {space.SpaceDescription}
+                              </div>
+                            )}
+                          </div>
+                        </Button>
+                      ))}
                     </div>
-                    
-                    <div className="bg-muted/50 p-4 rounded-lg">
-                      <p className="font-medium mb-3">{currentQuestion.question}</p>
-                      <div className="space-y-2">
-                        {Object.entries(currentQuestion.options).map(([key, value]) => (
-                          <Button
-                            key={key}
-                            onClick={() => setSelectedAnswer(key)}
-                            variant={selectedAnswer === key ? "default" : "outline"}
-                            className="w-full text-left justify-start p-3 h-auto"
-                          >
-                            <div className="flex items-start gap-3">
-                              <span className="font-mono text-sm bg-background/50 px-2 py-1 rounded">
-                                {key.toUpperCase()}
-                              </span>
-                              <span className="flex-1">{value}</span>
-                            </div>
-                          </Button>
-                        ))}
-                      </div>
-                    </div>
-                    
-                    <Button 
-                      onClick={handleAnswerSubmit}
-                      disabled={!selectedAnswer}
-                      className="w-full"
-                      size="lg"
-                    >
-                      Submit Answer
+                  </div>
+                )}
+
+                {state === 'ready' && (
+                  <div className="space-y-3">
+                    <Separator />
+                    <Button onClick={handleStartQuestion} className="w-full">
+                      <Send className="h-4 w-4 mr-2" />
+                      Get Next Question
                     </Button>
                   </div>
-                </div>
-              )}
-            </>
+                )}
+
+                {state === 'question' && currentQuestion && (
+                  <div className="space-y-3">
+                    <Separator />
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <Badge variant="secondary">
+                          File: {currentQuestion.file}
+                        </Badge>
+                        <Badge variant="outline">
+                          MCQ Question
+                        </Badge>
+                      </div>
+                      
+                      <div className="bg-muted/50 p-4 rounded-lg">
+                        <p className="font-medium mb-3">{currentQuestion.question}</p>
+                        <div className="space-y-2">
+                          {Object.entries(currentQuestion.options).map(([key, value]) => (
+                            <Button
+                              key={key}
+                              onClick={() => setSelectedAnswer(key)}
+                              variant={selectedAnswer === key ? "default" : "outline"}
+                              className="w-full text-left justify-start p-3 h-auto"
+                            >
+                              <div className="flex items-start gap-3">
+                                <span className="font-mono text-sm bg-background/50 px-2 py-1 rounded">
+                                  {key.toUpperCase()}
+                                </span>
+                                <span className="flex-1 text-wrap break-words">{value}</span>
+                              </div>
+                            </Button>
+                          ))}
+                        </div>
+                      </div>
+                      
+                      <Button 
+                        onClick={handleAnswerSubmit}
+                        disabled={!selectedAnswer}
+                        className="w-full"
+                        size="lg"
+                      >
+                        Submit Answer
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
+                <div ref={messagesEndRef} />
+              </div>
+            </ScrollArea>
           )}
         </div>
       </DialogContent>
