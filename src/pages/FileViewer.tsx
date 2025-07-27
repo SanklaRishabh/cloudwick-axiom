@@ -328,8 +328,8 @@ const FileViewer = () => {
           
           {/* AI Summary Tab */}
           <TabsContent value="summary" className="flex-1 px-6 pb-6 mt-0 flex flex-col">
-            <Card className="flex-1 border-teal/20 shadow-lg" style={{ backgroundColor: 'hsl(var(--primary) / 0.3)' }}>
-              <CardContent className="p-6">
+            <div className="flex-1 border-teal/20 shadow-lg rounded-lg" style={{ backgroundColor: 'hsl(var(--primary) / 0.3)' }}>
+              <div className="p-6">
                 <div className="mb-4">
                   <div className="relative max-w-md">
                     <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -341,21 +341,25 @@ const FileViewer = () => {
                     />
                   </div>
                 </div>
-                {contentLoading ? (
-                  <div className="flex items-center justify-center p-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal"></div>
-                  </div>
-                ) : summaryContent || fileDetails?.DocSummary ? (
-                  <div className="prose prose-sm max-w-none text-foreground">
-                    <ReactMarkdown components={markdownComponents}>
-                      {filterContent(summaryContent || fileDetails?.DocSummary || '', summarySearch)}
-                    </ReactMarkdown>
-                  </div>
-                ) : (
-                  <p className="text-muted-foreground opacity-100">No summary available</p>
-                )}
-              </CardContent>
-            </Card>
+                <Card className="border-teal/20 shadow-lg bg-background">
+                  <CardContent className="p-6">
+                    {contentLoading ? (
+                      <div className="flex items-center justify-center p-8">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal"></div>
+                      </div>
+                    ) : summaryContent || fileDetails?.DocSummary ? (
+                      <div className="prose prose-sm max-w-none text-foreground">
+                        <ReactMarkdown components={markdownComponents}>
+                          {filterContent(summaryContent || fileDetails?.DocSummary || '', summarySearch)}
+                        </ReactMarkdown>
+                      </div>
+                    ) : (
+                      <p className="text-muted-foreground opacity-100">No summary available</p>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
           </TabsContent>
 
           {/* Action Items Tab */}
