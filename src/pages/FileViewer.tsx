@@ -15,7 +15,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { ArrowLeft, Download, Edit, Trash2, Calendar, User, FileText, Eye, List, MessageSquare, MoreVertical, Search, Bot } from 'lucide-react';
 import { PDFViewer } from '@/components/PDFViewer';
 import { YouTubePlayer } from '@/components/YouTubePlayer';
-import AIChatInterface from '@/components/AIChatInterface';
+import AIAssistantInterface from '@/components/AIAssistantInterface';
 import { useFiles, FileItem, FileDetails } from '@/hooks/useFiles';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
@@ -744,22 +744,12 @@ const FileViewer = () => {
                               </SheetTitle>
                             </SheetHeader>
                             <div className="mt-6">
-                              <AIChatInterface 
-                                spaceId={spaceId || ''} 
-                                fileName={fileDetails?.FileName}
-                                onCourseCreated={() => {
-                                  toast({
-                                    title: "Success",
-                                    description: "Course created successfully!",
-                                  });
-                                  setIsAIChatOpen(false);
-                                }}
-                                onError={(error) => {
-                                  toast({
-                                    title: "Error",
-                                    description: error,
-                                    variant: "destructive",
-                                  });
+                              <AIAssistantInterface
+                                mode="sidebar"
+                                preSelectedFile={{
+                                  spaceId: spaceId || '',
+                                  spaceName: 'Current Space',
+                                  fileName: fileDetails?.FileName || ''
                                 }}
                               />
                             </div>
