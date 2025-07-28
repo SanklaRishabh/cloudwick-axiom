@@ -116,6 +116,7 @@ const QAChat: React.FC = () => {
   };
 
   const handleWebSocketMessage = (data: any) => {
+    console.log('WebSocket message received:', data);
     switch (data.action) {
       case 'questionnaire':
         if (selectedType === 'aws') {
@@ -124,7 +125,7 @@ const QAChat: React.FC = () => {
         } else if (data.status === 'ready') {
           setState('ready');
           addMessage('bot', data.message || 'Platform questionnaire initialized! You can now start answering questions.');
-        } else if (data.type === 'mcq') {
+        } else if (data.type === 'mcq' && data.data) {
           setState('question');
           setCurrentQuestion(data.data);
           setSelectedAnswer(null);
