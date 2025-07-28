@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { ArrowLeft, Download, Edit, Trash2, Calendar, User, FileText, Eye, List, MessageSquare, MoreVertical, Search, Bot } from 'lucide-react';
+import { ArrowLeft, Download, Edit, Trash2, Calendar, User, FileText, Eye, List, MessageSquare, MoreVertical, Search, Bot, ExternalLink } from 'lucide-react';
 import { PDFViewer } from '@/components/PDFViewer';
 import { YouTubePlayer } from '@/components/YouTubePlayer';
 import AIAssistantInterface from '@/components/AIAssistantInterface';
@@ -552,19 +552,32 @@ const FileViewer = () => {
       
       // Regular website iframe for non-YouTube URLs
       return (
-        <div className="w-full h-96 bg-gray-100 rounded-lg">
-          {websiteUrl ? (
-            <iframe
-              src={websiteUrl}
-              className="w-full h-full rounded-lg"
-              title={fileDetails.FileName}
-              sandbox="allow-scripts allow-same-origin"
-            />
-          ) : (
-            <div className="flex items-center justify-center h-full text-gray-500">
-              Website preview not available
-            </div>
-          )}
+        <div className="w-full space-y-3">
+          <div className="flex justify-end">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => window.open(websiteUrl, '_blank')}
+              className="flex items-center gap-2"
+            >
+              <ExternalLink className="h-4 w-4" />
+              Open in New Tab
+            </Button>
+          </div>
+          <div className="w-full h-96 bg-gray-100 rounded-lg">
+            {websiteUrl ? (
+              <iframe
+                src={websiteUrl}
+                className="w-full h-full rounded-lg"
+                title={fileDetails.FileName}
+                sandbox="allow-scripts allow-same-origin"
+              />
+            ) : (
+              <div className="flex items-center justify-center h-full text-gray-500">
+                Website preview not available
+              </div>
+            )}
+          </div>
         </div>
       );
     }

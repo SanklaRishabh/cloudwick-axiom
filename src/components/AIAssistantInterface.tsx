@@ -444,9 +444,15 @@ const AIAssistantInterface: React.FC<AIAssistantInterfaceProps> = ({
               </p>
             </div>
           </div>
-          <Button variant="ghost" size="sm">
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>
+          <div className="flex items-center gap-2">
+            <AttachMenu 
+              onAttach={setAttachment}
+              currentAttachment={attachment}
+            />
+            <Button variant="ghost" size="sm">
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </div>
 
