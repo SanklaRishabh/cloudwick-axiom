@@ -130,6 +130,11 @@ const QAChat: React.FC = () => {
           setCurrentQuestion(data.data);
           setSelectedAnswer(null);
           addMessage('bot', `Question from ${data.data.file}:\n\n${data.data.question}`);
+        } else if (data.type === 'evaluation' && data.data) {
+          setState('evaluation');
+          setLastEvaluation(data.data);
+          const result = data.data.isCorrect ? '✅ Correct!' : '❌ Incorrect';
+          addMessage('bot', `${result}\n\nScore: ${data.data.score}\nFeedback: ${data.data.feedback}\nExplanation: ${data.data.explanation}${data.data.suggestion ? '\nSuggestion: ' + data.data.suggestion : ''}`);
         }
         break;
       case 'setMode':
