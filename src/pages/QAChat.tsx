@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Brain, Cloud, Users, Send, ArrowLeft } from "lucide-react";
+import { Brain, Cloud, Users, Send, ArrowLeft, Lightbulb } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Textarea } from "@/components/ui/textarea";
 import { useSpaces } from '@/hooks/useSpaces';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
@@ -18,13 +19,16 @@ interface QAMessage {
 
 interface QuestionData {
   file?: string;
-  question: string;
-  options: {
+  question?: string;
+  options?: {
     a: string;
     b: string;
     c: string;
     d: string;
   };
+  scenario?: string;
+  expectedSolution?: string;
+  keyPoints?: string[];
   totalFiles?: number;
   correct?: string;
   explanation?: string;
@@ -49,6 +53,8 @@ const QAChat: React.FC = () => {
   const [selectedMode, setSelectedMode] = useState<'mcq' | 'solution' | null>(null);
   const [currentQuestion, setCurrentQuestion] = useState<QuestionData | null>(null);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+  const [solutionAnswer, setSolutionAnswer] = useState<string>('');
+  const [showHints, setShowHints] = useState<boolean>(false);
   const [lastEvaluation, setLastEvaluation] = useState<EvaluationData | null>(null);
   const { spaces } = useSpaces();
   const { toast } = useToast();
@@ -156,7 +162,16 @@ const QAChat: React.FC = () => {
           setState('question');
           setCurrentQuestion(data.data);
           setSelectedAnswer(null);
+          setSolutionAnswer('');
+          setShowHints(false);
           addMessage('bot', `AWS MCQ Question:\n\n${data.data.question}`);
+        } else if (data.type === 'question' && data.mode === 'solution') {
+          setState('question');
+          setCurrentQuestion(data.data);
+          setSelectedAnswer(null);
+          setSolutionAnswer('');
+          setShowHints(false);
+          addMessage('bot', `AWS Solution Question:\n\n${data.data.scenario}`);
         } else if (data.type === 'evaluation') {
           setState('evaluation');
           setLastEvaluation(data.data);
@@ -214,23 +229,34 @@ const QAChat: React.FC = () => {
   };
 
   const handleAnswerSubmit = () => {
-    if (!selectedAnswer || !currentQuestion) return;
+    if ((!selectedAnswer && !solutionAnswer.trim()) || !currentQuestion) return;
     
-    addMessage('user', `Selected answer: ${selectedAnswer.toUpperCase()}) ${currentQuestion.options[selectedAnswer as keyof typeof currentQuestion.options]}`);
-    
-    if (selectedType === 'platform') {
-      sendMessage({
-        action: 'submitSpaceAnswer',
-        answer: selectedAnswer
-      });
-    } else {
+    if (selectedMode === 'solution') {
+      addMessage('user', `Solution submitted: ${solutionAnswer}`);
       sendMessage({
         action: 'submitAnswer',
-        answer: selectedAnswer
+        answer: solutionAnswer
       });
+      setSolutionAnswer('');
+    } else {
+      const answer = selectedAnswer!;
+      const options = currentQuestion.options!;
+      addMessage('user', `Selected answer: ${answer.toUpperCase()}) ${options[answer as keyof typeof options]}`);
+      
+      if (selectedType === 'platform') {
+        sendMessage({
+          action: 'submitSpaceAnswer',
+          answer: selectedAnswer
+        });
+      } else {
+        sendMessage({
+          action: 'submitAnswer',
+          answer: selectedAnswer
+        });
+      }
+      setSelectedAnswer(null);
     }
     
-    setSelectedAnswer(null);
     setCurrentQuestion(null);
     // State will be updated to 'evaluation' when response arrives
   };
@@ -432,40 +458,84 @@ const QAChat: React.FC = () => {
                                   File: {currentQuestion.file}
                                 </Badge>
                               )}
-                              <Badge variant="outline">
-                                {selectedType === 'aws' ? 'AWS MCQ' : 'Platform MCQ'}
-                              </Badge>
-                            </div>
-                            
-                            <div className="bg-muted/50 p-4 rounded-lg">
-                              <p className="font-medium mb-3">{currentQuestion.question}</p>
-                              <div className="space-y-2">
-                                {Object.entries(currentQuestion.options).map(([key, value]) => (
-                                  <Button
-                                    key={key}
-                                    onClick={() => setSelectedAnswer(key)}
-                                    variant={selectedAnswer === key ? "default" : "outline"}
-                                    className="w-full text-left justify-start p-3 h-auto"
-                                  >
-                                    <div className="flex items-start gap-3">
-                                      <span className="font-mono text-sm bg-background/50 px-2 py-1 rounded">
-                                        {key.toUpperCase()}
-                                      </span>
-                                      <span className="flex-1 text-wrap break-words">{value}</span>
-                                    </div>
-                                  </Button>
-                                ))}
-                              </div>
-                            </div>
-                            
-                            <Button 
-                              onClick={handleAnswerSubmit}
-                              disabled={!selectedAnswer}
-                              className="w-full"
-                              size="lg"
-                            >
-                              Submit Answer
-                            </Button>
+                               <Badge variant="outline">
+                                 {selectedType === 'aws' ? `AWS ${selectedMode?.toUpperCase()}` : 'Platform MCQ'}
+                               </Badge>
+                             </div>
+                             
+                             {selectedMode === 'solution' ? (
+                               <div className="bg-muted/50 p-4 rounded-lg space-y-4">
+                                 <p className="font-medium mb-3">{currentQuestion.scenario}</p>
+                                 
+                                 {currentQuestion.keyPoints && currentQuestion.keyPoints.length > 0 && (
+                                   <div className="space-y-2">
+                                     <Button
+                                       onClick={() => setShowHints(!showHints)}
+                                       variant="secondary"
+                                       size="sm"
+                                       className="flex items-center gap-2"
+                                     >
+                                       <Lightbulb className="h-4 w-4" />
+                                       {showHints ? 'Hide Hints' : 'Show Hints'}
+                                     </Button>
+                                     
+                                     {showHints && (
+                                       <div className="bg-background/50 p-3 rounded border">
+                                         <h4 className="font-medium text-sm mb-2">Key Points:</h4>
+                                         <ul className="text-sm space-y-1">
+                                           {currentQuestion.keyPoints.map((point, index) => (
+                                             <li key={index} className="flex items-start gap-2">
+                                               <span className="text-primary">•</span>
+                                               <span>{point}</span>
+                                             </li>
+                                           ))}
+                                         </ul>
+                                       </div>
+                                     )}
+                                   </div>
+                                 )}
+                                 
+                                 <div className="space-y-2">
+                                   <label className="text-sm font-medium">Your Solution:</label>
+                                   <Textarea
+                                     value={solutionAnswer}
+                                     onChange={(e) => setSolutionAnswer(e.target.value)}
+                                     placeholder="Type your solution here..."
+                                     className="min-h-[120px]"
+                                   />
+                                 </div>
+                               </div>
+                             ) : (
+                               <div className="bg-muted/50 p-4 rounded-lg">
+                                 <p className="font-medium mb-3">{currentQuestion.question}</p>
+                                 <div className="space-y-2">
+                                   {currentQuestion.options && Object.entries(currentQuestion.options).map(([key, value]) => (
+                                     <Button
+                                       key={key}
+                                       onClick={() => setSelectedAnswer(key)}
+                                       variant={selectedAnswer === key ? "default" : "outline"}
+                                       className="w-full text-left justify-start p-3 h-auto"
+                                     >
+                                       <div className="flex items-start gap-3">
+                                         <span className="font-mono text-sm bg-background/50 px-2 py-1 rounded">
+                                           {key.toUpperCase()}
+                                         </span>
+                                         <span className="flex-1 text-wrap break-words">{value}</span>
+                                       </div>
+                                     </Button>
+                                   ))}
+                                 </div>
+                               </div>
+                             )}
+                             
+                             <Button 
+                               onClick={handleAnswerSubmit}
+                               disabled={selectedMode === 'solution' ? !solutionAnswer.trim() : !selectedAnswer}
+                               className="w-full"
+                               size="lg"
+                             >
+                               Submit Answer
+                             </Button>
                           </div>
                         </div>
                       )}
