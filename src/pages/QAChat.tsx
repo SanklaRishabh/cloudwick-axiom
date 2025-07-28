@@ -194,10 +194,8 @@ const QAChat: React.FC = () => {
     addMessage('user', `Selected: ${type.toUpperCase()}`);
     
     if (type === 'aws') {
-      sendMessage({
-        action: 'questionnaire',
-        questionnaire: 'aws'
-      });
+      setState('selecting-mode');
+      addMessage('bot', 'AWS questionnaire selected! Please choose your preferred mode:');
     } else {
       setState('selecting-space');
       addMessage('bot', 'Please select a space from your available spaces:');
