@@ -140,7 +140,7 @@ const QAChat: React.FC = () => {
           setState('evaluation');
           setLastEvaluation(data.data);
           const result = data.data.isCorrect ? '✅ Correct!' : '❌ Incorrect';
-          addMessage('bot', `${result}\n\nScore: ${data.data.score}\nFeedback: ${data.data.feedback}\nExplanation: ${data.data.explanation}${data.data.suggestion ? '\nSuggestion: ' + data.data.suggestion : ''}`);
+          addMessage('bot', `${result}\n\nScore: ${data.data.score}\nFeedback: ${data.data.feedback}\nExplanation: ${data.data.explanation}`);
         }
         break;
       case 'setMode':
@@ -154,7 +154,7 @@ const QAChat: React.FC = () => {
           setState('evaluation');
           setLastEvaluation(data.data);
           const result = data.data.isCorrect ? '✅ Correct!' : '❌ Incorrect';
-          addMessage('bot', `${result}\n\nScore: ${data.data.score}\nFeedback: ${data.data.feedback}\nExplanation: ${data.data.explanation}${data.data.suggestion ? '\nSuggestion: ' + data.data.suggestion : ''}`);
+          addMessage('bot', `${result}\n\nScore: ${data.data.score}\nFeedback: ${data.data.feedback}\nExplanation: ${data.data.explanation}`);
         }
         break;
       default:
