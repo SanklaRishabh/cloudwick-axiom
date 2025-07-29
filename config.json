@@ -24,7 +24,7 @@
     }
   },
   "api": {
-    "baseUrl": "https://p1ucbxsdk0.execute-api.us-east-1.amazonaws.com/develop",
+    "baseUrl": "https://9dke4j5v6l.execute-api.us-east-1.amazonaws.com/develop",
     "region": "us-east-1",
     "external": {
       "devTo": "https://dev.to/api/articles",
@@ -34,8 +34,8 @@
   "aws": {
     "region": "us-east-1",
     "cognito": {
-      "userPoolId": "us-east-1_J8iFhMdKr",
-      "userPoolClientId": "5fgu50j2sdcpk1n81scc8q10h1",
+      "userPoolId": "us-east-1_VwF8LSzuW",
+      "userPoolClientId": "68kg90batc1ho0piilrqfrh3od",
       "passwordRequirements": {
         "minLength": 8,
         "requireLowercase": true,
@@ -49,35 +49,35 @@
     }
   },
   "websockets": {
-    "aiAssistant": "wss://l9nli7niwh.execute-api.us-east-1.amazonaws.com/develop",
-    "aiCourseCreator": "wss://oyejozfr7d.execute-api.us-east-1.amazonaws.com/develop",
-    "qaChat": "wss://ytf7gj1r05.execute-api.us-east-1.amazonaws.com/develop"
+    "aiAssistant": "wss://iut8uo0xk1.execute-api.us-east-1.amazonaws.com/develop",
+    "aiCourseCreator": "wss://3aoyivj7qb.execute-api.us-east-1.amazonaws.com/develop",
+    "qaChat": "wss://tanx2non94.execute-api.us-east-1.amazonaws.com/develop"
   },
   "environment": {
     "variables": {
       "VITE_API_BASE_URL": {
         "description": "Base URL for the main API",
-        "fallback": "https://p1ucbxsdk0.execute-api.us-east-1.amazonaws.com/develop",
+        "fallback": "https://9dke4j5v6l.execute-api.us-east-1.amazonaws.com/develop",
         "required": false
       },
       "VITE_COGNITO_USER_POOL_ID": {
         "description": "AWS Cognito User Pool ID",
-        "fallback": "us-east-1_J8iFhMdKr",
+        "fallback": "us-east-1_VwF8LSzuW",
         "required": false
       },
       "VITE_COGNITO_USER_POOL_CLIENT_ID": {
         "description": "AWS Cognito User Pool Client ID",
-        "fallback": "5fgu50j2sdcpk1n81scc8q10h1",
+        "fallback": "68kg90batc1ho0piilrqfrh3od",
         "required": false
       },
       "VITE_WS_BASE_URL": {
         "description": "WebSocket base URL for AI Assistant",
-        "fallback": "wss://l9nli7niwh.execute-api.us-east-1.amazonaws.com/develop",
+        "fallback": "wss://iut8uo0xk1.execute-api.us-east-1.amazonaws.com/develop",
         "required": false
       },
       "VITE_AI_COURSE_CREATOR_WS_URL": {
         "description": "WebSocket URL for AI Course Creator",
-        "fallback": "wss://oyejozfr7d.execute-api.us-east-1.amazonaws.com/develop",
+        "fallback": "wss://3aoyivj7qb.execute-api.us-east-1.amazonaws.com/develop",
         "required": false
       }
     }
