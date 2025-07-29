@@ -110,7 +110,6 @@
     "serverHost": "::",
     "environment": "development"
   },
-  // PUBLIC ARTICLES API
   "integrations": {
     "devTo": {
       "enabled": true,
