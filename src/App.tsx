@@ -40,15 +40,15 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/dashboard" element={<Dashboard />}>
               <Route index element={<DashboardHome />} />
-            <Route path="spaces" element={<Spaces />} />
-            <Route path="spaces/:spaceId" element={<SpaceDetail />} />
-            <Route path="spaces/:spaceId/files/:fileId" element={<FileViewer />} />
-            <Route path="spaces/:spaceId/courses/:courseId" element={<CourseDetail />} />
-            <Route path="spaces/:spaceId/courses/:courseId/sections" element={<CourseSections />} />
-            <Route path="spaces/:spaceId/courses/:courseId/sections/:sectionId" element={<SectionDetail />} />
-            <Route path="spaces/:spaceId/courses/:courseId/sections/:sectionId/lessons/:lessonId" element={<LessonDetail />} />
-            <Route path="ai-chat" element={<AIChat />} />
-            <Route path="qa-chat" element={<QAChat />} />
+              <Route path="spaces" element={<Spaces />} />
+              <Route path="spaces/:spaceId" element={<SpaceDetail />} />
+              <Route path="spaces/:spaceId/files/:fileId" element={<FileViewer />} />
+              <Route path="spaces/:spaceId/courses/:courseId" element={<CourseDetail />} />
+              <Route path="spaces/:spaceId/courses/:courseId/sections" element={<CourseSections />} />
+              <Route path="spaces/:spaceId/courses/:courseId/sections/:sectionId" element={<SectionDetail />} />
+              <Route path="spaces/:spaceId/courses/:courseId/sections/:sectionId/lessons/:lessonId" element={<LessonDetail />} />
+              <Route path="ai-chat" element={<AIChat />} />
+              <Route path="qa-chat" element={<QAChat />} />
               <Route path="people" element={<People />} />
               <Route path="people/:userId" element={<UserDetail />} />
               <Route path="documents" element={<Documents />} />
