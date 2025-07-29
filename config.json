@@ -23,7 +23,6 @@
       "emailPlaceholder": "john.doe@cloudwick.com"
     }
   },
-  // REST API
   "api": {
     "baseUrl": "https://p1ucbxsdk0.execute-api.us-east-1.amazonaws.com/develop",
     "region": "us-east-1",
@@ -32,7 +31,6 @@
       "localDevelopment": "http://localhost:8000"
     }
   },
-  // COGNITO
   "aws": {
     "region": "us-east-1",
     "cognito": {
@@ -50,37 +48,35 @@
       "requiredAttributes": ["email", "given_name", "family_name"]
     }
   },
-  // WEBSOCKET API
   "websockets": {
     "aiAssistant": "wss://l9nli7niwh.execute-api.us-east-1.amazonaws.com/develop",
     "aiCourseCreator": "wss://oyejozfr7d.execute-api.us-east-1.amazonaws.com/develop",
     "qaChat": "wss://ytf7gj1r05.execute-api.us-east-1.amazonaws.com/develop"
   },
-  // ENVIRONMENT VARIABLES
   "environment": {
     "variables": {
       "VITE_API_BASE_URL": {
-        "description": "Base URL for the main API",  // REST API
+        "description": "Base URL for the main API",
         "fallback": "https://p1ucbxsdk0.execute-api.us-east-1.amazonaws.com/develop",
         "required": false
       },
       "VITE_COGNITO_USER_POOL_ID": {
-        "description": "AWS Cognito User Pool ID",  // COGNITO
+        "description": "AWS Cognito User Pool ID",
         "fallback": "us-east-1_J8iFhMdKr",
         "required": false
       },
       "VITE_COGNITO_USER_POOL_CLIENT_ID": {
-        "description": "AWS Cognito User Pool Client ID",  // COGNITO
+        "description": "AWS Cognito User Pool Client ID",
         "fallback": "5fgu50j2sdcpk1n81scc8q10h1",
         "required": false
       },
       "VITE_WS_BASE_URL": {
-        "description": "WebSocket base URL for AI Assistant",  // WEBSOCKET API
+        "description": "WebSocket base URL for AI Assistant",
         "fallback": "wss://l9nli7niwh.execute-api.us-east-1.amazonaws.com/develop",
         "required": false
       },
       "VITE_AI_COURSE_CREATOR_WS_URL": {
-        "description": "WebSocket URL for AI Course Creator",  // WEBSOCKET API
+        "description": "WebSocket URL for AI Course Creator",
         "fallback": "wss://oyejozfr7d.execute-api.us-east-1.amazonaws.com/develop",
         "required": false
       }
