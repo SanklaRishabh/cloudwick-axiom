@@ -24,7 +24,7 @@
     }
   },
   "api": {
-    "baseUrl": "https://9dke4j5v6l.execute-api.us-east-1.amazonaws.com/develop",
+    "baseUrl": "https://9dke4j5v6l.execute-api.us-east-1.amazonaws.com/axiom-develop-Stage",
     "region": "us-east-1",
     "external": {
       "devTo": "https://dev.to/api/articles",
@@ -57,7 +57,7 @@
     "variables": {
       "VITE_API_BASE_URL": {
         "description": "Base URL for the main API",
-        "fallback": "https://9dke4j5v6l.execute-api.us-east-1.amazonaws.com/develop",
+        "fallback": "https://9dke4j5v6l.execute-api.us-east-1.amazonaws.com/axiom-develop-Stage",
         "required": false
       },
       "VITE_COGNITO_USER_POOL_ID": {
