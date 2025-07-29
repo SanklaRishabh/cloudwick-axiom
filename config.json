@@ -23,19 +23,21 @@
       "emailPlaceholder": "john.doe@cloudwick.com"
     }
   },
+  // REST API
   "api": {
-    "baseUrl": "https://ndncqs0q7i.execute-api.us-east-1.amazonaws.com/auth-test",
+    "baseUrl": "https://p1ucbxsdk0.execute-api.us-east-1.amazonaws.com/develop",
     "region": "us-east-1",
     "external": {
       "devTo": "https://dev.to/api/articles",
       "localDevelopment": "http://localhost:8000"
     }
   },
+  // COGNITO
   "aws": {
     "region": "us-east-1",
     "cognito": {
-      "userPoolId": "us-east-1_gt96zzkHV",
-      "userPoolClientId": "1epbmpkpafmm1dqhsbgudd1t74",
+      "userPoolId": "us-east-1_J8iFhMdKr",
+      "userPoolClientId": "5fgu50j2sdcpk1n81scc8q10h1",
       "passwordRequirements": {
         "minLength": 8,
         "requireLowercase": true,
@@ -48,36 +50,38 @@
       "requiredAttributes": ["email", "given_name", "family_name"]
     }
   },
+  // WEBSOCKET API
   "websockets": {
-    "aiAssistant": "wss://ct3ranhp35.execute-api.us-east-1.amazonaws.com/production",
-    "aiCourseCreator": "wss://pgnyjmjo7a.execute-api.us-east-1.amazonaws.com/production",
-    "qaChat": "wss://wrzeiax2uh.execute-api.us-east-1.amazonaws.com/production/"
+    "aiAssistant": "wss://l9nli7niwh.execute-api.us-east-1.amazonaws.com/develop",
+    "aiCourseCreator": "wss://oyejozfr7d.execute-api.us-east-1.amazonaws.com/develop",
+    "qaChat": "wss://ytf7gj1r05.execute-api.us-east-1.amazonaws.com/develop"
   },
+  // ENVIRONMENT VARIABLES
   "environment": {
     "variables": {
       "VITE_API_BASE_URL": {
-        "description": "Base URL for the main API",
-        "fallback": "https://ndncqs0q7i.execute-api.us-east-1.amazonaws.com/auth-test",
+        "description": "Base URL for the main API",  // REST API
+        "fallback": "https://p1ucbxsdk0.execute-api.us-east-1.amazonaws.com/develop",
         "required": false
       },
       "VITE_COGNITO_USER_POOL_ID": {
-        "description": "AWS Cognito User Pool ID",
-        "fallback": "us-east-1_gt96zzkHV",
+        "description": "AWS Cognito User Pool ID",  // COGNITO
+        "fallback": "us-east-1_J8iFhMdKr",
         "required": false
       },
       "VITE_COGNITO_USER_POOL_CLIENT_ID": {
-        "description": "AWS Cognito User Pool Client ID",
-        "fallback": "1epbmpkpafmm1dqhsbgudd1t74",
+        "description": "AWS Cognito User Pool Client ID",  // COGNITO
+        "fallback": "5fgu50j2sdcpk1n81scc8q10h1",
         "required": false
       },
       "VITE_WS_BASE_URL": {
-        "description": "WebSocket base URL for AI Assistant",
-        "fallback": "wss://ct3ranhp35.execute-api.us-east-1.amazonaws.com/production",
+        "description": "WebSocket base URL for AI Assistant",  // WEBSOCKET API
+        "fallback": "wss://l9nli7niwh.execute-api.us-east-1.amazonaws.com/develop",
         "required": false
       },
       "VITE_AI_COURSE_CREATOR_WS_URL": {
-        "description": "WebSocket URL for AI Course Creator",
-        "fallback": "wss://pgnyjmjo7a.execute-api.us-east-1.amazonaws.com/production",
+        "description": "WebSocket URL for AI Course Creator",  // WEBSOCKET API
+        "fallback": "wss://oyejozfr7d.execute-api.us-east-1.amazonaws.com/develop",
         "required": false
       }
     }
@@ -110,6 +114,7 @@
     "serverHost": "::",
     "environment": "development"
   },
+  // PUBLIC ARTICLES API
   "integrations": {
     "devTo": {
       "enabled": true,
