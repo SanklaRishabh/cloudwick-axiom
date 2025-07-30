@@ -1,0 +1,121 @@
+{
+  "application": {
+    "name": "Cloudwick Axiom",
+    "brand": {
+      "name": "Cloudwick",
+      "subtitle": "Axiom",
+      "logo": "CW",
+      "colors": {
+        "primary": "#3374DF",
+        "gradients": {
+          "primary": "linear-gradient(135deg, hsl(195 100% 50%), hsl(220 70% 60%))",
+          "primaryHover": "linear-gradient(135deg, hsl(195 100% 55%), hsl(220 70% 65%))",
+          "brandText": "linear-gradient(to right, #047857, #64748b, #047857)"
+        }
+      },
+      "fonts": {
+        "primary": "Lato",
+        "secondary": "Helvetica"
+      }
+    },
+    "defaults": {
+      "emailDomain": "cloudwick.com",
+      "emailPlaceholder": "john.doe@cloudwick.com"
+    }
+  },
+  "api": {
+    "baseUrl": "https://9dke4j5v6l.execute-api.us-east-1.amazonaws.com/axiom-develop-Stage",
+    "region": "us-east-1",
+    "external": {
+      "devTo": "https://dev.to/api/articles",
+      "localDevelopment": "http://localhost:8000"
+    }
+  },
+  "aws": {
+    "region": "us-east-1",
+    "cognito": {
+      "userPoolId": "us-east-1_VwF8LSzuW",
+      "userPoolClientId": "68kg90batc1ho0piilrqfrh3od",
+      "passwordRequirements": {
+        "minLength": 8,
+        "requireLowercase": true,
+        "requireUppercase": true,
+        "requireNumbers": true,
+        "requireSpecialCharacters": true
+      },
+      "signUpVerification": "code",
+      "loginMethods": ["email", "username"],
+      "requiredAttributes": ["email", "given_name", "family_name"]
+    }
+  },
+  "websockets": {
+    "aiAssistant": "wss://iut8uo0xk1.execute-api.us-east-1.amazonaws.com/develop",
+    "aiCourseCreator": "wss://3aoyivj7qb.execute-api.us-east-1.amazonaws.com/develop",
+    "qaChat": "wss://tanx2non94.execute-api.us-east-1.amazonaws.com/develop"
+  },
+  "environment": {
+    "variables": {
+      "VITE_API_BASE_URL": {
+        "description": "Base URL for the main API",
+        "fallback": "https://9dke4j5v6l.execute-api.us-east-1.amazonaws.com/axiom-develop-Stage",
+        "required": false
+      },
+      "VITE_COGNITO_USER_POOL_ID": {
+        "description": "AWS Cognito User Pool ID",
+        "fallback": "us-east-1_VwF8LSzuW",
+        "required": false
+      },
+      "VITE_COGNITO_USER_POOL_CLIENT_ID": {
+        "description": "AWS Cognito User Pool Client ID",
+        "fallback": "68kg90batc1ho0piilrqfrh3od",
+        "required": false
+      },
+      "VITE_WS_BASE_URL": {
+        "description": "WebSocket base URL for AI Assistant",
+        "fallback": "wss://iut8uo0xk1.execute-api.us-east-1.amazonaws.com/develop",
+        "required": false
+      },
+      "VITE_AI_COURSE_CREATOR_WS_URL": {
+        "description": "WebSocket URL for AI Course Creator",
+        "fallback": "wss://3aoyivj7qb.execute-api.us-east-1.amazonaws.com/develop",
+        "required": false
+      }
+    }
+  },
+  "features": {
+    "authentication": {
+      "enabled": true,
+      "provider": "cognito",
+      "multiFactorAuth": false,
+      "socialLogin": false
+    },
+    "aiServices": {
+      "assistant": true,
+      "courseCreator": true,
+      "qaChat": true
+    },
+    "fileUpload": {
+      "enabled": true,
+      "supportedTypes": ["pdf", "video", "website"],
+      "websitePreview": true
+    },
+    "themes": {
+      "darkMode": true,
+      "lightMode": true,
+      "systemPreference": true
+    }
+  },
+  "deployment": {
+    "serverPort": 8080,
+    "serverHost": "::",
+    "environment": "development"
+  },
+  "integrations": {
+    "devTo": {
+      "enabled": true,
+      "apiUrl": "https://dev.to/api/articles",
+      "perPage": 5,
+      "timeframe": 7
+    }
+  }
+}

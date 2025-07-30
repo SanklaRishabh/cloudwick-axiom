@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { getDevToApiUrl } from '@/lib/config';
 
 export interface DevArticle {
   id: number;
@@ -43,7 +44,7 @@ export const useDevArticles = (limit: number = 6): UseDevArticlesReturn => {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(`https://dev.to/api/articles?per_page=${limit}&top=7`);
+      const response = await fetch(`${getDevToApiUrl()}?per_page=${limit}&top=7`);
       
       if (!response.ok) {
         throw new Error('Failed to fetch articles');

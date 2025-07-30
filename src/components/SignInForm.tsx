@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import { getEmailPlaceholder } from '@/lib/config';
 
 interface SignInFormProps {
   onSwitchToSignUp: () => void;
@@ -34,7 +35,7 @@ const SignInForm = ({ onSwitchToSignUp }: SignInFormProps) => {
         <div className="space-y-2">
           <Input
             type="email"
-            placeholder="john.doe@cloudwick.com"
+            placeholder={getEmailPlaceholder()}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-500"

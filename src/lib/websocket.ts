@@ -1,5 +1,6 @@
 
 import { authService } from './cognito';
+import { getAIAssistantWebSocketUrl } from './config';
 
 export interface WebSocketMessage {
   Query: string;
@@ -23,7 +24,7 @@ export class WebSocketService {
 
   constructor(baseUrl?: string) {
     // Provide fallback URL if not specified
-    this.baseUrl = baseUrl || 'wss://ct3ranhp35.execute-api.us-east-1.amazonaws.com/production';
+    this.baseUrl = baseUrl || getAIAssistantWebSocketUrl();
     console.log('🔧 AI Assistant WebSocket initialized with URL:', this.baseUrl);
   }
 
