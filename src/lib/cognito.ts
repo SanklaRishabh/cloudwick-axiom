@@ -1,41 +1,40 @@
 import { Amplify } from 'aws-amplify';
 import { signUp, signIn, signOut, confirmSignUp, getCurrentUser, fetchAuthSession, fetchUserAttributes } from 'aws-amplify/auth';
-import { getCognitoUserPoolId, getCognitoUserPoolClientId, cognitoConfig } from './config';
 
 // Configure Amplify with Cognito settings
-const cognitoAmplifyConfig = {
+const cognitoConfig = {
   Auth: {
     Cognito: {
-      userPoolId: getCognitoUserPoolId(),
-      userPoolClientId: getCognitoUserPoolClientId(),
+      userPoolId: import.meta.env.VITE_COGNITO_USER_POOL_ID || 'us-east-1_gt96zzkHV',
+      userPoolClientId: import.meta.env.VITE_COGNITO_USER_POOL_CLIENT_ID || '1epbmpkpafmm1dqhsbgudd1t74',
       loginWith: {
-        email: cognitoConfig.loginMethods.includes('email'),
-        username: cognitoConfig.loginMethods.includes('username'),
+        email: true,
+        username: true,
       },
-      signUpVerificationMethod: cognitoConfig.signUpVerification as "code" | "link",
+      signUpVerificationMethod: 'code' as const,
       userAttributes: {
         email: {
-          required: cognitoConfig.requiredAttributes.includes('email'),
+          required: true,
         },
         given_name: {
-          required: cognitoConfig.requiredAttributes.includes('given_name'),
+          required: true,
         },
         family_name: {
-          required: cognitoConfig.requiredAttributes.includes('family_name'),
+          required: true,
         },
       },
       passwordFormat: {
-        minLength: cognitoConfig.passwordRequirements.minLength,
-        requireLowercase: cognitoConfig.passwordRequirements.requireLowercase,
-        requireUppercase: cognitoConfig.passwordRequirements.requireUppercase,
-        requireNumbers: cognitoConfig.passwordRequirements.requireNumbers,
-        requireSpecialCharacters: cognitoConfig.passwordRequirements.requireSpecialCharacters,
+        minLength: 8,
+        requireLowercase: true,
+        requireUppercase: true,
+        requireNumbers: true,
+        requireSpecialCharacters: true,
       },
     },
   },
 };
 
-Amplify.configure(cognitoAmplifyConfig);
+Amplify.configure(cognitoConfig);
 
 export interface CognitoUser {
   username: string;

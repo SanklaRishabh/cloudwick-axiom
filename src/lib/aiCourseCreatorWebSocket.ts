@@ -1,5 +1,4 @@
 import { authService } from './cognito';
-import { getAICourseCreatorWebSocketUrl } from './config';
 
 // AI Course Creator specific message interfaces
 export interface AICourseCreatorMessage {
@@ -25,7 +24,7 @@ export class AICourseCreatorWebSocketService {
 
   constructor(baseUrl?: string) {
     // Provide fallback URL if not specified
-    this.baseUrl = baseUrl || getAICourseCreatorWebSocketUrl();
+    this.baseUrl = baseUrl || 'wss://pgnyjmjo7a.execute-api.us-east-1.amazonaws.com/production';
     console.log('🔧 AI Course Creator WebSocket initialized with URL:', this.baseUrl);
   }
 

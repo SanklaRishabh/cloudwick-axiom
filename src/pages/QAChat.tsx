@@ -9,7 +9,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { useSpaces } from '@/hooks/useSpaces';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
-import { getQAChatWebSocketUrl } from '@/lib/config';
 
 interface QAMessage {
   id: string;
@@ -84,7 +83,7 @@ const QAChat: React.FC = () => {
     setState('connecting');
     addMessage('system', 'Connecting to Q&A service...');
     
-    const ws = new WebSocket(getQAChatWebSocketUrl());
+    const ws = new WebSocket('wss://wrzeiax2uh.execute-api.us-east-1.amazonaws.com/production/');
     
     ws.onopen = () => {
       setWebsocket(ws);

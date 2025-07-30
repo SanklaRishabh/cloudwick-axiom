@@ -5,7 +5,6 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useAuth } from '@/hooks/useAuth';
 import VerificationForm from './VerificationForm';
-import { getEmailPlaceholder } from '@/lib/config';
 
 interface SignUpFormProps {
   onSwitchToSignIn: () => void;
@@ -86,7 +85,7 @@ const SignUpForm = ({ onSwitchToSignIn }: SignUpFormProps) => {
           <Input
             id="email"
             type="email"
-            placeholder={getEmailPlaceholder()}
+            placeholder="john.doe@cloudwick.com"
             value={formData.email}
             onChange={(e) => handleInputChange('email', e.target.value)}
             className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-500"

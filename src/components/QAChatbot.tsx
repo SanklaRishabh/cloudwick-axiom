@@ -8,7 +8,6 @@ import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useSpaces } from '@/hooks/useSpaces';
 import { useToast } from '@/hooks/use-toast';
-import { getQAChatWebSocketUrl } from '@/lib/config';
 
 interface QAMessage {
   id: string;
@@ -66,7 +65,7 @@ const QAChatbot: React.FC = () => {
     setState('connecting');
     addMessage('system', 'Connecting to Q&A service...');
     
-    const ws = new WebSocket(getQAChatWebSocketUrl());
+    const ws = new WebSocket('wss://wrzeiax2uh.execute-api.us-east-1.amazonaws.com/production/');
     
     ws.onopen = () => {
       setWebsocket(ws);
